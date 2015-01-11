@@ -1,0 +1,19 @@
+<section data-ng-controller="OwnersController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Owners</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="owner in owners" data-ng-href="#!/owners/{{owner._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="owner.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="owner.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="owner.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!owners.$resolved || owners.length">
+    	No Owners yet, why don't you <a href="/#!/owners/create">create one</a>?
+    </div>
+</section>

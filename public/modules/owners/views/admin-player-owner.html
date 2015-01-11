@@ -1,0 +1,49 @@
+<section data-ng-controller="assocPlayerController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Admin Page: Associate Players with Owners</h1>
+    </div>
+    todo:<br/>
+    check an owner - highlight players that the owner currently has<br/>
+    click on and off players that the owner has on roster - use socket to do it on click - not form submit<br/>
+    players can only have one owner<br/>
+    in list show who the owner is<br/>
+    filter players based on name<br/>
+    <br/>
+    
+    <h4>countdown</h4>
+    <div id="counter">{{counter}}</div><br/>
+    <button type="button" class="btn btn-default" ng-click="startTimer()">StartTimer</button>    
+    <button type="button" class="btn btn-default" ng-click="resetTimer()">Reset!</button>    
+    <br/><br/>    
+    
+    Owner: {{selectedOwner}}<br/><br/>    
+    Player: {{selectedPlayer}}<br/><br/>    
+    <br/>    
+    <button type="button" class="btn btn-default" ng-Click="socketTest()">Default</button>
+    <br/>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="list-group">
+                <a data-ng-repeat="owner in owners" class="list-group-item" ng-click="selectOwner(owner)" ng-class="ownerSelect">
+                    <h4 class="list-group-item-heading" data-ng-bind="owner.name"></h4>
+                </a>
+            </div>            
+        </div>
+        <div class="col-md-6">
+            <div class="list-group">
+                <a data-ng-repeat="player in players" class="list-group-item" ng-click="selectPlayer(player)">
+                    <h4 class="list-group-item-heading" data-ng-bind="player.name"></h4>
+                    <small>
+                        Owner: {{player.owner}}<br/>
+                        Price: {{player.price}}<br/>
+                        Position: {{player.position}}<br/>
+                        YearsOwned: {{player.yearsOwned}}
+                    </small>                    
+                </a>
+            </div>            
+        </div>
+    </div>
+    
+        
+    
+</section>
