@@ -1,23 +1,68 @@
-<section data-ng-controller="PlayersController" data-ng-init="findOne()">
+<section data-ng-controller="PlayersController" data-ng-init="initializeEditPlayer()">
     <div class="page-header">
-        <h1>Edit Player</h1>
+        <h3>Edit Player</h3>
+        <button class="btn btn-default" ng-Click="remove()">Delete Player</button>
     </div>
-    <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate>
-            <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="player.name" id="name" class="form-control" placeholder="Name" required>
+    player: {{player}}<br/><br/>
+    <!--myOwner: {{myOwner}}<br/><br/>-->
+    <!--oldOwner: {{oldOwner}}<br/><br/>-->
+    <!--owners: {{owners}}-->
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-horizontal" data-ng-submit="update()" novalidate>
+                <fieldset>
+                    <div class="form-group">
+                        <div class="controls">
+                            <h4>General Info</h4>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    Name: <input type="text" data-ng-model="player.name" id="name" class="form-control" placeholder="Name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    Position: <select ng-model="player.position" ng-options="position for position in playerPositions"></select>
+                                </div>
+                                <div class="col-md-3">
+                                    Team: <select ng-model="player.team" ng-options="team.name for team in teams track by team.name"></select><br/>
+                                    Bye Week: {{player.team.byeWeek}}
+                                </div>
+                            </div>
+
+                            <h4>Ranks</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    absRank: <input type="number" data-ng-model="player.absRank" id="abs" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    posRank: <input type="number" data-ng-model="player.posRank" id="pos" class="form-control" required>
+                                </div>
+                            </div>
+                            <br/>
+
+                            <h4>Draft specific</h4>
+                            Rookie: <input type="checkbox" data-ng-model="player.rookie" id="rookie" class="form-control" required>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    Owner: <select ng-model="myOwner" ng-options="owner.name for owner in owners track by owner.name"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    Price: <input type="text" data-ng-model="player.price" id="price" class="form-control" placeholder="0" required>
+                                </div>
+                                <div class="col-md-4">
+                                    Contract Year: <select ng-model="player.yearsOwned" ng-options="year for year in contractYears"></select>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
-                </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
-            </fieldset>
-        </form>
+                    <div class="form-group">
+                        <input type="submit" value="Update" class="btn btn-default">
+                    </div>
+                    <div data-ng-show="error" class="text-danger">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
+
 </section>

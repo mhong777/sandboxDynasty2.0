@@ -1,0 +1,12 @@
+<section data-ng-controller="assocPlayerController">
+	<h2>association page</h2>
+    <p>this page is supposed to enable the admin to associate players with a particular user</p>
+    <p>validate groups - ramos and hong will be admins</p>
+
+    {{allUsers}}
+
+    <a data-ng-repeat="owner in owners" data-ng-href="#!/myplayers/{{owner._id}}" class="list-group-item">
+        <span data-ng-bind="owner.user.displayName"></span>
+        <h4 class="list-group-item-heading" data-ng-bind="owner.name"></h4>
+    </a>
+</section>

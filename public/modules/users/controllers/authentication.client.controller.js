@@ -13,7 +13,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 				$scope.authentication.user = response;
 
 				//And redirect to the index page
-				$location.path('/');
+				$location.path('select-owner');
 			}).error(function(response) {
 				$scope.error = response.message;
 			});
@@ -25,7 +25,13 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 				$scope.authentication.user = response;
 
 				//And redirect to the index page
-				$location.path('/');
+				if($scope.authentication.ownerId){
+					$location.path('/');
+				}
+				else{
+					$location.path('select-owner');
+				}
+
 			}).error(function(response) {
 				$scope.error = response.message;
 			});

@@ -1,15 +1,29 @@
-<section data-ng-controller="OwnersController" data-ng-init="findOne()">
+<section data-ng-controller="OwnersController" data-ng-init="initializeEditOwner()">
     <div class="page-header">
         <h1>Edit Owner</h1>
     </div>
+
+    <!--owners: {{owner}}<br/><br/>-->
+    <!--users: {{allUsers}}<br/><br/>-->
+    <!--associate user: {{associateUser}}<br/><br/>-->
+    <!--deassociate user: {{oldUser}} <br/><br/>-->
+
+    <button class="btn btn-default" ng-Click="remove(owner)">Delete Owner</button>
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                    <h4>Name</h4>
                     <div class="controls">
                         <input type="text" data-ng-model="owner.name" id="name" class="form-control" placeholder="Name" required>
                     </div>
+
+                    <h4>Extra Money</h4>
+                    <input type="number" data-ng-model="owner.extraMoney" id="extraMoney" class="form-control" required>
+
+                    <h4>Associated User</h4>
+                    <select ng-model="associateUser" ng-options="user.username for user in allUsers track by user._id" ng-change="changeOwnerUser()"></select>
+
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Update" class="btn btn-default">

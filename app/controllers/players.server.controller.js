@@ -60,16 +60,30 @@ exports.read = function(req, res) {
  * Update a Player
  */
 exports.update = function(req, res) {
-	var player = req.player ;
+	//var player = req.player ;
+	//console.log(player);
+    //
+	//player = _.extend(player , req.body);
 
-	player = _.extend(player , req.body);
-
-	player.save(function(err) {
+	var rPlayer=req.body.player;
+	Player.findById(rPlayer._id).exec(function(err, player) {
 		if (err) {
-			return res.send(400, {
-				message: getErrorMessage(err)
-			});
+			console.log(err);
 		} else {
+			player.name=rPlayer.name;
+			player.user=rPlayer.user;
+			player.position=rPlayer.position;
+			player.price=rPlayer.price;
+			player.available=rPlayer.available;
+			player.yearsOwned=rPlayer.yearsOwned;
+			player.owner=rPlayer.owner;
+			player.rookie=rPlayer.rookie;
+			player.team=rPlayer.team;
+			player.absRank=rPlayer.absRank;
+			player.posRank=rPlayer.posRank;
+
+			player.save();
+			console.log(player);
 			res.jsonp(player);
 		}
 	});
@@ -95,7 +109,7 @@ exports.delete = function(req, res) {
 /**
  * List of Players
  */
-exports.list = function(req, res) { Player.find().sort('-created').populate('user', 'displayName').exec(function(err, players) {
+exports.list = function(req, res) { Player.find().sort('-created').populate('owner', 'name').exec(function(err, players) {
 		if (err) {
 			return res.send(400, {
 				message: getErrorMessage(err)
@@ -109,7 +123,8 @@ exports.list = function(req, res) { Player.find().sort('-created').populate('use
 /**
  * Player middleware
  */
-exports.playerByID = function(req, res, next, id) { Player.findById(id).populate('user', 'displayName').exec(function(err, player) {
+exports.playerByID = function(req, res, next, id) {
+	Player.findById(id).exec(function(err, player) {
 		if (err) return next(err);
 		if (! player) return next(new Error('Failed to load Player ' + id));
 		req.player = player ;

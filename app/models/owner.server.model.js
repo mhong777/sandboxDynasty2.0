@@ -39,6 +39,10 @@ var OwnerSchema = new Schema({
     extraMoney:{
         type:Number,
         default: 0
+    },
+    myUser:{
+        type: Schema.ObjectId,
+        ref: 'User'
     }
     
     

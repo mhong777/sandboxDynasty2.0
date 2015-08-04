@@ -1,0 +1,52 @@
+<section data-ng-controller="EditRosterController" data-ng-init="getOwner()">
+	<!--{{owner.previousRoster}}-->
+	<!--{{user.ownerId}}<br/>-->
+	<!--{{owner._id}}<br/>-->
+	<!--{{owner.keepRoster[0].price}}-->
+
+	<div class="row">
+		<div class="col-md-12">
+			<h1>{{owner.name}}'s Roster</h1>
+		</div>
+	</div>
+	<div ng-show="rosterCheck" >
+		<span class="errorMsg">This isn't your roster so you can't alter it</span>
+	</div>
+	<div ng-show="timeCheck">
+		<span class="errorMsg">The time for altering is over, the time for drafting is now</span>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h2>Keepers</h2>
+			Keeper Salary: ${{salary}}<br/>
+			Keeper Cap Left: ${{keeperCap-salary}}<br/>
+
+			<h3>Currently Keeping</h3>
+			<a data-ng-repeat="player in owner.keepRoster" ng-click="changeKeeper(player,0)" class="list-group-item cursor">
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+				Years Owned: {{player.yearsOwned}}
+			</a>
+			<hr/>
+			<h3>Eligable to Keep</h3>
+			<a data-ng-repeat="player in owner.keepEligable" ng-click="changeKeeper(player,1)" class="list-group-item cursor">
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+				Years Owned: {{player.yearsOwned}}
+			</a>
+		</div>
+		<div class="col-md-6">
+			<h2>Restricted Free Agents</h2>
+			RFA Salary: ${{rfaSalary}}<br/>
+			RFA Budget Left: ${{totalCap-salary-rfaSalary}}<br/>
+
+			<h3>Currently Bidding</h3>
+			<a data-ng-repeat="player in owner.bidRoster" ng-click="changeBidee(player,0)" class="list-group-item cursor">
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+			</a>
+			<hr/>
+			<h3>Eligable to Bid</h3>
+			<a data-ng-repeat="player in owner.bidEligable" ng-click="changeBidee(player,1)" class="list-group-item cursor">
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+			</a>
+		</div>
+	</div>
+</section>

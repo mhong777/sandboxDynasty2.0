@@ -5,6 +5,26 @@ angular.module('owners').config(['$stateProvider',
 	function($stateProvider) {
 		// Owners state routing
 		$stateProvider.
+		state('edit-roster', {
+			url: '/edit-roster/:ownerId',
+			templateUrl: 'modules/owners/views/edit-roster.client.view.html'
+		}).
+		state('review-roster', {
+			url: '/review-roster',
+			templateUrl: 'modules/owners/views/review-roster.client.view.html'
+		}).
+		state('remove-owner', {
+			url: '/remove-owner',
+			templateUrl: 'modules/owners/views/remove-owner.client.view.html'
+		}).
+		state('myplayers', {
+			url: '/myplayers/:ownerId',
+			templateUrl: 'modules/owners/views/myplayers.client.view.html'
+		}).
+		state('assocplayer', {
+			url: '/assocplayer',
+			templateUrl: 'modules/owners/views/assocplayer.client.view.html'
+		}).
 		state('listOwners', {
 			url: '/owners',
 			templateUrl: 'modules/owners/views/list-owners.client.view.html'

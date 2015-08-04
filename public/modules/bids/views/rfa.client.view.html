@@ -1,0 +1,88 @@
+<section data-ng-controller="RfaController" data-ng-init="initialize()">
+	<!--ToDo-->
+
+	<!--view available RFAs for bid-->
+		<!--see who orig owner is-->
+		<!--see who highest bidder is / what the bid is-->
+		<!--highlight ones you are winning-->
+	<!--show your roster-->
+		<!--show your RFAs-->
+		<!--show your budget-->
+	<!--show where you can put a bid in and submit-->
+		<!--do not show this function for players outside of your price range-->
+	<!--show counter for time left-->
+
+	<h3>Available Cap: ${{salaryCap-salary}}</h3>
+
+	<table class="table table-striped table-bordered">
+		<thead>
+		<td>Name</td>
+		<td>Position</td>
+		<td>Team</td>
+		<td>Bye Week</td>
+		<td>Abs Rank</td>
+		<td>Pos Rank</td>
+		<td>Price</td>
+
+
+		<td>Current Bidder</td>
+		<td>Original Owner</td>
+		<td>Submit Bid</td>
+		</thead>
+		<tr ng-repeat="bid in bids | orderBy:'player.name'">
+			<td>{{bid.player.name}}</td>
+			<td>{{bid.player.position}}</td>
+			<td>{{bid.player.team.name}}</td>
+			<td>{{bid.player.team.byeWeek}}</td>
+			<td>{{bid.player.absRank}}</td>
+			<td>{{bid.player.posRank}}</td>
+			<td>${{bid.price}}</td>
+			<td>{{bid.owner.name}}</td>
+			<td>{{bid.origOwner.name}}</td>
+			<td>
+				Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" >
+				<button class="btn btn-default" type="button" ng-click="submitBid(bid)">Submit Bid</button>
+			</td>
+		</tr>
+	</table>
+
+
+
+	<div class="row">
+		<div class="col-md-4">
+			<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)">
+				{{owner.name}}: ${{owner.salary}}
+				<!--<br/>{{owner.numPlayer}} Players-->
+			</a>
+		</div>
+
+		<div class="col-md-8">
+			<h3>{{dispOwner.name}}'s Roster</h3>
+			<h4>Available Cap: ${{salaryCap - dispOwner.salary}}</h4>
+			<table class="table table-striped table-bordered">
+				<thead>
+				<td>Name</td>
+				<td>Position</td>
+				<td>Team</td>
+				<td>Bye Week</td>
+				<td>Abs Rank</td>
+				<td>Pos Rank</td>
+				<td>Price</td>
+				<td>Years Owned</td>
+				</thead>
+				<tbody>
+				<tr ng-repeat="player in dispOwner.keepRoster">
+					<td>{{player.name}}</td>
+					<td>{{player.position}}</td>
+					<td>{{player.team.name}}</td>
+					<td>{{player.team.byeWeek}}</td>
+					<td>{{player.absRank}}</td>
+					<td>{{player.posRank}}</td>
+					<td>${{player.price}}</td>
+					<td>{{player.yearsOwned}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>

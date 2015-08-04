@@ -1,0 +1,113 @@
+<section data-ng-controller="PlayersController" data-ng-init="find()">
+	<div class="page-header">
+		<h1>Players</h1>
+	</div>
+	<div>
+		<div class="playerFilter">
+			<div class="row">
+				<h3>Filters</h3>
+				<div class="col-md-12">
+					Search Player: <input type="text" placeholder="name" ng-model="searchPlayer">
+				</div>
+			</div><br/>
+
+			<div class="row">
+				<div class="col-md-6">
+					Position:
+					<div class="btn-group" role="group" aria-label="bGroup1">
+						<button type="button" class="btn btn-default" ng-click="filters.position = ''">All</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'QB'">QB</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'RB'">RB</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'WR'">WR</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'TE'">TE</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'K'">K</button>
+						<button type="button" class="btn btn-default" ng-click="filters.position = 'D'">D</button>
+					</div>
+				</div>
+				<div class="col-md-6">
+					Availability:
+					<div class="btn-group" role="group" aria-label="bGroup2">
+						<button type="button" class="btn btn-default" ng-click="changeAvailable(1)">All</button>
+						<button type="button" class="btn btn-default" ng-click="changeAvailable(2)">Available</button>
+						<button type="button" class="btn btn-default" ng-click="changeAvailable(3)">Unavailable</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<td>
+						<a href="" ng-click="sortType = 'name'; sortReverse = !sortReverse" target="_self">
+							Name
+							<span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'position'; sortReverse = !sortReverse">
+							Position
+							<span ng-show="sortType == 'position'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'team.name'; sortReverse = !sortReverse">
+							Team
+							<span ng-show="sortType == 'team.name'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'team.byeWeek'; sortReverse = !sortReverse">
+							Bye Week
+							<span ng-show="sortType == 'team.byeWeek'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'absRank'; sortReverse = !sortReverse">
+							Absolute Rank
+							<span ng-show="sortType == 'absRank'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'posRank'; sortReverse = !sortReverse">
+							Position Rank
+							<span ng-show="sortType == 'posRank'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'price'; sortReverse = !sortReverse">
+							Price
+							<span ng-show="sortType == 'price'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'yearsOwned'; sortReverse = !sortReverse">
+							Contract Years
+							<span ng-show="sortType == 'yearsOwned'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+					<td>
+						<a href="" ng-click="sortType = 'owner.name'; sortReverse = !sortReverse">
+							Owner
+							<span ng-show="sortType == 'owner.name'" class="fa fa-caret-down"></span>
+						</a>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="player in players | orderBy:sortType:sortReverse | filter:searchPlayer | filter: listFilter(filters.position, filters.available)">
+					<td>{{player.name}}</td>
+					<td>{{player.position}}</td>
+					<td>{{player.team.name}}</td>
+					<td>{{player.team.byeWeek}}</td>
+					<td>{{player.absRank}}</td>
+					<td>{{player.posRank}}</td>
+					<td>{{player.price}}</td>
+					<td>{{player.yearsOwned}}</td>
+					<td>{{player.owner.name}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</section>

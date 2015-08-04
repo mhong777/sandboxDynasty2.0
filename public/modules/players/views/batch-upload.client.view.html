@@ -1,0 +1,51 @@
+<section data-ng-controller="PlayersController" data-ng-init="initializeBatchUpload()">
+
+	<!--{{owners}}<br/>-->
+	<br/>
+	<input type="file" read-file="showContent($fileContent)" />
+	<button class="btn btn-default" type="submit" ng-click="parseCSV()">Parse</button><br/>
+	<button class="btn btn-default" type="submit" ng-click="batchAdd()">Upload to DB</button>
+	<div>
+		<h2>File content is:</h2>
+		<pre>{{ content }}</pre>
+
+	</div>
+	{{playerArray[0].uploaded}}
+	<div>
+		<table class="table">
+			<tr>
+				<td>To Upload</td>
+				<td>Name</td>
+				<td>Position</td>
+				<td>Team</td>
+				<td>Bye</td>
+				<td>Absolute Rank</td>
+				<td>Position Rank</td>
+				<td>Rookie</td>
+				<td>Price</td>
+				<td>Contract Years</td>
+				<td>Owner</td>
+				<td>JSON</td>
+			</tr>
+			<tr ng-repeat="inputPlayer in playerArray">
+				<td>
+					<input type="checkbox" data-ng-model="inputPlayer.toUpload" id="toUpload" class="form-control" required>
+					Uploaded: {{inputPlayer.uploaded}}
+				</td>
+				<td><input type="text" data-ng-model="inputPlayer.name" id="name" class="form-control" placeholder="Name" required></td>
+				<td><select ng-model="inputPlayer.position" ng-options="position for position in playerPositions"></select></td>
+				<td><select ng-model="inputPlayer.team" ng-options="team.name for team in teams track by team.name"></select></td>
+				<td>{{inputPlayer.team.byeWeek}}</td>
+				<td><input type="number" data-ng-model="inputPlayer.absRank" id="abs" class="form-control" required></td>
+				<td><input type="number" data-ng-model="inputPlayer.posRank" id="pos" class="form-control" required></td>
+				<td><input type="checkbox" data-ng-model="inputPlayer.rookie" id="rookie" class="form-control" required></td>
+				<td><input type="text" data-ng-model="inputPlayer.price" id="price" class="form-control" placeholder="0" required></td>
+				<td><select ng-model="inputPlayer.yearsOwned" ng-options="year for year in contractYears"></select></td>
+				<td><select ng-model="inputPlayer.owner" ng-options="owner.name for owner in owners track by owner.name"></select></td>
+				<td>
+					{{inputPlayer}}
+				</td>
+			</tr>
+		</table>
+	</div>
+</section>

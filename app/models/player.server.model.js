@@ -28,13 +28,9 @@ var PlayerSchema = new Schema({
         type: String,
         default: ''
     },
-    team:{
-        type: String,
-        default: ''
-    },
     price:{
         type: Number,
-        default: 0
+        default: 1
     },
     available:{
         type: Boolean,
@@ -44,14 +40,6 @@ var PlayerSchema = new Schema({
         type: Number,
         default: 0
     },
-    preSeasonRank:{
-        abs:{type:Number, default: 500},
-        pos:{type:Number, default: 500}
-    },
-    lastYearRank:{
-        abs:{type:Number, default: 500},
-        pos:{type:Number, default: 500}
-    },
     owner:{
         type: Schema.ObjectId,
         ref: 'Owner'
@@ -59,7 +47,26 @@ var PlayerSchema = new Schema({
     rookie:{
         type: Boolean,
         default: false
+    },
+    team:{
+        name:{
+            type: String,
+            default: ''
+        },
+        byeWeek:{
+            type: Number,
+            default: 0
+        }
+    },
+    absRank:{
+        type: Number,
+        default: 300
+    },
+    posRank:{
+        type: Number,
+        default: 300
     }
+
     
 });
 

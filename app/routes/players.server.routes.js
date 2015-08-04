@@ -11,8 +11,8 @@ module.exports = function(app) {
 
 	app.route('/players/:playerId')
 		.get(players.read)
-		.put(users.requiresLogin, players.hasAuthorization, players.update)
-		.delete(users.requiresLogin, players.hasAuthorization, players.delete);
+		.put(users.requiresLogin, players.update)
+		.delete(users.requiresLogin, players.delete);
 
 	// Finish by binding the Player middleware
 	app.param('playerId', players.playerByID);

@@ -1,15 +1,52 @@
 'use strict';
 
 // Owners controller
-angular.module('owners').controller('assocPlayerController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', 'Players', 'socket',
-	function($scope, $stateParams, $location, Authentication, Owners, Players, socket ) {
-		$scope.authentication = Authentication;
+angular.module('owners').controller('assocPlayerController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', 'Players', 'socket', '$http',
+	function($scope, $stateParams, $location, Authentication, Owners, Players, socket, $http ) {
+        $scope.authentication = Authentication;
+        /****
+         * INITIALIZATION
+         *
+         ****/
+        $scope.initialze=function(){
+            $scope.selectedOwner={};
+            $scope.owners = Owners.query();
+        };
+
+        $scope.initialze();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
         /***
         ***INITIALIZATION
         ***Find a list of Owners
         ***/
+        $scope.getTimer=function(){
+            socket.emit('getTime');
+        };
+
+        $scope.getTimer();
+
 		$scope.find = function() {
 			$scope.owners = Owners.query();
             $scope.players = Players.query();            
@@ -47,6 +84,11 @@ angular.module('owners').controller('assocPlayerController', ['$scope', '$stateP
         *****/
         socket.on('timer', function (data) {
             $scope.counter=data.countdown;
+            $scope.$digest();
+        });
+
+        socket.on('finalMsg', function(data){
+            $scope.msg=data.msg;
             $scope.$digest();
         });
 

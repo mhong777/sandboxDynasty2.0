@@ -11,8 +11,32 @@ module.exports = function(app) {
 
 	app.route('/owners/:ownerId')
 		.get(owners.read)
-		.put(users.requiresLogin, owners.hasAuthorization, owners.update)
-		.delete(users.requiresLogin, owners.hasAuthorization, owners.delete);
+		.put(users.requiresLogin, owners.update)
+		.delete(users.requiresLogin, owners.delete);
+
+	app.route('/batchAddPlayer')
+		.put(owners.batchAddPlayer);
+
+	app.route('/changeKeeper')
+		.put(owners.changeKeeper);
+
+	app.route('/changeBidee')
+		.put(owners.changeBidee);
+
+	app.route('/ownerChange')
+		.put(owners.ownerChange);
+
+	app.route('/reviewRoster')
+		.get(owners.reviewRoster);
+
+	app.route('/editRoster/:ownerId')
+		.get(owners.editRoster);
+
+	app.route('/ownersAndPlayers')
+		.get(owners.ownersAndPlayers);
+
+	//app.route('/changeKeeper')
+	//	.put(owners.changeKeeper);
 
 	// Finish by binding the Owner middleware
 	app.param('ownerId', owners.ownerByID);

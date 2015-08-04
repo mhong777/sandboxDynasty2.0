@@ -45,7 +45,7 @@ exports.signup = function(req, res) {
 
 	// Add missing user fields
 	user.provider = 'local';
-	user.displayName = user.firstName + ' ' + user.lastName;
+	//user.displayName = user.firstName + ' ' + user.lastName;
 
 	// Then save the user 
 	user.save(function(err) {
@@ -68,6 +68,23 @@ exports.signup = function(req, res) {
 		}
 	});
 };
+
+/*
+*list all of the users
+* need to limit the amount of data this query return: name, id, ownerId populate
+*/
+//populate('ownerId', 'name').
+exports.allUsers = function(req, res) { User.find({},{_id:1, username:1, ownerId:1}).sort('-created').exec(function(err, users) {
+	if (err) {
+		return res.send(400, {
+			message: getErrorMessage(err)
+		});
+	} else {
+		res.jsonp(users);
+	}
+});
+};
+
 
 /**
  * Signin after passport authentication
@@ -107,7 +124,8 @@ exports.update = function(req, res) {
 		// Merge existing user
 		user = _.extend(user, req.body);
 		user.updated = Date.now();
-		user.displayName = user.firstName + ' ' + user.lastName;
+		//user.displayName = user.firstName + ' ' + user.lastName;
+		user.ownerId=user.ownerId;
 
 		user.save(function(err) {
 			if (err) {
@@ -302,7 +320,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 							firstName: providerUserProfile.firstName,
 							lastName: providerUserProfile.lastName,
 							username: availableUsername,
-							displayName: providerUserProfile.displayName,
+							//displayName: providerUserProfile.displayName,
 							email: providerUserProfile.email,
 							provider: providerUserProfile.provider,
 							providerData: providerUserProfile.providerData

@@ -7,3 +7,16 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
 }
+
+.availablePlayer{
+	background-color: #a6e1ec;
+}
+
+.errorMsg{
+	color:red;
+	font-size: 1.3em;
+}
+
+.cursor{
+	cursor:pointer;
+}

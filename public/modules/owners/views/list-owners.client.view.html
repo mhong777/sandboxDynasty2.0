@@ -3,7 +3,7 @@
         <h1>Owners</h1>
     </div>
     <div class="list-group">
-        <a data-ng-repeat="owner in owners" data-ng-href="#!/owners/{{owner._id}}" class="list-group-item">
+        <a data-ng-repeat="owner in owners" data-ng-href="#!/owners/{{owner._id}}/edit" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on
 				<span data-ng-bind="owner.created | date:'medium'"></span>

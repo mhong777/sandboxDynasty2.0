@@ -5,9 +5,17 @@ angular.module('players').config(['$stateProvider',
 	function($stateProvider) {
 		// Players state routing
 		$stateProvider.
+		state('view-players', {
+			url: '/admin-players',
+			templateUrl: 'modules/players/views/list-players.client.view.html'
+		}).
+		state('batch-upload', {
+			url: '/batch-upload',
+			templateUrl: 'modules/players/views/batch-upload.client.view.html'
+		}).
 		state('listPlayers', {
 			url: '/players',
-			templateUrl: 'modules/players/views/list-players.client.view.html'
+			templateUrl: 'modules/players/views/view-players.client.view.html'
 		}).
 		state('createPlayer', {
 			url: '/players/create',

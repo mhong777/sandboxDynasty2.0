@@ -1,0 +1,19 @@
+<section data-ng-controller="BidsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Bids</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="bid in bids" data-ng-href="#!/bids/{{bid._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="bid.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="bid.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="bid.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!bids.$resolved || bids.length">
+    	No Bids yet, why don't you <a href="/#!/bids/create">create one</a>?
+    </div>
+</section>

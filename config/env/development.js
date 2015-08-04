@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/sandboxdynasty-dev',
+	db: 'mongodb://localhost/sandbox',
 	app: {
 		title: 'sandboxDynasty - Development Environment'
 	},

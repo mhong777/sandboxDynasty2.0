@@ -10,7 +10,11 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 		$stateProvider.
 		state('home', {
 			url: '/',
-			templateUrl: 'modules/owners/views/admin-player-owner.html'
+				templateUrl: 'modules/owners/views/review-roster.client.view.html'
+		}).
+		state('admin-main', {
+			url: '/admin-main',
+			templateUrl: 'modules/core/views/admin-main.client.view.html'
 		});
 	}
 ]);

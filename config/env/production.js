@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/sandboxdynasty',
+	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/sandbox',
 	assets: {
 		lib: {
 			css: [
@@ -10,6 +10,9 @@ module.exports = {
 			],
 			js: [
 				'public/lib/angular/angular.min.js',
+				'public/lib/angular-route/angular-route.min.js',
+				'public/lib/angular-socket-io/socket.js',
+				'public/lib/socket.io-client/socket.io.js',
 				'public/lib/angular-resource/angular-resource.js', 
 				'public/lib/angular-ui-router/release/angular-ui-router.min.js',
 				'public/lib/angular-ui-utils/ui-utils.min.js',
