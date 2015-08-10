@@ -9,7 +9,7 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
 			],
 			js: [
-				'public/lib/angular/angular.min.js',
+				'public/lib/angular/angular.js',
 				'public/lib/angular-route/angular-route.min.js',
 				'public/lib/angular-socket-io/socket.js',
 				'public/lib/socket.io-client/socket.io.js',
