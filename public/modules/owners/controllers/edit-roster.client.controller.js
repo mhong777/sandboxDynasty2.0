@@ -67,6 +67,8 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		};
 
 		$scope.changeBidee=function(player,status){
+			//console.log(($scope.rfaSalary+player.price + $scope.salary));
+			//console.log($scope.totalCap + $scope.owner.extraMoney);
 			//check that the user owns the person first
 			if($scope.user.ownerId==$scope.owner._id && $scope.changeTime==1){
 				var req={};
@@ -77,7 +79,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				if(status==1){
 					//keep
 					//check salary - if the salary is over - give them an alert
-					if(($scope.rfaSalary+player.price)<=$scope.totalCap){
+					if(($scope.rfaSalary+player.price+$scope.salary)<=($scope.totalCap + $scope.owner.extraMoney)){
 						//rest - send status, ownerId, playerId
 						console.log(req);
 						$http.put('/changeBidee',req).

@@ -36,7 +36,7 @@
 		<div class="col-md-6">
 			<h2>Restricted Free Agents</h2>
 			RFA Salary: ${{rfaSalary}}<br/>
-			RFA Budget Left: ${{totalCap-salary-rfaSalary}}<br/>
+			RFA Budget Left: ${{totalCap-salary-rfaSalary + owner.extraMoney}}<br/>
 
 			<h3>Currently Bidding</h3>
 			<a data-ng-repeat="player in owner.bidRoster" ng-click="changeBidee(player,0)" class="list-group-item cursor">
