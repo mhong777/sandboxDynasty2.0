@@ -10,7 +10,7 @@
 		</thead>
 		<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
 			<td>{{owner.name}}</td>
-			<td>${{salaryCap - owner.salary}}</td>
+			<td>${{salaryCap - owner.salary + owner.extraMoney}}</td>
 			<td>{{owner.keepRoster.length}}</td>
 			<td>{{owner.bidRoster.length}}</td>
 			<td>{{owner.draftPicks}}</td>
