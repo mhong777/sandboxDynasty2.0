@@ -145,8 +145,21 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   '$stateProvider',
   '$urlRouterProvider',
   function ($stateProvider, $urlRouterProvider) {
+<<<<<<< HEAD
     $urlRouterProvider.otherwise('/'), $stateProvider.state('home', {
+=======
+    // Redirect to home view when route not found
+    $urlRouterProvider.otherwise('/');
+    // Home state routing
+    $stateProvider.state('rules', {
+      url: '/rules',
+      templateUrl: 'modules/core/views/rules.client.view.html'
+    }).state('home-page', {
+>>>>>>> master
       url: '/',
+      templateUrl: 'modules/core/views/home.client.view.html'
+    }).state('roster', {
+      url: '/roster',
       templateUrl: 'modules/owners/views/review-roster.client.view.html'
     }).state('admin-main', {
       url: '/admin-main',
@@ -328,6 +341,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   'Authentication',
   'Owners',
   '$http',
+<<<<<<< HEAD
   function ($scope, $stateParams, $location, Authentication, Owners, $http) {
     $scope.user = Authentication.user, $scope.keeperCap = 175, $scope.totalCap = 300, $scope.changeTime = 1, $scope.timeCheck = !1, $scope.rosterCheck = !1, $scope.getOwner = function () {
       var ownerId = $stateParams.ownerId;
@@ -338,6 +352,37 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       });
     }, $scope.changeKeeper = function (player, status) {
       if ($scope.user.ownerId == $scope.owner._id && 1 == $scope.changeTime) {
+=======
+  '$modal',
+  function ($scope, $stateParams, $location, Authentication, Owners, $http, $modal) {
+    $scope.user = Authentication.user;
+    $scope.keeperCap = 175;
+    $scope.totalCap = 300;
+    $scope.changeTime = 1;
+    $scope.timeCheck = false;
+    $scope.rosterCheck = false;
+    $scope.getOwner = function () {
+      //console.log(Authentication.user);
+      if (Authentication.user == null) {
+        $location.path('/');
+      } else {
+        var ownerId = $stateParams.ownerId, x;
+        $scope.salary = 0;
+        $scope.rfaSalary = 0;
+        $http.get('/editRoster/' + ownerId).success(function (data, status) {
+          $scope.owner = data;
+        }).then(function () {
+          if ($scope.user.ownerId != $scope.owner._id) {
+            $scope.rosterCheck = true;
+          }
+          $scope.setData();
+        });
+      }
+    };
+    $scope.changeKeeper = function (player, status) {
+      //check that the user owns the person first
+      if ($scope.user.ownerId == $scope.owner._id && $scope.changeTime == 1) {
+>>>>>>> master
         var req = {};
         req.status = status, req.ownerId = $scope.owner._id, req.playerId = player._id, 1 == status ? $scope.salary + player.price <= $scope.keeperCap && $scope.rfaSalary + player.price <= $scope.totalCap ? $http.put('/changeKeeper', req).success(function (data, status) {
           console.log('player added'), console.log(data), $scope.owner = data;
@@ -372,6 +417,20 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         rfaSalary += $scope.owner.bidRoster[x].price;
       $scope.salary = Math.round(100 * salary) / 100, $scope.rfaSalary = Math.round(100 * rfaSalary) / 100, $scope.owner._id == $scope.user.ownerId ? $scope.errMsg = !1 : $scope.errMsg = !0;
     };
+    //MODAL
+    $scope.open = function () {
+      var modalInstance = $modal.open({
+          animation: true,
+          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+    };
+  }
+]);'use strict';
+angular.module('owners').controller('ModalController', [
+  '$scope',
+  function ($scope) {
   }
 ]), angular.module('owners').controller('MyplayersController', [
   '$scope',
@@ -498,9 +557,23 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         for (x = 0; x < $scope.owners.length; x++)
           salary = 0, salary = $scope.getSalary($scope.owners[x]), $scope.owners[x].salary = salary;
       });
+<<<<<<< HEAD
     }, $scope.initialize = function () {
       $scope.getOwners(), $scope.salaryCap = 300, $scope.keeperCap = 175;
     }, $scope.goToRoster = function (ownerId) {
+=======
+    };
+    $scope.initialize = function () {
+      if (Authentication.user == null) {
+        $location.path('/');
+      } else {
+        $scope.getOwners();
+        $scope.salaryCap = 300;
+        $scope.keeperCap = 175;
+      }
+    };
+    $scope.goToRoster = function (ownerId) {
+>>>>>>> master
       $location.path('edit-roster/' + ownerId);
     }, $scope.getSalary = function (owner) {
       var x = 0, salary = 0;
@@ -897,13 +970,31 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   function ($scope, $http, $location, Authentication) {
     $scope.authentication = Authentication, $scope.authentication.user && $location.path('/'), $scope.signup = function () {
       $http.post('/auth/signup', $scope.credentials).success(function (response) {
+<<<<<<< HEAD
         $scope.authentication.user = response, $location.path('select-owner');
+=======
+        //If successful we assign the response to the global user model
+        $scope.authentication.user = response;
+        //And redirect to the index page
+        $location.path('/roster');
+>>>>>>> master
       }).error(function (response) {
         $scope.error = response.message;
       });
     }, $scope.signin = function () {
       $http.post('/auth/signin', $scope.credentials).success(function (response) {
+<<<<<<< HEAD
         $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('select-owner');
+=======
+        //If successful we assign the response to the global user model
+        $scope.authentication.user = response;
+        //And redirect to the index page
+        if ($scope.authentication.ownerId) {
+          $location.path('/');
+        } else {
+          $location.path('/roster');
+        }
+>>>>>>> master
       }).error(function (response) {
         $scope.error = response.message;
       });
