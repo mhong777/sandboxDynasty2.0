@@ -15,6 +15,7 @@ module.exports = function() {
 	 */
 	glob('./config/env/' + process.env.NODE_ENV + '.js', {
 		sync: true
+		//something
 	}, function(err, environmentFiles) {
 		console.log();
 
