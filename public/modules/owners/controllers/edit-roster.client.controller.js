@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('owners').controller('EditRosterController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', '$modal',
-	function($scope, $stateParams, $location, Authentication, Owners, $http, $modal ) {
+angular.module('owners').controller('EditRosterController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http',
+	function($scope, $stateParams, $location, Authentication, Owners, $http ) {
 		$scope.user = Authentication.user;
 		$scope.keeperCap=175;
 		$scope.totalCap=300;
@@ -11,26 +11,19 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 
 
 		$scope.getOwner=function(){
-			//console.log(Authentication.user);
-			if(Authentication.user==null){
-				$location.path('/');
-			}
-			else{
-				var ownerId=$stateParams.ownerId,
-					x;
-
-				$scope.salary=0;
-				$scope.rfaSalary=0;
-				$http.get('/editRoster/' + ownerId).
-					success(function(data, status){
-						$scope.owner=data;
-					}).then(function(){
-						if($scope.user.ownerId!=$scope.owner._id){
-							$scope.rosterCheck=true;
-						}
-						$scope.setData();
-					});
-			}
+			var ownerId=$stateParams.ownerId,
+				x;
+			$scope.salary=0;
+			$scope.rfaSalary=0;
+			$http.get('/editRoster/' + ownerId).
+				success(function(data, status){
+					$scope.owner=data;
+				}).then(function(){
+					if($scope.user.ownerId!=$scope.owner._id){
+						$scope.rosterCheck=true;
+					}
+					$scope.setData();
+				});
 		};
 
 		$scope.changeKeeper=function(player,status){
@@ -147,18 +140,6 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				$scope.errMsg=true;
 			}
 		};
-
-		//MODAL
-		$scope.open = function () {
-
-			var modalInstance = $modal.open({
-				animation: true,
-				templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-				controller: 'ModalController',
-				size: 'lg'
-			});
-		};
-
 
 
 	}

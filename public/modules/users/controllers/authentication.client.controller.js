@@ -13,7 +13,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 				$scope.authentication.user = response;
 
 				//And redirect to the index page
-				$location.path('/roster');
+				$location.path('select-owner');
 			}).error(function(response) {
 				$scope.error = response.message;
 			});
@@ -29,7 +29,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 					$location.path('/');
 				}
 				else{
-					$location.path('/roster');
+					$location.path('select-owner');
 				}
 
 			}).error(function(response) {

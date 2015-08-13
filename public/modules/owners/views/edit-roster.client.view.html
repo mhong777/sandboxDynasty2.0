@@ -17,38 +17,35 @@
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			<h2>Keepers <button type="button" class="btn btn-default" ng-click="open()">Help</button><br/></h2>
+			<h2>Keepers</h2>
 			Keeper Salary: ${{salary}}<br/>
 			Keeper Cap Left: ${{keeperCap-salary}}<br/>
 
-
 			<h3>Currently Keeping</h3>
 			<a data-ng-repeat="player in owner.keepRoster" ng-click="changeKeeper(player,0)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+				Years Owned: {{player.yearsOwned}}
 			</a>
 			<hr/>
 			<h3>Eligable to Keep</h3>
 			<a data-ng-repeat="player in owner.keepEligable" ng-click="changeKeeper(player,1)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
+				Years Owned: {{player.yearsOwned}}
 			</a>
 		</div>
 		<div class="col-md-6">
-			<h2>Restricted Free Agents <button type="button" class="btn btn-default" ng-click="open()">Help</button><br/></h2>
+			<h2>Restricted Free Agents</h2>
 			RFA Salary: ${{rfaSalary}}<br/>
 			RFA Budget Left: ${{totalCap-salary-rfaSalary + owner.extraMoney}}<br/>
 
 			<h3>Currently Bidding</h3>
 			<a data-ng-repeat="player in owner.bidRoster" ng-click="changeBidee(player,0)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}}
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
 			</a>
 			<hr/>
 			<h3>Eligable to Bid</h3>
 			<a data-ng-repeat="player in owner.bidEligable" ng-click="changeBidee(player,1)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}}
+				<h4>{{player.name}} ({{player.position}}) - ${{player.price}}</h4>
 			</a>
 		</div>
 	</div>
