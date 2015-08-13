@@ -146,6 +146,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   '$urlRouterProvider',
   function ($stateProvider, $urlRouterProvider) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $urlRouterProvider.otherwise('/'), $stateProvider.state('home', {
 =======
     // Redirect to home view when route not found
@@ -160,6 +161,10 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       templateUrl: 'modules/core/views/home.client.view.html'
     }).state('roster', {
       url: '/roster',
+=======
+    $urlRouterProvider.otherwise('/'), $stateProvider.state('home', {
+      url: '/',
+>>>>>>> parent of 4915d70... fix the build
       templateUrl: 'modules/owners/views/review-roster.client.view.html'
     }).state('admin-main', {
       url: '/admin-main',
@@ -342,6 +347,9 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   'Owners',
   '$http',
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 4915d70... fix the build
   function ($scope, $stateParams, $location, Authentication, Owners, $http) {
     $scope.user = Authentication.user, $scope.keeperCap = 175, $scope.totalCap = 300, $scope.changeTime = 1, $scope.timeCheck = !1, $scope.rosterCheck = !1, $scope.getOwner = function () {
       var ownerId = $stateParams.ownerId;
@@ -352,6 +360,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       });
     }, $scope.changeKeeper = function (player, status) {
       if ($scope.user.ownerId == $scope.owner._id && 1 == $scope.changeTime) {
+<<<<<<< HEAD
 =======
   '$modal',
   function ($scope, $stateParams, $location, Authentication, Owners, $http, $modal) {
@@ -383,6 +392,8 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       //check that the user owns the person first
       if ($scope.user.ownerId == $scope.owner._id && $scope.changeTime == 1) {
 >>>>>>> master
+=======
+>>>>>>> parent of 4915d70... fix the build
         var req = {};
         req.status = status, req.ownerId = $scope.owner._id, req.playerId = player._id, 1 == status ? $scope.salary + player.price <= $scope.keeperCap && $scope.rfaSalary + player.price <= $scope.totalCap ? $http.put('/changeKeeper', req).success(function (data, status) {
           console.log('player added'), console.log(data), $scope.owner = data;
@@ -417,6 +428,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         rfaSalary += $scope.owner.bidRoster[x].price;
       $scope.salary = Math.round(100 * salary) / 100, $scope.rfaSalary = Math.round(100 * rfaSalary) / 100, $scope.owner._id == $scope.user.ownerId ? $scope.errMsg = !1 : $scope.errMsg = !0;
     };
+<<<<<<< HEAD
     //MODAL
     $scope.open = function () {
       var modalInstance = $modal.open({
@@ -431,6 +443,8 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
 angular.module('owners').controller('ModalController', [
   '$scope',
   function ($scope) {
+=======
+>>>>>>> parent of 4915d70... fix the build
   }
 ]), angular.module('owners').controller('MyplayersController', [
   '$scope',
@@ -464,6 +478,7 @@ angular.module('owners').controller('ModalController', [
       socket.emit('unchoosePlayer', input);
     };
   }
+<<<<<<< HEAD
 ]), angular.module('owners').controller('OwnersController', [
   '$scope',
   '$stateParams',
@@ -529,6 +544,8 @@ angular.module('owners').controller('ModalController', [
       $scope.owner.myUser = $scope.associateUser._id, $scope.associateUser.ownerId = $scope.owner._id;
     };
   }
+=======
+>>>>>>> parent of 4915d70... fix the build
 ]), angular.module('owners').controller('RemoveOwnerController', [
   '$scope',
   '$http',
@@ -558,6 +575,7 @@ angular.module('owners').controller('ModalController', [
           salary = 0, salary = $scope.getSalary($scope.owners[x]), $scope.owners[x].salary = salary;
       });
 <<<<<<< HEAD
+<<<<<<< HEAD
     }, $scope.initialize = function () {
       $scope.getOwners(), $scope.salaryCap = 300, $scope.keeperCap = 175;
     }, $scope.goToRoster = function (ownerId) {
@@ -574,6 +592,11 @@ angular.module('owners').controller('ModalController', [
     };
     $scope.goToRoster = function (ownerId) {
 >>>>>>> master
+=======
+    }, $scope.initialize = function () {
+      $scope.getOwners(), $scope.salaryCap = 300, $scope.keeperCap = 175;
+    }, $scope.goToRoster = function (ownerId) {
+>>>>>>> parent of 4915d70... fix the build
       $location.path('edit-roster/' + ownerId);
     }, $scope.getSalary = function (owner) {
       var x = 0, salary = 0;
@@ -588,7 +611,11 @@ angular.module('owners').controller('ModalController', [
     return $resource('owners/:ownerId', { ownerId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]), angular.module('owners').factory('socket', function () {
+<<<<<<< HEAD
   var socket = io.connect('/');
+=======
+  var socket = io.connect('http://localhost:3000');
+>>>>>>> parent of 4915d70... fix the build
   return socket;
 }), angular.module('players').run([
   'Menus',
@@ -971,6 +998,7 @@ angular.module('owners').controller('ModalController', [
     $scope.authentication = Authentication, $scope.authentication.user && $location.path('/'), $scope.signup = function () {
       $http.post('/auth/signup', $scope.credentials).success(function (response) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         $scope.authentication.user = response, $location.path('select-owner');
 =======
         //If successful we assign the response to the global user model
@@ -978,11 +1006,15 @@ angular.module('owners').controller('ModalController', [
         //And redirect to the index page
         $location.path('/roster');
 >>>>>>> master
+=======
+        $scope.authentication.user = response, $location.path('select-owner');
+>>>>>>> parent of 4915d70... fix the build
       }).error(function (response) {
         $scope.error = response.message;
       });
     }, $scope.signin = function () {
       $http.post('/auth/signin', $scope.credentials).success(function (response) {
+<<<<<<< HEAD
 <<<<<<< HEAD
         $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('select-owner');
 =======
@@ -995,6 +1027,9 @@ angular.module('owners').controller('ModalController', [
           $location.path('/roster');
         }
 >>>>>>> master
+=======
+        $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('select-owner');
+>>>>>>> parent of 4915d70... fix the build
       }).error(function (response) {
         $scope.error = response.message;
       });
@@ -1063,6 +1098,10 @@ angular.module('owners').controller('ModalController', [
   function ($resource) {
     return $resource('users', {}, { update: { method: 'PUT' } });
   }
+<<<<<<< HEAD
 ]);
 =======
 >>>>>>> parent of 3004e82... Revert c2fd8cf..beedfcf
+=======
+]);
+>>>>>>> parent of 4915d70... fix the build

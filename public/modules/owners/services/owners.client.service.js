@@ -13,7 +13,7 @@ angular.module('owners').factory('Owners', ['$resource',
 ]);
 
 angular.module('owners').factory('socket', function(){
-    var socket=io.connect('/');
-//    var socket=io.connect('http://localhost');
+//    var socket=io.connect('/');
+    var socket=io.connect('http://localhost');
     return socket;
 });
