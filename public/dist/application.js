@@ -269,8 +269,14 @@ angular.module('core').config([
     // Redirect to home view when route not found
     $urlRouterProvider.otherwise('/');
     // Home state routing
-    $stateProvider.state('home', {
+    $stateProvider.state('rules', {
+      url: '/rules',
+      templateUrl: 'modules/core/views/rules.client.view.html'
+    }).state('home-page', {
       url: '/',
+      templateUrl: 'modules/core/views/home.client.view.html'
+    }).state('roster', {
+      url: '/roster',
       templateUrl: 'modules/owners/views/review-roster.client.view.html'
     }).state('admin-main', {
       url: '/admin-main',
@@ -578,7 +584,8 @@ angular.module('owners').controller('EditRosterController', [
   'Authentication',
   'Owners',
   '$http',
-  function ($scope, $stateParams, $location, Authentication, Owners, $http) {
+  '$modal',
+  function ($scope, $stateParams, $location, Authentication, Owners, $http, $modal) {
     $scope.user = Authentication.user;
     $scope.keeperCap = 175;
     $scope.totalCap = 300;
@@ -586,17 +593,22 @@ angular.module('owners').controller('EditRosterController', [
     $scope.timeCheck = false;
     $scope.rosterCheck = false;
     $scope.getOwner = function () {
-      var ownerId = $stateParams.ownerId, x;
-      $scope.salary = 0;
-      $scope.rfaSalary = 0;
-      $http.get('/editRoster/' + ownerId).success(function (data, status) {
-        $scope.owner = data;
-      }).then(function () {
-        if ($scope.user.ownerId != $scope.owner._id) {
-          $scope.rosterCheck = true;
-        }
-        $scope.setData();
-      });
+      //console.log(Authentication.user);
+      if (Authentication.user == null) {
+        $location.path('/');
+      } else {
+        var ownerId = $stateParams.ownerId, x;
+        $scope.salary = 0;
+        $scope.rfaSalary = 0;
+        $http.get('/editRoster/' + ownerId).success(function (data, status) {
+          $scope.owner = data;
+        }).then(function () {
+          if ($scope.user.ownerId != $scope.owner._id) {
+            $scope.rosterCheck = true;
+          }
+          $scope.setData();
+        });
+      }
     };
     $scope.changeKeeper = function (player, status) {
       //check that the user owns the person first
@@ -700,6 +712,20 @@ angular.module('owners').controller('EditRosterController', [
         $scope.errMsg = true;
       }
     };
+    //MODAL
+    $scope.open = function () {
+      var modalInstance = $modal.open({
+          animation: true,
+          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+    };
+  }
+]);'use strict';
+angular.module('owners').controller('ModalController', [
+  '$scope',
+  function ($scope) {
   }
 ]);'use strict';
 angular.module('owners').controller('MyplayersController', [
@@ -786,9 +812,13 @@ angular.module('owners').controller('ReviewRosterController', [
       });
     };
     $scope.initialize = function () {
-      $scope.getOwners();
-      $scope.salaryCap = 300;
-      $scope.keeperCap = 175;
+      if (Authentication.user == null) {
+        $location.path('/');
+      } else {
+        $scope.getOwners();
+        $scope.salaryCap = 300;
+        $scope.keeperCap = 175;
+      }
     };
     $scope.goToRoster = function (ownerId) {
       $location.path('edit-roster/' + ownerId);
@@ -1411,7 +1441,7 @@ angular.module('users').controller('AuthenticationController', [
         //If successful we assign the response to the global user model
         $scope.authentication.user = response;
         //And redirect to the index page
-        $location.path('select-owner');
+        $location.path('/roster');
       }).error(function (response) {
         $scope.error = response.message;
       });
@@ -1424,7 +1454,7 @@ angular.module('users').controller('AuthenticationController', [
         if ($scope.authentication.ownerId) {
           $location.path('/');
         } else {
-          $location.path('select-owner');
+          $location.path('/roster');
         }
       }).error(function (response) {
         $scope.error = response.message;
