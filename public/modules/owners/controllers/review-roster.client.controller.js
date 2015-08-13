@@ -21,9 +21,14 @@ angular.module('owners').controller('ReviewRosterController', ['$scope', '$state
 		};
 
 		$scope.initialize = function(){
-			$scope.getOwners();
-			$scope.salaryCap=300;
-			$scope.keeperCap=175;
+			if(Authentication.user==null){
+				$location.path('/');
+			}
+			else{
+				$scope.getOwners();
+				$scope.salaryCap=300;
+				$scope.keeperCap=175;
+			}
 		};
 
 		$scope.goToRoster = function(ownerId){
