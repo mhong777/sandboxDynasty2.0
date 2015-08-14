@@ -1,10 +1,10 @@
 'use strict';
 
 (function() {
-	// Owners Controller Spec
-	describe('Owners Controller Tests', function() {
+	// Test add Controller Spec
+	describe('Test add Controller Tests', function() {
 		// Initialize global variables
-		var OwnersController,
+		var TestAddController,
 			scope,
 			$httpBackend,
 			$stateParams,
@@ -44,8 +44,8 @@
 			$httpBackend = _$httpBackend_;
 			$location = _$location_;
 
-			// Initialize the Owners controller.
-			OwnersController = $controller('OwnersController', {
+			// Initialize the Test add controller.
+			TestAddController = $controller('TestAddController', {
 				$scope: scope
 			});
 		}));
