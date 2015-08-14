@@ -145,11 +145,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   '$stateProvider',
   '$urlRouterProvider',
   function ($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise('/'), $stateProvider.state('home', {
-    // Redirect to home view when route not found
-    $urlRouterProvider.otherwise('/');
-    // Home state routing
-    $stateProvider.state('rules', {
+    $urlRouterProvider.otherwise('/'), $stateProvider.state('rules', {
       url: '/rules',
       templateUrl: 'modules/core/views/rules.client.view.html'
     }).state('home-page', {
@@ -338,45 +334,21 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   'Authentication',
   'Owners',
   '$http',
-  function ($scope, $stateParams, $location, Authentication, Owners, $http) {
-    $scope.user = Authentication.user, $scope.keeperCap = 175, $scope.totalCap = 300, $scope.changeTime = 1, $scope.timeCheck = !1, $scope.rosterCheck = !1, $scope.getOwner = function () {
-      var ownerId = $stateParams.ownerId;
-      $scope.salary = 0, $scope.rfaSalary = 0, $http.get('/editRoster/' + ownerId).success(function (data, status) {
-        $scope.owner = data;
-      }).then(function () {
-        $scope.user.ownerId != $scope.owner._id && ($scope.rosterCheck = !0), $scope.setData();
-      });
-    }, $scope.changeKeeper = function (player, status) {
-      if ($scope.user.ownerId == $scope.owner._id && 1 == $scope.changeTime) {
   '$modal',
   function ($scope, $stateParams, $location, Authentication, Owners, $http, $modal) {
-    $scope.user = Authentication.user;
-    $scope.keeperCap = 175;
-    $scope.totalCap = 300;
-    $scope.changeTime = 1;
-    $scope.timeCheck = false;
-    $scope.rosterCheck = false;
-    $scope.getOwner = function () {
-      //console.log(Authentication.user);
-      if (Authentication.user == null) {
+    $scope.user = Authentication.user, $scope.keeperCap = 175, $scope.totalCap = 300, $scope.changeTime = 1, $scope.timeCheck = !1, $scope.rosterCheck = !1, $scope.getOwner = function () {
+      if (null == Authentication.user)
         $location.path('/');
-      } else {
-        var ownerId = $stateParams.ownerId, x;
-        $scope.salary = 0;
-        $scope.rfaSalary = 0;
-        $http.get('/editRoster/' + ownerId).success(function (data, status) {
+      else {
+        var ownerId = $stateParams.ownerId;
+        $scope.salary = 0, $scope.rfaSalary = 0, $http.get('/editRoster/' + ownerId).success(function (data, status) {
           $scope.owner = data;
         }).then(function () {
-          if ($scope.user.ownerId != $scope.owner._id) {
-            $scope.rosterCheck = true;
-          }
-          $scope.setData();
+          $scope.user.ownerId != $scope.owner._id && ($scope.rosterCheck = !0), $scope.setData();
         });
       }
-    };
-    $scope.changeKeeper = function (player, status) {
-      //check that the user owns the person first
-      if ($scope.user.ownerId == $scope.owner._id && $scope.changeTime == 1) {
+    }, $scope.changeKeeper = function (player, status) {
+      if ($scope.user.ownerId == $scope.owner._id && 1 == $scope.changeTime) {
         var req = {};
         req.status = status, req.ownerId = $scope.owner._id, req.playerId = player._id, 1 == status ? $scope.salary + player.price <= $scope.keeperCap && $scope.rfaSalary + player.price <= $scope.totalCap ? $http.put('/changeKeeper', req).success(function (data, status) {
           console.log('player added'), console.log(data), $scope.owner = data;
@@ -410,22 +382,18 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       for (x = 0; x < $scope.owner.bidRoster.length; x++)
         rfaSalary += $scope.owner.bidRoster[x].price;
       $scope.salary = Math.round(100 * salary) / 100, $scope.rfaSalary = Math.round(100 * rfaSalary) / 100, $scope.owner._id == $scope.user.ownerId ? $scope.errMsg = !1 : $scope.errMsg = !0;
-    };
-    //MODAL
-    $scope.open = function () {
-      var modalInstance = $modal.open({
-          animation: true,
-          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-          controller: 'ModalController',
-          size: 'lg'
-        });
+    }, $scope.open = function () {
+      $modal.open({
+        animation: !0,
+        templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+        controller: 'ModalController',
+        size: 'lg'
+      });
     };
   }
-]);'use strict';
-angular.module('owners').controller('ModalController', [
+]), angular.module('owners').controller('ModalController', [
   '$scope',
   function ($scope) {
-<<<<<<< HEAD
   }
 ]), angular.module('owners').controller('MyplayersController', [
   '$scope',
@@ -459,71 +427,6 @@ angular.module('owners').controller('ModalController', [
       socket.emit('unchoosePlayer', input);
     };
   }
-]), angular.module('owners').controller('OwnersController', [
-  '$scope',
-  '$stateParams',
-  '$location',
-  'Authentication',
-  'Owners',
-  '$http',
-  'Users',
-  function ($scope, $stateParams, $location, Authentication, Owners, $http, Users) {
-    $scope.authentication = Authentication, $scope.create = function () {
-      var owner = new Owners({ name: this.name });
-      owner.$save(function (response) {
-        $location.path('owners');
-      }, function (errorResponse) {
-        $scope.error = errorResponse.data.message;
-      }), this.name = '';
-    }, $scope.remove = function (owner) {
-      if (owner) {
-        owner.$remove();
-        for (var i in $scope.owners)
-          $scope.owners[i] === owner && $scope.owners.splice(i, 1);
-        $location.path('owners');
-      } else
-        $scope.owner.$remove(function () {
-          $location.path('owners');
-        });
-    }, $scope.update = function () {
-      if ($scope.oldUser != $scope.owner.myUser) {
-        $scope.deassociateUser;
-        for (var x = 0; x < $scope.allUsers.length; x++)
-          if ($scope.allUsers[x]._id == $scope.oldUser) {
-            $scope.deassociateUser = $scope.allUsers[x], $scope.deassociateUser.ownerId = null;
-            break;
-          }
-        console.log($scope.deassociateUser), console.log($scope.associateUser), $http.put('/users', $scope.deassociateUser).success(function (data, status) {
-          console.log('updated one user'), console.log(data);
-        }).then(function () {
-          $http.put('/users', $scope.associateUser).success(function (data, status) {
-            console.log('updated second user'), console.log(data);
-          });
-        });
-      }
-      var owner = $scope.owner;
-      $http.put('/owners/' + owner._id, owner).success(function (data, status) {
-        console.log('owner data'), console.log(data);
-      });
-    }, $scope.find = function () {
-      $scope.owners = Owners.query();
-    }, $scope.getUsers = function () {
-      $http.get('/allUsers').success(function (data, status) {
-        $scope.allUsers = data;
-      });
-    }, $scope.initializeEditOwner = function () {
-      $scope.findOne(), $scope.find(), $scope.getUsers();
-    }, $scope.findOne = function () {
-      var ownerId = $stateParams.ownerId;
-      $http.get('/owners/' + ownerId).success(function (data, status) {
-        $scope.owner = data;
-      }).then(function () {
-        $scope.associateUser = {}, $scope.associateUser._id = $scope.owner.myUser, $scope.oldUser = $scope.owner.myUser;
-      });
-    }, $scope.changeOwnerUser = function () {
-      $scope.owner.myUser = $scope.associateUser._id, $scope.associateUser.ownerId = $scope.owner._id;
-    };
-  }
 ]), angular.module('owners').controller('RemoveOwnerController', [
   '$scope',
   '$http',
@@ -552,19 +455,8 @@ angular.module('owners').controller('ModalController', [
         for (x = 0; x < $scope.owners.length; x++)
           salary = 0, salary = $scope.getSalary($scope.owners[x]), $scope.owners[x].salary = salary;
       });
-    };
-    $scope.initialize = function () {
-      if (Authentication.user == null) {
-        $location.path('/');
-      } else {
-        $scope.getOwners();
-        $scope.salaryCap = 300;
-        $scope.keeperCap = 175;
-      }
-    };
-    $scope.goToRoster = function (ownerId) {
     }, $scope.initialize = function () {
-      $scope.getOwners(), $scope.salaryCap = 300, $scope.keeperCap = 175;
+      null == Authentication.user ? $location.path('/') : ($scope.getOwners(), $scope.salaryCap = 300, $scope.keeperCap = 175);
     }, $scope.goToRoster = function (ownerId) {
       $location.path('edit-roster/' + ownerId);
     }, $scope.getSalary = function (owner) {
@@ -580,7 +472,7 @@ angular.module('owners').controller('ModalController', [
     return $resource('owners/:ownerId', { ownerId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]), angular.module('owners').factory('socket', function () {
-  var socket = io.connect('/');
+  var socket = io.connect('http://localhost:3000');
   return socket;
 }), angular.module('players').run([
   'Menus',
@@ -962,20 +854,13 @@ angular.module('owners').controller('ModalController', [
   function ($scope, $http, $location, Authentication) {
     $scope.authentication = Authentication, $scope.authentication.user && $location.path('/'), $scope.signup = function () {
       $http.post('/auth/signup', $scope.credentials).success(function (response) {
-        //If successful we assign the response to the global user model
-        $scope.authentication.user = response;
-        //And redirect to the index page
-        $location.path('/roster');
-        $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('select-owner');
-        //If successful we assign the response to the global user model
-        $scope.authentication.user = response;
-        //And redirect to the index page
-        if ($scope.authentication.ownerId) {
-          $location.path('/');
-        } else {
-          $location.path('/roster');
-        }
-        $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('select-owner');
+        $scope.authentication.user = response, $location.path('/roster');
+      }).error(function (response) {
+        $scope.error = response.message;
+      });
+    }, $scope.signin = function () {
+      $http.post('/auth/signin', $scope.credentials).success(function (response) {
+        $scope.authentication.user = response, $scope.authentication.ownerId ? $location.path('/') : $location.path('/roster');
       }).error(function (response) {
         $scope.error = response.message;
       });
