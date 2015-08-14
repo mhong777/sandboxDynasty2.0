@@ -5,6 +5,10 @@ angular.module('bids').config(['$stateProvider',
 	function($stateProvider) {
 		// Bids state routing
 		$stateProvider.
+		state('rfa-match', {
+			url: '/rfa-match',
+			templateUrl: 'modules/bids/views/rfa-match.client.view.html'
+		}).
 		state('rfa', {
 			url: '/rfa',
 			templateUrl: 'modules/bids/views/rfa.client.view.html'

@@ -137,8 +137,11 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			for(x=0;x<$scope.owner.bidRoster.length;x++){
 				rfaSalary+=$scope.owner.bidRoster[x].price;
 			}
-			$scope.salary=Math.round(salary*100)/100;
-			$scope.rfaSalary=Math.round(rfaSalary*100)/100;
+			//$scope.salary=Math.round(salary*100)/100;
+			//$scope.rfaSalary=Math.round(rfaSalary*100)/100;
+
+			$scope.salary=parseFloat(salary.toFixed(2));
+			$scope.rfaSalary=parseFloat(rfaSalary.toFixed(2));
 
 
 			if($scope.owner._id==$scope.user.ownerId){
@@ -149,14 +152,24 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		};
 
 		//MODAL
-		$scope.open = function () {
+		$scope.open = function (myMode) {
 
-			var modalInstance = $modal.open({
-				animation: true,
-				templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-				controller: 'ModalController',
-				size: 'lg'
-			});
+			if(myMode==1){
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+					controller: 'ModalController',
+					size: 'lg'
+				});
+			}
+			else{
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
+					controller: 'ModalController',
+					size: 'lg'
+				});
+			}
 		};
 
 
