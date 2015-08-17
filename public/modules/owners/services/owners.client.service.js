@@ -14,10 +14,5 @@ angular.module('owners').factory('Owners', ['$resource',
 
 angular.module('owners').factory('socket', function(){
     var socket=io.connect('/');
-<<<<<<< HEAD
-    //var socket=io.connect('http://localhost');
-=======
-//    var socket=io.connect('http://localhost:3000');
->>>>>>> master
     return socket;
 });
