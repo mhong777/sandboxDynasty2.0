@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket',
-	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket ) {
+angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket', 'Players', '$timeout',
+	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket,Players, $timeout ) {
 
 		//INITIALIZE FUNCTION
 		// Find a list of Owners
@@ -22,44 +22,72 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 			if(!Authentication){
 				console.log('need to log in first');
 			}
+			else{
+				var x,
+					salary= 0,
+					fxnOut,
+					numPlayer;
 
-			var x,
-				salary= 0,
-				fxnOut,
-				numPlayer;
+				$scope.salary=0;
+				$scope.numPlayers;
+				$scope.onlyNumbers = /^\d+$/;
 
-			$scope.salaryCap=300;
-			$scope.salary=0;
-			$scope.numPlayers;
-			$scope.maxPlayers=22;
+				//should be in gvars
+				$scope.salaryCap=300;
+				$scope.maxPlayers=22;
 
-			$scope.ownerId=Authentication.user.ownerId;
+				//for hiding everything
+				$scope.bidShow=true;
+				$scope.matchShow=true;
+				$scope.timerShow=true;
+				$scope.draftShow=true;
 
+				//for counter
+				$scope.counter=100;
+				$scope.mins = parseInt($scope.counter / 60);
+				$scope.secs = parseInt($scope.counter % 60);
+				//$scope.countdown();
 
-			$http.get('/bids').
-				success(function(data, status){
-					$scope.bids=data;
-				}).then(function(){
-					$http.get('/ownersAndPlayers').
-						success(function(data, status){
-							$scope.owners=data;
-						}).then(function(){
-							for(x=0;x<$scope.owners.length;x++){
-								salary=0;
-								fxnOut=$scope.getSalary($scope.owners[x]);
-								salary=fxnOut[0];
-								numPlayer=fxnOut[1];
-								$scope.owners[x].salary=salary;
-								$scope.owners[x].numPlayer=numPlayer;
-								if($scope.owners[x]._id==$scope.ownerId){
-									$scope.salary=salary;
-									$scope.numPlayers=numPlayer;
-									$scope.myOwner=$scope.owners[x];
-									$scope.dispOwner=$scope.owners[x];
+				//Filter for finding players
+				$scope.sortType='absRank';
+				$scope.sortReverse=false;
+				$scope.searchPlayer='';
+				$scope.filters={};
+				$scope.filters.position='';
+				$scope.availableString='All Players';
+				$scope.filters.available='';
+				$scope.availableString='';
+				$scope.filters.rookie='';
+
+				$scope.ownerId=Authentication.user.ownerId;
+
+				$http.get('/bids').
+					success(function(data, status){
+						$scope.bids=data;
+					}).then(function(){
+						$http.get('/ownersAndPlayers').
+							success(function(data, status){
+								$scope.owners=data;
+							}).then(function(){
+								for(x=0;x<$scope.owners.length;x++){
+									salary=0;
+									fxnOut=$scope.getSalary($scope.owners[x]);
+									salary=fxnOut[0];
+									numPlayer=fxnOut[1];
+									$scope.owners[x].salary=salary;
+									$scope.owners[x].numPlayer=numPlayer;
+									if($scope.owners[x]._id==$scope.ownerId){
+										$scope.salary=salary;
+										$scope.numPlayers=numPlayer;
+										$scope.myOwner=$scope.owners[x];
+										$scope.dispOwner=$scope.owners[x];
+									}
 								}
-							}
-						});
-				});
+							});
+					}).then(function(){
+						$scope.players = Players.query();
+					});
+			}
 		};
 
 		$scope.getSalary = function(owner){
@@ -78,13 +106,24 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 					numPlayer++
 				}
 			}
-			return [salary.toFixed(2),numPlayer];
+			return [Math.ceil(salary),numPlayer];
 		};
 
+		/****
+		 * FOR HTML COSMETICS
+		 */
 		$scope.viewOwner=function(owner){
 			$scope.dispOwner=owner;
 		};
 
+		$scope.checkAmount=function(price){
+			console.log(price + ' - ' + $scope.salary);
+		};
+
+		/*****
+		 *MAIN FUNCTIONS
+		 ****/
+		//made function to check the bid - can be used for both rfa and auction
 		$scope.submitBid=function(bid){
 			var bidTest= 0,
 				x,
@@ -123,6 +162,10 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 			}
 		};
 
+		$scope.matchBid=function(bid){
+			console.log(bid);
+		};
+
 
 		socket.on('updateRfa', function(input){
 			var x,salary, fxnOut,numPlayer;
@@ -147,6 +190,59 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		});
 
 
+		/*******
+		 *FOR FILTERS
+		 *******/
+		$scope.changeAvailable=function(value){
+			if(value===1){
+				$scope.filters.available='';
+				$scope.availableString='All Players';
+				return;
+			}
+			else if(value ===2){
+				$scope.filters.available=true;
+				$scope.availableString='Free Agents';
+				return;
+			}
+			else{
+				$scope.filters.available=false;
+				$scope.availableString='Currently Owned';
+				return;
+			}
+		};
+
+		//filter by position
+		$scope.addFilter=function(position){
+			$scope.filters.position.push(position);
+		};
+
+		$scope.listFilter = function (position, available, rookie) {
+			return function (list) {
+				if(list.available===available || available===''){
+					if(list.rookie==rookie || rookie===''){
+						return list.position.match(position);
+					}
+				}
+			};
+		};
+
+		/*****
+		 * FOR TIMER
+		 ****/
+		var stopped;
+
+
+		$scope.countdown = function() {
+			stopped = $timeout(function() {
+				$scope.counter--;
+				$scope.mins = parseInt($scope.counter / 60);
+				$scope.secs = parseInt($scope.counter % 60);
+				$scope.countdown();
+			}, 1000);
+		};
+
+		//minutes = parseInt(seconds_left / 60);
+		//seconds = parseInt(seconds_left % 60);
 
 	}
 ]);

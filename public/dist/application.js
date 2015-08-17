@@ -549,7 +549,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
     return $resource('owners/:ownerId', { ownerId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]), angular.module('owners').factory('socket', function () {
-  var socket = io.connect('http://localhost:3000');
+  var socket = io.connect('/');
   return socket;
 }), angular.module('players').run([
   'Menus',
