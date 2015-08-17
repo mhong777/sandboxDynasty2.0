@@ -4,7 +4,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 	function($scope, $stateParams, $location, Authentication, Owners, $http, $modal ) {
 		$scope.user = Authentication.user;
 		$scope.keeperCap=175;
-		$scope.totalCap=300;
+		$scope.totalCap=parseInt(300);
 		$scope.changeTime=1;
 		$scope.timeCheck=false;
 		$scope.rosterCheck=false;
@@ -140,8 +140,12 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			//$scope.salary=Math.round(salary*100)/100;
 			//$scope.rfaSalary=Math.round(rfaSalary*100)/100;
 
-			$scope.salary=parseFloat(salary.toFixed(2));
-			$scope.rfaSalary=parseFloat(rfaSalary.toFixed(2));
+			//$scope.salary=parseFloat(salary.toFixed(1));
+			$scope.salary=Math.ceil(salary);
+			//parseFloat(Math.round(salary*100)/100);
+			$scope.rfaSalary=Math.ceil(rfaSalary);
+				//parseFloat(Math.round(rfaSalary*100)/100);
+			//$scope.rfaSalary=parseFloat(rfaSalary.toFixed(1));
 
 
 			if($scope.owner._id==$scope.user.ownerId){

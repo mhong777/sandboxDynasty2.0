@@ -143,6 +143,7 @@ var mongoose = require('mongoose'),
                                     player.available=true;
                                     player.owner=null;
                                     player.yearsOwned=0;
+                                    player.price=0;
                                     player.save();
                                     console.log(player.name);
                                 }
