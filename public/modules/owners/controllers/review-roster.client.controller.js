@@ -8,16 +8,24 @@ angular.module('owners').controller('ReviewRosterController', ['$scope', '$state
 		$scope.getOwners = function() {
 			var x= 0,
 				salary;
-			$http.get('/reviewRoster').
+
+			$http.get('/gvars').
 				success(function(data, status){
-					$scope.owners=data;
+					$scope.gvar=data[0];
 				}).then(function(){
-					for(x=0;x<$scope.owners.length;x++){
-						salary=0;
-						salary=$scope.getSalary($scope.owners[x]);
-						$scope.owners[x].salary=salary;
-					}
+					$http.get('/reviewRoster').
+						success(function(data, status){
+							$scope.owners=data;
+						}).then(function(){
+							for(x=0;x<$scope.owners.length;x++){
+								salary=0;
+								salary=$scope.getSalary($scope.owners[x]);
+								$scope.owners[x].salary=salary;
+							}
+						});
 				});
+
+
 		};
 
 		$scope.initialize = function(){

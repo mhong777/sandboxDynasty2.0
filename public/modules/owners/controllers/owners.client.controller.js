@@ -102,7 +102,6 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 			$scope.findOne();
 			$scope.find();
 			$scope.getUsers();
-
 		};
 
 		// Find existing Owner

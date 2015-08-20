@@ -6,9 +6,55 @@
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="gvar.name" id="name" class="form-control" placeholder="Name" required>
+                    <!--<label class="control-label" for="name">Name</label>-->
+                    <!--<div class="controls">-->
+                        <!--<input type="text" data-ng-model="gvar.name" id="name" class="form-control" placeholder="Name" required>-->
+                    <!--</div>-->
+                    draft order: {{draft}}<br/><br/>
+                    <div class="row">
+                        <div class="col-md-2">
+                            draftTime: <input type="checkbox" data-ng-model="gvar.draftTime" id="draftTime" class="form-control" required>
+                            bidShow: <input type="checkbox" data-ng-model="gvar.bidShow" id="bidShow" class="form-control" required>
+                            matchShow: <input type="checkbox" data-ng-model="gvar.matchShow" id="matchShow" class="form-control" required>
+                            timerShow: <input type="checkbox" data-ng-model="gvar.timerShow" id="timerShow" class="form-control" required>
+                            draftShow: <input type="checkbox" data-ng-model="gvar.draftShow" id="draftShow" class="form-control" required>
+                        </div>
+                        <div class="col-md-2">
+                            salaryCap: <input type="number" data-ng-model="gvar.salaryCap" id="salaryCap" class="form-control" placeholder="0" required>
+                            keeperCap: <input type="number" data-ng-model="gvar.keeperCap" id="keeperCap" class="form-control" placeholder="0" required>
+                            maxPlayers: <input type="number" data-ng-model="gvar.maxPlayers" id="maxPlayers" class="form-control" placeholder="0" required>
+                            timer: <input type="number" data-ng-model="gvar.timer" id="timer" class="form-control" placeholder="0" required>
+                            pickTimer: <input type="number" data-ng-model="gvar.pickTimer" id="pickTimer" class="form-control" placeholder="0" required>
+                            bidTimer: <input type="number" data-ng-model="gvar.bidTimer" id="bidTimer" class="form-control" placeholder="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <b>upNext: </b> {{gvar.upNext}}
+                            <!--<select ng-model="gvar.upNext" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft($index,pick)"></select>-->
+                            <br/>
+                            <h4>draftOrder:</h4>
+                            <button class="btn btn-default" type="button" ng-click="startDraftOrder()">Start</button>
+                            <button class="btn btn-default" type="button" ng-click="addDraft()">Add New</button><br/><br/>
+                            <div ng-repeat="pick in draft track by $index">
+                                {{$index+1}}: <select ng-model="pick" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft($index,pick)"></select>: {{pick}}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <td>Name</td>
+                                    <td>Id</td>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="owner in owners">
+                                        <td>{{owner.name}}</td>
+                                        <td>{{owner._id}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div ng-repeat="owner in owners">
+
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">

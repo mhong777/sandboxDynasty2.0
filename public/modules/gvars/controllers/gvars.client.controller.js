@@ -1,8 +1,8 @@
 'use strict';
 
 // Gvars controller
-angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars',
-	function($scope, $stateParams, $location, Authentication, Gvars) {
+angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars', 'Owners',
+	function($scope, $stateParams, $location, Authentication, Gvars, Owners) {
 		$scope.authentication = Authentication;
 
 		// Create new Gvar
@@ -56,11 +56,27 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			$scope.gvars = Gvars.query();
 		};
 
+		$scope.startDraftOrder = function(){
+			var x;
+			x= $scope.gvar.draftOrder;
+			$scope.draft=x;
+		};
+
+		$scope.addDraft = function(){
+			$scope.draft.push(null);
+		};
+
+		$scope.changeDraft=function(index,pick){
+			$scope.gvar.draftOrder.splice(index,1,pick._id);
+		};
+
 		// Find existing Gvar
 		$scope.findOne = function() {
-			$scope.gvar = Gvars.get({ 
+			$scope.gvar = Gvars.get({
 				gvarId: $stateParams.gvarId
 			});
+			$scope.owners = Owners.query();
+			$scope.draft;
 		};
 	}
 ]);

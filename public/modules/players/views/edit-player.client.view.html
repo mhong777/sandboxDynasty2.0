@@ -45,7 +45,7 @@
                                     Owner: <select ng-model="myOwner" ng-options="owner.name for owner in owners track by owner.name"></select>
                                 </div>
                                 <div class="col-md-4">
-                                    Price: <input type="text" data-ng-model="player.price" id="price" class="form-control" placeholder="0" required>
+                                    Price: <input type="number" data-ng-model="player.price" id="price" class="form-control" placeholder="0" required>
                                 </div>
                                 <div class="col-md-4">
                                     Contract Year: <select ng-model="player.yearsOwned" ng-options="year for year in contractYears"></select>

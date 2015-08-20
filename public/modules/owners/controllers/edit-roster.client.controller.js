@@ -3,8 +3,8 @@
 angular.module('owners').controller('EditRosterController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', '$modal',
 	function($scope, $stateParams, $location, Authentication, Owners, $http, $modal ) {
 		$scope.user = Authentication.user;
-		$scope.keeperCap=175;
-		$scope.totalCap=parseInt(300);
+		//$scope.keeperCap=175;
+		//$scope.totalCap=parseInt(300);
 		$scope.changeTime=1;
 		$scope.timeCheck=false;
 		$scope.rosterCheck=false;
@@ -21,14 +21,20 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 
 				$scope.salary=0;
 				$scope.rfaSalary=0;
-				$http.get('/editRoster/' + ownerId).
+				$http.get('/gvars').
 					success(function(data, status){
-						$scope.owner=data;
+						$scope.gvar=data[0];
+						console.log($scope.gvar);
 					}).then(function(){
-						if($scope.user.ownerId!=$scope.owner._id){
-							$scope.rosterCheck=true;
-						}
-						$scope.setData();
+						$http.get('/editRoster/' + ownerId).
+							success(function(data, status){
+								$scope.owner=data;
+							}).then(function(){
+								if($scope.user.ownerId!=$scope.owner._id){
+									$scope.rosterCheck=true;
+								}
+								$scope.setData();
+							});
 					});
 			}
 		};
@@ -44,7 +50,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				if(status==1){
 					//keep
 					//check salary - if the salary is over - give them an alert
-					if(($scope.salary+player.price)<=$scope.keeperCap && ($scope.rfaSalary+player.price)<=$scope.totalCap){
+					if(($scope.salary+player.price)<=$scope.gvar.keeperCap && ($scope.rfaSalary+player.price)<=$scope.gvar.salaryCap){
 						//rest - send status, ownerId, playerId
 						//console.log(req);
 						$http.put('/changeKeeper',req).
@@ -86,7 +92,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				if(status==1){
 					//keep
 					//check salary - if the salary is over - give them an alert
-					if(($scope.rfaSalary+player.price+$scope.salary)<=($scope.totalCap + $scope.owner.extraMoney)){
+					if(($scope.rfaSalary+player.price+$scope.salary)<=($scope.gvar.salaryCap + $scope.owner.extraMoney)){
 						//rest - send status, ownerId, playerId
 						console.log(req);
 						$http.put('/changeBidee',req).

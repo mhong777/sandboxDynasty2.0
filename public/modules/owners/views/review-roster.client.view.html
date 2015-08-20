@@ -1,20 +1,41 @@
 <section data-ng-controller="ReviewRosterController" data-ng-init="initialize()">
 	<br/>
-	<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<td>Name</td>
-			<td>Available Salary</td>
-			<td>Players Kept</td>
-			<td>RFA Players</td>
-			<td>Draft Picks</td>
-		</thead>
-		<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
-			<td>{{owner.name}}</td>
-			<td>${{salaryCap - owner.salary + owner.extraMoney}}</td>
-			<td>{{owner.keepRoster.length}}</td>
-			<td>{{owner.bidRoster.length}}</td>
-			<td>{{owner.draftPicks}}</td>
-		</tr>
-	</table>
+	<div class="row">
+		<div class="col-md-2">
+			<h3>Draft Picks</h3>
+			<table class="table table-striped table-bordered">
+				<thead>
+					<td>Pick</td>
+					<td>Owner</td>
+				</thead>
+				<tr ng-repeat="pick in gvar.draftOrder">
+					<td>{{$index+1}}</td>
+					<td>{{pick.name}}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="col-md-10">
+			<div class="minitron text-center">
+				<h3>Rosters</h3>
+				<span>Select a roster to view it</span>
+			</div>
+
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+				<td>Name</td>
+				<td>Available Salary</td>
+				<td>Players Kept</td>
+				<td>RFA Players</td>
+				</thead>
+				<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
+					<td>{{owner.name}}</td>
+					<td>${{gvar.salaryCap - owner.salary + owner.extraMoney}}</td>
+					<td>{{owner.keepRoster.length}}</td>
+					<td>{{owner.bidRoster.length}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 
 </section>

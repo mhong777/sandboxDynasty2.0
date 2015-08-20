@@ -45,9 +45,13 @@ ApplicationConfiguration.registerModule('bids');'use strict';
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');'use strict';
 // Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('gvars');'use strict';
+// Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('owners');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('players');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('sales');'use strict';
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');'use strict';
 //Setting up route
@@ -146,7 +150,9 @@ angular.module('bids').controller('RfaController', [
   '$http',
   'Bids',
   'socket',
-  function ($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket) {
+  'Players',
+  '$timeout',
+  function ($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket, Players, $timeout) {
     //INITIALIZE FUNCTION
     // Find a list of Owners
     $scope.getOwners = function () {
@@ -159,35 +165,60 @@ angular.module('bids').controller('RfaController', [
     $scope.initialize = function () {
       if (!Authentication) {
         console.log('need to log in first');
-      }
-      var x, salary = 0, fxnOut, numPlayer;
-      $scope.salaryCap = 300;
-      $scope.salary = 0;
-      $scope.numPlayers;
-      $scope.maxPlayers = 22;
-      $scope.ownerId = Authentication.user.ownerId;
-      $http.get('/bids').success(function (data, status) {
-        $scope.bids = data;
-      }).then(function () {
-        $http.get('/ownersAndPlayers').success(function (data, status) {
-          $scope.owners = data;
+      } else {
+        var x, salary = 0, fxnOut, numPlayer;
+        $scope.salary = 0;
+        $scope.numPlayers;
+        $scope.onlyNumbers = /^\d+$/;
+        //should be in gvars
+        $scope.salaryCap = 300;
+        $scope.maxPlayers = 22;
+        //for hiding everything
+        $scope.bidShow = true;
+        $scope.matchShow = true;
+        $scope.timerShow = true;
+        $scope.draftShow = true;
+        //for counter
+        $scope.counter = 100;
+        $scope.mins = parseInt($scope.counter / 60);
+        $scope.secs = parseInt($scope.counter % 60);
+        //$scope.countdown();
+        //Filter for finding players
+        $scope.sortType = 'absRank';
+        $scope.sortReverse = false;
+        $scope.searchPlayer = '';
+        $scope.filters = {};
+        $scope.filters.position = '';
+        $scope.availableString = 'All Players';
+        $scope.filters.available = '';
+        $scope.availableString = '';
+        $scope.filters.rookie = '';
+        $scope.ownerId = Authentication.user.ownerId;
+        $http.get('/bids').success(function (data, status) {
+          $scope.bids = data;
         }).then(function () {
-          for (x = 0; x < $scope.owners.length; x++) {
-            salary = 0;
-            fxnOut = $scope.getSalary($scope.owners[x]);
-            salary = fxnOut[0];
-            numPlayer = fxnOut[1];
-            $scope.owners[x].salary = salary;
-            $scope.owners[x].numPlayer = numPlayer;
-            if ($scope.owners[x]._id == $scope.ownerId) {
-              $scope.salary = salary;
-              $scope.numPlayers = numPlayer;
-              $scope.myOwner = $scope.owners[x];
-              $scope.dispOwner = $scope.owners[x];
+          $http.get('/ownersAndPlayers').success(function (data, status) {
+            $scope.owners = data;
+          }).then(function () {
+            for (x = 0; x < $scope.owners.length; x++) {
+              salary = 0;
+              fxnOut = $scope.getSalary($scope.owners[x]);
+              salary = fxnOut[0];
+              numPlayer = fxnOut[1];
+              $scope.owners[x].salary = salary;
+              $scope.owners[x].numPlayer = numPlayer;
+              if ($scope.owners[x]._id == $scope.ownerId) {
+                $scope.salary = salary;
+                $scope.numPlayers = numPlayer;
+                $scope.myOwner = $scope.owners[x];
+                $scope.dispOwner = $scope.owners[x];
+              }
             }
-          }
+          });
+        }).then(function () {
+          $scope.players = Players.query();
         });
-      });
+      }
     };
     $scope.getSalary = function (owner) {
       var x = 0, salary = 0, bid, numPlayer = 0;
@@ -203,13 +234,23 @@ angular.module('bids').controller('RfaController', [
         }
       }
       return [
-        salary.toFixed(2),
+        Math.ceil(salary),
         numPlayer
       ];
     };
+    /****
+		 * FOR HTML COSMETICS
+		 */
     $scope.viewOwner = function (owner) {
       $scope.dispOwner = owner;
     };
+    $scope.checkAmount = function (price) {
+      console.log(price + ' - ' + $scope.salary);
+    };
+    /*****
+		 *MAIN FUNCTIONS
+		 ****/
+    //made function to check the bid - can be used for both rfa and auction
     $scope.submitBid = function (bid) {
       var bidTest = 0, x, salary = $scope.myOwner.salary, numPlayers = $scope.myOwner.numPlayer;
       //function to validate and put in bid
@@ -240,6 +281,9 @@ angular.module('bids').controller('RfaController', [
         console.log('cant do that bcz you have to bid more than current price');
       }
     };
+    $scope.matchBid = function (bid) {
+      console.log(bid);
+    };
     socket.on('updateRfa', function (input) {
       var x, salary, fxnOut, numPlayer;
       //update the bid
@@ -260,6 +304,50 @@ angular.module('bids').controller('RfaController', [
       }
       $scope.$digest();
     });
+    /*******
+		 *FOR FILTERS
+		 *******/
+    $scope.changeAvailable = function (value) {
+      if (value === 1) {
+        $scope.filters.available = '';
+        $scope.availableString = 'All Players';
+        return;
+      } else if (value === 2) {
+        $scope.filters.available = true;
+        $scope.availableString = 'Free Agents';
+        return;
+      } else {
+        $scope.filters.available = false;
+        $scope.availableString = 'Currently Owned';
+        return;
+      }
+    };
+    //filter by position
+    $scope.addFilter = function (position) {
+      $scope.filters.position.push(position);
+    };
+    $scope.listFilter = function (position, available, rookie) {
+      return function (list) {
+        if (list.available === available || available === '') {
+          if (list.rookie == rookie || rookie === '') {
+            return list.position.match(position);
+          }
+        }
+      };
+    };
+    /*****
+		 * FOR TIMER
+		 ****/
+    var stopped;
+    $scope.countdown = function () {
+      stopped = $timeout(function () {
+        $scope.counter--;
+        $scope.mins = parseInt($scope.counter / 60);
+        $scope.secs = parseInt($scope.counter % 60);
+        $scope.countdown();
+      }, 1000);
+    };  //minutes = parseInt(seconds_left / 60);
+        //seconds = parseInt(seconds_left % 60);
   }
 ]);'use strict';
 //Bids service used to communicate Bids REST endpoints
@@ -463,6 +551,103 @@ angular.module('core').service('Menus', [function () {
     //Adding the topbar menu
     this.addMenu('topbar');
   }]);'use strict';
+//Setting up route
+angular.module('gvars').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Gvars state routing
+    $stateProvider.state('listGvars', {
+      url: '/gvars',
+      templateUrl: 'modules/gvars/views/list-gvars.client.view.html'
+    }).state('createGvar', {
+      url: '/gvars/create',
+      templateUrl: 'modules/gvars/views/create-gvar.client.view.html'
+    }).state('viewGvar', {
+      url: '/gvars/:gvarId',
+      templateUrl: 'modules/gvars/views/view-gvar.client.view.html'
+    }).state('editGvar', {
+      url: '/gvars/:gvarId/edit',
+      templateUrl: 'modules/gvars/views/edit-gvar.client.view.html'
+    });
+  }
+]);'use strict';
+// Gvars controller
+angular.module('gvars').controller('GvarsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Gvars',
+  'Owners',
+  function ($scope, $stateParams, $location, Authentication, Gvars, Owners) {
+    $scope.authentication = Authentication;
+    // Create new Gvar
+    $scope.create = function () {
+      // Create new Gvar object
+      var gvar = new Gvars({ name: this.name });
+      // Redirect after save
+      gvar.$save(function (response) {
+        $location.path('gvars/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Gvar
+    $scope.remove = function (gvar) {
+      if (gvar) {
+        gvar.$remove();
+        for (var i in $scope.gvars) {
+          if ($scope.gvars[i] === gvar) {
+            $scope.gvars.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.gvar.$remove(function () {
+          $location.path('gvars');
+        });
+      }
+    };
+    // Update existing Gvar
+    $scope.update = function () {
+      var gvar = $scope.gvar;
+      gvar.$update(function () {
+        $location.path('gvars/' + gvar._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Gvars
+    $scope.find = function () {
+      $scope.gvars = Gvars.query();
+    };
+    $scope.startDraftOrder = function () {
+      var x;
+      x = $scope.gvar.draftOrder;
+      $scope.draft = x;
+    };
+    $scope.addDraft = function () {
+      $scope.draft.push(null);
+    };
+    $scope.changeDraft = function (index, pick) {
+      $scope.gvar.draftOrder.splice(index, 1, pick._id);
+    };
+    // Find existing Gvar
+    $scope.findOne = function () {
+      $scope.gvar = Gvars.get({ gvarId: $stateParams.gvarId });
+      $scope.owners = Owners.query();
+      $scope.draft;
+    };
+  }
+]);'use strict';
+//Gvars service used to communicate Gvars REST endpoints
+angular.module('gvars').factory('Gvars', [
+  '$resource',
+  function ($resource) {
+    return $resource('gvars/:gvarId', { gvarId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';
 // Configuring the Articles module
 angular.module('owners').run([
   'Menus',
@@ -595,8 +780,8 @@ angular.module('owners').controller('EditRosterController', [
   '$modal',
   function ($scope, $stateParams, $location, Authentication, Owners, $http, $modal) {
     $scope.user = Authentication.user;
-    $scope.keeperCap = 175;
-    $scope.totalCap = 300;
+    //$scope.keeperCap=175;
+    //$scope.totalCap=parseInt(300);
     $scope.changeTime = 1;
     $scope.timeCheck = false;
     $scope.rosterCheck = false;
@@ -608,13 +793,18 @@ angular.module('owners').controller('EditRosterController', [
         var ownerId = $stateParams.ownerId, x;
         $scope.salary = 0;
         $scope.rfaSalary = 0;
-        $http.get('/editRoster/' + ownerId).success(function (data, status) {
-          $scope.owner = data;
+        $http.get('/gvars').success(function (data, status) {
+          $scope.gvar = data[0];
+          console.log($scope.gvar);
         }).then(function () {
-          if ($scope.user.ownerId != $scope.owner._id) {
-            $scope.rosterCheck = true;
-          }
-          $scope.setData();
+          $http.get('/editRoster/' + ownerId).success(function (data, status) {
+            $scope.owner = data;
+          }).then(function () {
+            if ($scope.user.ownerId != $scope.owner._id) {
+              $scope.rosterCheck = true;
+            }
+            $scope.setData();
+          });
         });
       }
     };
@@ -629,7 +819,7 @@ angular.module('owners').controller('EditRosterController', [
         if (status == 1) {
           //keep
           //check salary - if the salary is over - give them an alert
-          if ($scope.salary + player.price <= $scope.keeperCap && $scope.rfaSalary + player.price <= $scope.totalCap) {
+          if ($scope.salary + player.price <= $scope.gvar.keeperCap && $scope.rfaSalary + player.price <= $scope.gvar.salaryCap) {
             //rest - send status, ownerId, playerId
             //console.log(req);
             $http.put('/changeKeeper', req).success(function (data, status) {
@@ -668,7 +858,7 @@ angular.module('owners').controller('EditRosterController', [
         if (status == 1) {
           //keep
           //check salary - if the salary is over - give them an alert
-          if ($scope.rfaSalary + player.price + $scope.salary <= $scope.totalCap + $scope.owner.extraMoney) {
+          if ($scope.rfaSalary + player.price + $scope.salary <= $scope.gvar.salaryCap + $scope.owner.extraMoney) {
             //rest - send status, ownerId, playerId
             console.log(req);
             $http.put('/changeBidee', req).success(function (data, status) {
@@ -714,8 +904,12 @@ angular.module('owners').controller('EditRosterController', [
       }
       //$scope.salary=Math.round(salary*100)/100;
       //$scope.rfaSalary=Math.round(rfaSalary*100)/100;
-      $scope.salary = parseFloat(salary.toFixed(2));
-      $scope.rfaSalary = parseFloat(rfaSalary.toFixed(2));
+      //$scope.salary=parseFloat(salary.toFixed(1));
+      $scope.salary = Math.ceil(salary);
+      //parseFloat(Math.round(salary*100)/100);
+      $scope.rfaSalary = Math.ceil(rfaSalary);
+      //parseFloat(Math.round(rfaSalary*100)/100);
+      //$scope.rfaSalary=parseFloat(rfaSalary.toFixed(1));
       if ($scope.owner._id == $scope.user.ownerId) {
         $scope.errMsg = false;
       } else {
@@ -923,14 +1117,18 @@ angular.module('owners').controller('ReviewRosterController', [
     // Find a list of Owners
     $scope.getOwners = function () {
       var x = 0, salary;
-      $http.get('/reviewRoster').success(function (data, status) {
-        $scope.owners = data;
+      $http.get('/gvars').success(function (data, status) {
+        $scope.gvar = data[0];
       }).then(function () {
-        for (x = 0; x < $scope.owners.length; x++) {
-          salary = 0;
-          salary = $scope.getSalary($scope.owners[x]);
-          $scope.owners[x].salary = salary;
-        }
+        $http.get('/reviewRoster').success(function (data, status) {
+          $scope.owners = data;
+        }).then(function () {
+          for (x = 0; x < $scope.owners.length; x++) {
+            salary = 0;
+            salary = $scope.getSalary($scope.owners[x]);
+            $scope.owners[x].salary = salary;
+          }
+        });
       });
     };
     $scope.initialize = function () {
@@ -962,8 +1160,8 @@ angular.module('owners').factory('Owners', [
   }
 ]);
 angular.module('owners').factory('socket', function () {
-  //    var socket=io.connect('/');
-  var socket = io.connect('http://localhost:3000');
+  var socket = io.connect('/');
+  //    var socket=io.connect('http://localhost:3000');
   return socket;
 });'use strict';
 // Configuring the Articles module
@@ -1490,6 +1688,89 @@ angular.module('players').factory('Players', [
   '$resource',
   function ($resource) {
     return $resource('players/:playerId', { playerId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';
+//Setting up route
+angular.module('sales').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Sales state routing
+    $stateProvider.state('listSales', {
+      url: '/sales',
+      templateUrl: 'modules/sales/views/list-sales.client.view.html'
+    }).state('createSale', {
+      url: '/sales/create',
+      templateUrl: 'modules/sales/views/create-sale.client.view.html'
+    }).state('viewSale', {
+      url: '/sales/:saleId',
+      templateUrl: 'modules/sales/views/view-sale.client.view.html'
+    }).state('editSale', {
+      url: '/sales/:saleId/edit',
+      templateUrl: 'modules/sales/views/edit-sale.client.view.html'
+    });
+  }
+]);'use strict';
+// Sales controller
+angular.module('sales').controller('SalesController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Sales',
+  function ($scope, $stateParams, $location, Authentication, Sales) {
+    $scope.authentication = Authentication;
+    // Create new Sale
+    $scope.create = function () {
+      // Create new Sale object
+      var sale = new Sales({ name: this.name });
+      // Redirect after save
+      sale.$save(function (response) {
+        $location.path('sales/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Sale
+    $scope.remove = function (sale) {
+      if (sale) {
+        sale.$remove();
+        for (var i in $scope.sales) {
+          if ($scope.sales[i] === sale) {
+            $scope.sales.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.sale.$remove(function () {
+          $location.path('sales');
+        });
+      }
+    };
+    // Update existing Sale
+    $scope.update = function () {
+      var sale = $scope.sale;
+      sale.$update(function () {
+        $location.path('sales/' + sale._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Sales
+    $scope.find = function () {
+      $scope.sales = Sales.query();
+    };
+    // Find existing Sale
+    $scope.findOne = function () {
+      $scope.sale = Sales.get({ saleId: $stateParams.saleId });
+    };
+  }
+]);'use strict';
+//Sales service used to communicate Sales REST endpoints
+angular.module('sales').factory('Sales', [
+  '$resource',
+  function ($resource) {
+    return $resource('sales/:saleId', { saleId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]);'use strict';
 // Config HTTP Error Handling
