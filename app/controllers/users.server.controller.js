@@ -124,7 +124,7 @@ exports.updateUserOwner = function(req, res){
 				message: getErrorMessage(err)
 			});
 		} else {
-			user.ownerId=stuff._id;
+			user.ownerId=stuff.ownerId;
 			user.save();
 			res.jsonp(user);
 		}
