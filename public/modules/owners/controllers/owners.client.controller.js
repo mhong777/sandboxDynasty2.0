@@ -52,25 +52,21 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 					if($scope.allUsers[x]._id==$scope.oldUser){
 						$scope.deassociateUser=$scope.allUsers[x];
 						$scope.deassociateUser.ownerId=null;
+						$http.put('/users',$scope.deassociateUser).
+							success(function(data, status){
+								console.log('deassociated user');
+								console.log(data);
+							});
 						break;
 					}
 				}
 
-				console.log($scope.deassociateUser);
-				console.log($scope.associateUser);
-
-				$http.put('/users',$scope.deassociateUser).
+				$http.put('/users',$scope.associateUser).
 					success(function(data, status){
-						console.log('updated one user');
+						console.log('associate user');
 						console.log(data);
-					}).then(function(){
-						//associate new user
-						$http.put('/users',$scope.associateUser).
-							success(function(data, status){
-								console.log('updated second user');
-								console.log(data);
-							});
 					});
+
 
 			}
 
@@ -81,6 +77,8 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 				success(function(data, status){
 					console.log('owner data');
 					console.log(data);
+				}).then(function(){
+					$location.path('owners');
 				});
 
 
