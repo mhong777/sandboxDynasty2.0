@@ -41,7 +41,7 @@
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
 			</a>
 			<hr/>
-			<h3>Eligable to Keep</h3>
+			<h3>Eligible to Keep</h3>
 			<a data-ng-repeat="player in owner.keepEligable" ng-click="changeKeeper(player,1)" class="list-group-item cursor">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
@@ -54,7 +54,7 @@
 				Team: {{player.team.name}}
 			</a>
 			<hr/>
-			<h3>Eligable to Bid</h3>
+			<h3>Eligible to Bid</h3>
 			<a data-ng-repeat="player in owner.bidEligable" ng-click="changeBidee(player,1)" class="list-group-item cursor">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}}
