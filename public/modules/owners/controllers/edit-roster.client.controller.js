@@ -33,6 +33,8 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 								if($scope.user.ownerId!=$scope.owner._id){
 									$scope.rosterCheck=true;
 								}
+								console.log($scope.user.ownerId);
+								console.log($scope.owner._id)
 								$scope.setData();
 							});
 					});
