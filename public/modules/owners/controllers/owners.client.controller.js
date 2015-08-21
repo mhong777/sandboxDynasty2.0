@@ -44,42 +44,42 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 
 		// Update existing Owner
 		$scope.update = function() {
-			if($scope.oldUser!=$scope.owner.myUser){
-				//de-associate the old user
-				$scope.deassociateUser;
-				var user;
-				for(var x=0;x<$scope.allUsers.length;x++){
-					if($scope.allUsers[x]._id==$scope.oldUser){
-						$scope.deassociateUser=$scope.allUsers[x];
-						$scope.deassociateUser.ownerId=null;
-						$http.put('/users',$scope.deassociateUser).
-							success(function(data, status){
-								console.log('deassociated user');
-								console.log(data);
-							});
-						break;
-					}
-				}
-
-				$http.put('/users',$scope.associateUser).
-					success(function(data, status){
-						console.log('associate user');
-						console.log(data);
-					});
-
-
-			}
-
-
+			//if($scope.oldUser!=$scope.owner.myUser){
+			//	//de-associate the old user
+			//	$scope.deassociateUser;
+			//	var user;
+			//	for(var x=0;x<$scope.allUsers.length;x++){
+			//		if($scope.allUsers[x]._id==$scope.oldUser){
+			//			$scope.deassociateUser=$scope.allUsers[x];
+			//			$scope.deassociateUser.ownerId=null;
+			//			$http.put('/users',$scope.deassociateUser).
+			//				success(function(data, status){
+			//					console.log('deassociated user');
+			//					console.log(data);
+			//				});
+			//			break;
+			//		}
+			//	}
+			//}
 			var owner = $scope.owner ;
 
-			$http.put('/owners/'+owner._id,owner).
+			$http.put('/users',$scope.associateUser).
 				success(function(data, status){
-					console.log('owner data');
+					console.log('associate user');
 					console.log(data);
-				}).then(function(){
-					$location.path('owners');
+				}). then(function(){
+					$http.put('/owners/'+owner._id,owner).
+						success(function(data, status){
+							console.log('owner data');
+							console.log(data);
+						}).then(function(){
+							$location.path('owners');
+						});
+
 				});
+
+
+
 
 
 		};
