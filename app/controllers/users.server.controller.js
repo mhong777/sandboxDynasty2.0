@@ -133,13 +133,14 @@ exports.update = function(req, res) {
 					message: getErrorMessage(err)
 				});
 			} else {
-				req.login(user, function(err) {
-					if (err) {
-						res.send(400, err);
-					} else {
-						res.jsonp(user);
-					}
-				});
+				res.jsonp(user);
+				//req.login(user, function(err) {
+				//	if (err) {
+				//		res.send(400, err);
+				//	} else {
+				//		res.jsonp(user);
+				//	}
+				//});
 			}
 		});
 	} else {
