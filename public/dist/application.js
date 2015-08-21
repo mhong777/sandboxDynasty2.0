@@ -171,13 +171,13 @@ angular.module('bids').controller('RfaController', [
         $scope.numPlayers;
         $scope.onlyNumbers = /^\d+$/;
         //should be in gvars
-        $scope.salaryCap = 300;
-        $scope.maxPlayers = 22;
+        //$scope.salaryCap=300;
+        //$scope.maxPlayers=22;
         //for hiding everything
-        $scope.bidShow = true;
-        $scope.matchShow = true;
+        //$scope.bidShow=true;
+        //$scope.matchShow=true;
         $scope.timerShow = true;
-        $scope.draftShow = true;
+        //$scope.draftShow=true;
         //for counter
         $scope.counter = 100;
         $scope.mins = parseInt($scope.counter / 60);
@@ -194,29 +194,33 @@ angular.module('bids').controller('RfaController', [
         $scope.availableString = '';
         $scope.filters.rookie = '';
         $scope.ownerId = Authentication.user.ownerId;
-        $http.get('/bids').success(function (data, status) {
-          $scope.bids = data;
+        $http.get('/gvars').success(function (data, status) {
+          $scope.gvar = data[0];
         }).then(function () {
-          $http.get('/ownersAndPlayers').success(function (data, status) {
-            $scope.owners = data;
+          $http.get('/bids').success(function (data, status) {
+            $scope.bids = data;
           }).then(function () {
-            for (x = 0; x < $scope.owners.length; x++) {
-              salary = 0;
-              fxnOut = $scope.getSalary($scope.owners[x]);
-              salary = fxnOut[0];
-              numPlayer = fxnOut[1];
-              $scope.owners[x].salary = salary;
-              $scope.owners[x].numPlayer = numPlayer;
-              if ($scope.owners[x]._id == $scope.ownerId) {
-                $scope.salary = salary;
-                $scope.numPlayers = numPlayer;
-                $scope.myOwner = $scope.owners[x];
-                $scope.dispOwner = $scope.owners[x];
+            $http.get('/ownersAndPlayers').success(function (data, status) {
+              $scope.owners = data;
+            }).then(function () {
+              for (x = 0; x < $scope.owners.length; x++) {
+                salary = 0;
+                fxnOut = $scope.getSalary($scope.owners[x]);
+                salary = fxnOut[0];
+                numPlayer = fxnOut[1];
+                $scope.owners[x].salary = salary;
+                $scope.owners[x].numPlayer = numPlayer;
+                if ($scope.owners[x]._id == $scope.ownerId) {
+                  $scope.salary = salary;
+                  $scope.numPlayers = numPlayer;
+                  $scope.myOwner = $scope.owners[x];
+                  $scope.dispOwner = $scope.owners[x];
+                }
               }
-            }
+            });
+          }).then(function () {
+            $scope.players = Players.query();
           });
-        }).then(function () {
-          $scope.players = Players.query();
         });
       }
     };
@@ -268,7 +272,7 @@ angular.module('bids').controller('RfaController', [
         }
         salary = salary + bid.myBid;
         numPlayers++;
-        if (salary <= $scope.salaryCap + $scope.myOwner.extraMoney && numPlayers <= $scope.maxPlayers) {
+        if (salary <= $scope.gvar.salaryCap + $scope.myOwner.extraMoney && numPlayers <= $scope.gvar.maxPlayers) {
           //send to socket - then update
           var input = {};
           input.bid = bid;
@@ -1039,26 +1043,24 @@ angular.module('owners').controller('OwnersController', [
           if ($scope.allUsers[x]._id == $scope.oldUser) {
             $scope.deassociateUser = $scope.allUsers[x];
             $scope.deassociateUser.ownerId = null;
+            $http.put('/users', $scope.deassociateUser).success(function (data, status) {
+              console.log('deassociated user');
+              console.log(data);
+            });
             break;
           }
         }
-        console.log($scope.deassociateUser);
-        console.log($scope.associateUser);
-        $http.put('/users', $scope.deassociateUser).success(function (data, status) {
-          console.log('updated one user');
+        $http.put('/users', $scope.associateUser).success(function (data, status) {
+          console.log('associate user');
           console.log(data);
-        }).then(function () {
-          //associate new user
-          $http.put('/users', $scope.associateUser).success(function (data, status) {
-            console.log('updated second user');
-            console.log(data);
-          });
         });
       }
       var owner = $scope.owner;
       $http.put('/owners/' + owner._id, owner).success(function (data, status) {
         console.log('owner data');
         console.log(data);
+      }).then(function () {
+        $location.path('owners');
       });
     };
     // Find a list of Owners
