@@ -6,8 +6,8 @@
 		</div>
 		<div class="col-md-4 minitron">
 			<h4>My Info:</h4>
-			<h5>Cap Left: ${{salaryCap-salary+myOwner.extraMoney}}</h5>
-			<h5>Roster Spots Left: {{maxPlayers - myOwner.numPlayer}}</h5>
+			<h5>Cap Left: ${{gvar.salaryCap-salary+myOwner.extraMoney}}</h5>
+			<h5>Roster Spots Left: {{gvar.maxPlayers - myOwner.numPlayer}}</h5>
 		</div>
 	</div>
 
@@ -23,8 +23,8 @@
 			<td>Price</td>
 			<td>Current Bidder</td>
 			<td>Original Owner</td>
-			<td ng-show="bidShow">Submit Bid</td>
-			<td ng-show="matchShow">Match Offer</td>
+			<td ng-show="gvar.bidShow">Submit Bid</td>
+			<td ng-show="gvar.matchShow">Match Offer</td>
 			</thead>
 			<tr ng-repeat="bid in bids | orderBy:'player.name'">
 				<td>{{bid.player.name}}</td>
@@ -36,16 +36,16 @@
 				<td>${{bid.price}}</td>
 				<td>{{bid.owner.name}}</td>
 				<td>{{bid.origOwner.name}}</td>
-				<td ng-show="bidShow">
-					Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(salaryCap-salary+myOwner.extraMoney)}">
-					<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=maxPlayers)">Submit Bid</button>
-					<div ng-show="bid.myBid>(salaryCap-salary+myOwner.extraMoney)">
+				<td ng-show="gvar.bidShow">
+					Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}">
+					<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Submit Bid</button>
+					<div ng-show="bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)">
 						<span class="errorMsg">Bid is too high</span>
 					</div>
 				</td>
-				<td ng-show="matchShow">
-					<button class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="(bid.price>(salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=maxPlayers)">Match</button>
-					<div ng-show="(bid.price>(salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=maxPlayers)">
+				<td ng-show="gvar.matchShow">
+					<button class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="(bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Match</button>
+					<div ng-show="(bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">
 						<span class="errorMsg">You can't match this</span>
 					</div>
 				</td>
@@ -59,15 +59,15 @@
 				<div class="col-md-4">
 					<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)">
 						<b>{{owner.name}}</b><br/>
-						${{salaryCap - owner.salary}} left <br/>
-						{{maxPlayers - owner.numPlayer}} spots left
+						${{gvar.salaryCap - owner.salary}} left <br/>
+						{{gvar.maxPlayers - owner.numPlayer}} spots left
 						<!--<br/>-->
 					</a>
 				</div>
 
 				<div class="col-md-8">
 					<h3>{{dispOwner.name}}'s Roster</h3>
-					<h4>Available Cap: ${{salaryCap - dispOwner.salary + dispOwner.extraMoney}}</h4>
+					<h4>Available Cap: ${{gvar.salaryCap - dispOwner.salary + dispOwner.extraMoney}}</h4>
 					<table class="table table-striped table-bordered">
 						<thead>
 						<td>Name</td>
@@ -179,10 +179,10 @@
 							<span ng-show="sortType == 'owner.name'" class="fa fa-caret-down"></span>
 						</a>
 					</td>
-					<td ng-show="draftShow">
+					<td ng-show="gvar.draftShow">
 						Nominate
 					</td>
-					<td ng-show="draftShow">
+					<td ng-show="gvar.draftShow">
 						Draft
 					</td>
 				</tr>
@@ -197,7 +197,8 @@
 					<td>{{player.posRank}}</td>
 					<td>{{player.price}}</td>
 					<td>{{player.owner.name}}</td>
-					<td ng-show="draftShow"><button class="btn btn-default" type="button" ng-click="matchBid(bid)">Draft</button></td>
+					<td ng-show="gvar.draftShow"><button class="btn btn-default" type="button" ng-click="matchBid(bid)">Nominate</button></td>
+					<td ng-show="gvar.draftShow"><button class="btn btn-default" type="button" ng-click="matchBid(bid)">Draft</button></td>
 				</tr>
 				</tbody>
 			</table>

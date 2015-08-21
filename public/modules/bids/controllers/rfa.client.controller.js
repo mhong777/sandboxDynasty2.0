@@ -33,14 +33,14 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				$scope.onlyNumbers = /^\d+$/;
 
 				//should be in gvars
-				$scope.salaryCap=300;
-				$scope.maxPlayers=22;
+				//$scope.salaryCap=300;
+				//$scope.maxPlayers=22;
 
 				//for hiding everything
-				$scope.bidShow=true;
-				$scope.matchShow=true;
+				//$scope.bidShow=true;
+				//$scope.matchShow=true;
 				$scope.timerShow=true;
-				$scope.draftShow=true;
+				//$scope.draftShow=true;
 
 				//for counter
 				$scope.counter=100;
@@ -61,32 +61,40 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 
 				$scope.ownerId=Authentication.user.ownerId;
 
-				$http.get('/bids').
+				$http.get('/gvars').
 					success(function(data, status){
-						$scope.bids=data;
+						$scope.gvar=data[0];
 					}).then(function(){
-						$http.get('/ownersAndPlayers').
+						$http.get('/bids').
 							success(function(data, status){
-								$scope.owners=data;
+								$scope.bids=data;
 							}).then(function(){
-								for(x=0;x<$scope.owners.length;x++){
-									salary=0;
-									fxnOut=$scope.getSalary($scope.owners[x]);
-									salary=fxnOut[0];
-									numPlayer=fxnOut[1];
-									$scope.owners[x].salary=salary;
-									$scope.owners[x].numPlayer=numPlayer;
-									if($scope.owners[x]._id==$scope.ownerId){
-										$scope.salary=salary;
-										$scope.numPlayers=numPlayer;
-										$scope.myOwner=$scope.owners[x];
-										$scope.dispOwner=$scope.owners[x];
-									}
-								}
+								$http.get('/ownersAndPlayers').
+									success(function(data, status){
+										$scope.owners=data;
+									}).then(function(){
+										for(x=0;x<$scope.owners.length;x++){
+											salary=0;
+											fxnOut=$scope.getSalary($scope.owners[x]);
+											salary=fxnOut[0];
+											numPlayer=fxnOut[1];
+											$scope.owners[x].salary=salary;
+											$scope.owners[x].numPlayer=numPlayer;
+											if($scope.owners[x]._id==$scope.ownerId){
+												$scope.salary=salary;
+												$scope.numPlayers=numPlayer;
+												$scope.myOwner=$scope.owners[x];
+												$scope.dispOwner=$scope.owners[x];
+											}
+										}
+									});
+							}).then(function(){
+								$scope.players = Players.query();
 							});
-					}).then(function(){
-						$scope.players = Players.query();
 					});
+
+
+
 			}
 		};
 
@@ -146,7 +154,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 
 				salary=salary + bid.myBid;
 				numPlayers++
-				if(salary<=($scope.salaryCap + $scope.myOwner.extraMoney) && numPlayers<=$scope.maxPlayers){
+				if(salary<=($scope.gvar.salaryCap + $scope.myOwner.extraMoney) && numPlayers<=$scope.gvar.maxPlayers){
 					//send to socket - then update
 					var input={};
 					input.bid=bid;
