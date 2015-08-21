@@ -1054,8 +1054,9 @@ angular.module('owners').controller('OwnersController', [
       //		}
       //	}
       //}
-      var owner = $scope.owner;
-      $http.put('/users', $scope.associateUser).success(function (data, status) {
+      var owner = $scope.owner, req = {};
+      req.user = $scope.associateUser;
+      $http.put('/users/ownerUpdate', req).success(function (data, status) {
         console.log('associate user');
         console.log(data);
       }).then(function () {

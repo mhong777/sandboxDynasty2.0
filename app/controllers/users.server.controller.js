@@ -112,6 +112,26 @@ exports.signin = function(req, res, next) {
 /**
  * Update user details
  */
+exports.updateUserOwner = function(req, res){
+	console.log(req.body.user);
+	var stuff=req.body.user;
+
+	User.findById(stuff._id).exec(function(err, user) {
+
+
+		if (err) {
+			return res.send(400, {
+				message: getErrorMessage(err)
+			});
+		} else {
+			user.ownerId=stuff._id;
+			user.save();
+			res.jsonp(user);
+		}
+	});
+};
+
+
 exports.update = function(req, res) {
 	// Init Variables
 	var user = req.user;
@@ -133,14 +153,13 @@ exports.update = function(req, res) {
 					message: getErrorMessage(err)
 				});
 			} else {
-				res.jsonp(user);
-				//req.login(user, function(err) {
-				//	if (err) {
-				//		res.send(400, err);
-				//	} else {
-				//		res.jsonp(user);
-				//	}
-				//});
+				req.login(user, function(err) {
+					if (err) {
+						res.send(400, err);
+					} else {
+						res.jsonp(user);
+					}
+				});
 			}
 		});
 	} else {
@@ -149,7 +168,6 @@ exports.update = function(req, res) {
 		});
 	}
 };
-
 /**
  * Change Password
  */

@@ -61,9 +61,10 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 			//		}
 			//	}
 			//}
-			var owner = $scope.owner ;
+			var owner = $scope.owner, req={};
+			req.user=$scope.associateUser;
 
-			$http.put('/users',$scope.associateUser).
+			$http.put('/users/ownerUpdate',req).
 				success(function(data, status){
 					console.log('associate user');
 					console.log(data);
