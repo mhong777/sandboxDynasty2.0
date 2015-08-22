@@ -116,19 +116,44 @@ exports.updateUserOwner = function(req, res){
 	console.log(req.body.user);
 	var stuff=req.body.user;
 
-	User.findById(stuff._id).exec(function(err, user) {
 
-
-		if (err) {
-			return res.send(400, {
-				message: getErrorMessage(err)
-			});
-		} else {
-			user.ownerId=stuff.ownerId;
-			user.save();
-			res.jsonp(user);
-		}
+	User.findOne({
+		_id: stuff._id
+	}).exec(function(err, user) {
+		if (err) return next(err);
+		if (!user) return next(new Error('Failed to load User ' + id));
+		user.ownerId=stuff.ownerId;
+		user.save(function(err) {
+			if (err) {
+				return res.send(400, {
+					message: getErrorMessage(err)
+				});
+			} else {
+				req.login(user, function(err) {
+					if (err) {
+						res.send(400, err);
+					} else {
+						res.jsonp(user);
+					}
+				});
+			}
+		});
 	});
+
+
+
+
+	//User.findById(stuff._id).exec(function(err, user) {
+	//	if (err) {
+	//		return res.send(400, {
+	//			message: getErrorMessage(err)
+	//		});
+	//	} else {
+	//		user.ownerId=stuff.ownerId;
+	//		user.save();
+	//		res.jsonp(user);
+	//	}
+	//});
 };
 
 

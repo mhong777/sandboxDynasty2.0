@@ -6,10 +6,10 @@
 	<div class="jumbotron text-center">
 		<div class="row">
 			<h2>{{owner.name}}'s Roster</h2>
-			<p ng-hide="rosterCheck">
+			<p ng-show="rosterCheck">
 				You have until TBD time to edit your roster
 			</p>
-			<p ng-show="rosterCheck" >
+			<p ng-hide="rosterCheck" >
 				<span class="errorMsg">This isn't your roster so you can't alter it</span>
 			</p>
 			<p ng-show="timeCheck">

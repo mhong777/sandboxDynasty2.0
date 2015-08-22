@@ -5,12 +5,13 @@ var mongoose = require('mongoose'),
     Player = mongoose.model('Player'),
 	User = mongoose.model('User'),
     Bid = mongoose.model('Bid'),
+    Gvar = mongoose.model('Gvar'),
 	_ = require('lodash');
     
 
     var maxPlayers=22,
-        salaryCap=300;
-        
+        salaryCap=315;
+
     io.on('connection', function(socket){
         socket.broadcast.emit('user connected');
         
@@ -18,6 +19,200 @@ var mongoose = require('mongoose'),
             console.log(input);
             io.emit('test back', input);
         });
+
+        /**********
+         * ALL OF THE DRAFT MECHANICS
+         **********/
+        socket.on('startRfaDraft', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=true;
+                    gvar.matchShow=false;
+                    gvar.timerShow=true;
+                    gvar.draftShow=false;
+                    gvar.rookieDraft=false;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+        socket.on('startRfaMatch', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=false;
+                    gvar.matchShow=true;
+                    gvar.timerShow=true;
+                    gvar.draftShow=false;
+                    gvar.rookieDraft=false;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+        socket.on('inbetweenDraft', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=false;
+                    gvar.matchShow=false;
+                    gvar.timerShow=true;
+                    gvar.draftShow=false;
+                    gvar.rookieDraft=false;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+        socket.on('startRookieDraft', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=false;
+                    gvar.matchShow=false;
+                    gvar.timerShow=true;
+                    gvar.draftShow=false;
+                    gvar.rookieDraft=true;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+        socket.on('startAuctionDraft', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=true;
+                    gvar.matchShow=false;
+                    gvar.timerShow=true;
+                    gvar.draftShow=false;
+                    gvar.rookieDraft=false;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+        socket.on('startSnake', function(){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    gvar.bidShow=false;
+                    gvar.matchShow=false;
+                    gvar.timerShow=true;
+                    gvar.draftShow=true;
+                    gvar.rookieDraft=false;
+                    gvar.save();
+                    io.emit('updateGvar', gvar);
+                }
+            });
+        });
+
+
+        /**********
+         * DRAFT STUFF
+         **********/
+
+        socket.on('draft', function(input){
+            //player modification
+                //change to unavailable
+                //change owner
+                //change price
+                //save
+                //grab all players
+                //send
+            //owner modification
+                //add player to keeper list
+                //save
+                //grab all owners
+                //send
+            //bid modification
+                //if bid is not null
+                //find bid and remove it
+                //grab all bids
+                //send
+
+            modDraftPlayer(input.playerId,input.price,input.ownerId);
+            modDraftOwner(input.playerId,input.ownerId);
+            modDraftBid(input.bidId);
+        });
+
+        function modDraftPlayer(playerId, price, ownerId){
+            Player.findById(playerId).exec(function(err, player) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    player.price=price;
+                    player.owner=ownerId;
+                    player.available=false;
+                    player.save();
+                }
+            }).then(function(){
+                //emit new bids to update everything
+                Player.find().populate('owner', 'name').exec(function(err, players) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        io.emit('updatePlayers', players);
+                        console.log('updated player');
+                    }
+                });
+            });
+        };
+
+        function modDraftOwner(playerId, ownerId){
+            Owner.findById(ownerId).exec(function(err, owner) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    owner.keepRoster.push(playerId);
+                    owner.save();
+                }
+            }).then(function(){
+                //emit new bids to update everything
+                Player.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        io.emit('updateOwners', owners);
+                        console.log('updated owner');
+                    }
+                });
+            });
+        };
+
+        function modDraftBid(bidId){
+            Bid.findById(bidId).exec(function(err, bid) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    bid.remove();
+                }
+            }).then(function(){
+                //emit new bids to update everything
+                Bid.find().populate('owner', 'name').populate('player').populate('origOwner', 'name').exec(function(err, bids) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        io.emit('updateBids', bids);
+                        console.log('updated bid');
+                    }
+                });
+            });
+        };
+
 
         /**********
          * MOD RFA BID
@@ -180,47 +375,6 @@ var mongoose = require('mongoose'),
             });
         });
 
-        /*****
-        *TIMER EXAMPLE
-        ****/
-        var countdown;
-        socket.on('startTimer', function(input){
-            console.log(input);
-            countdown = input;
-            io.emit('timer', { countdown: countdown });
-            var intervalId = setInterval(function() {
-                if(countdown===0){
-                    clearInterval(intervalId);
-                    io.emit('finalMsg', {msg:'worked!'});
-                }
-                else{
-                    countdown--;
-                    console.log(countdown);
-                    io.emit('timer', { countdown: countdown });                    
-                }                
-            }, 1000);            
-        });
-
-        socket.on('getTime', function(){
-            io.emit('timer', { countdown: countdown });
-        });
-        
-        socket.on('reset', function (data) {
-            console.log('reset');
-            countdown = 10;
-            io.emit('timer', { countdown: countdown });
-//            io.sockets.emit('timer', { countdown: countdown });
-        });
-
-
-
-
-
-
-
-
-
-
 
         /*****
          ***ASSOCIATE PLAYER PAGE
@@ -276,6 +430,43 @@ var mongoose = require('mongoose'),
                 });
             });
         });
+
+
+        /*****
+         *TIMER EXAMPLE
+         ****/
+        var countdown;
+        socket.on('startTimer', function(input){
+            console.log(input);
+            countdown = input;
+            io.emit('timer', { countdown: countdown });
+            var intervalId = setInterval(function() {
+                if(countdown===0){
+                    clearInterval(intervalId);
+                    io.emit('finalMsg', {msg:'worked!'});
+                }
+                else{
+                    countdown--;
+                    console.log(countdown);
+                    io.emit('timer', { countdown: countdown });
+                }
+            }, 1000);
+        });
+
+        socket.on('getTime', function(){
+            io.emit('timer', { countdown: countdown });
+        });
+
+        socket.on('reset', function (data) {
+            console.log('reset');
+            countdown = 10;
+            io.emit('timer', { countdown: countdown });
+//            io.sockets.emit('timer', { countdown: countdown });
+        });
+
+
+
+
 //                $scope.selectedPlayer=player;
         /**************
          ***************/

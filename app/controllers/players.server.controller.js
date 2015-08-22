@@ -109,7 +109,8 @@ exports.delete = function(req, res) {
 /**
  * List of Players
  */
-exports.list = function(req, res) { Player.find().sort('-created').populate('owner', 'name').exec(function(err, players) {
+exports.list = function(req, res) {
+	Player.find().sort('-created').populate('owner', 'name').exec(function(err, players) {
 		if (err) {
 			return res.send(400, {
 				message: getErrorMessage(err)
