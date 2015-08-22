@@ -62,23 +62,23 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 			//	}
 			//}
 			var owner = $scope.owner, req={};
-			req.user=$scope.associateUser;
 
-			$http.put('/users/ownerUpdate',req).
+			//req.user=$scope.associateUser;
+			//$http.put('/users/ownerUpdate',req).
+			//	success(function(data, status){
+			//		console.log('associate user');
+			//		console.log(data);
+			//	}). then(function(){
+            //
+			//	});
+
+			$http.put('/owners/'+owner._id,owner).
 				success(function(data, status){
-					console.log('associate user');
+					console.log('owner data');
 					console.log(data);
-				}). then(function(){
-					$http.put('/owners/'+owner._id,owner).
-						success(function(data, status){
-							console.log('owner data');
-							console.log(data);
-						}).then(function(){
-							$location.path('owners');
-						});
-
+				}).then(function(){
+					$location.path('owners');
 				});
-
 
 
 

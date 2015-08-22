@@ -23,14 +23,9 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				console.log('need to log in first');
 			}
 			else{
-				var x,
-					salary= 0,
-					fxnOut,
-					numPlayer;
-
 				$scope.salary=0;
 				$scope.numPlayers;
-				$scope.onlyNumbers = /^\d+$/;
+				$scope.nomShow = true;
 
 				//should be in gvars
 				//$scope.salaryCap=300;
@@ -39,13 +34,13 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				//for hiding everything
 				//$scope.bidShow=true;
 				//$scope.matchShow=true;
-				$scope.timerShow=true;
+				//$scope.timerShow=true;
 				//$scope.draftShow=true;
 
 				//for counter
-				$scope.counter=100;
-				$scope.mins = parseInt($scope.counter / 60);
-				$scope.secs = parseInt($scope.counter % 60);
+				//$scope.counter=100;
+				$scope.mins ='';
+				$scope.secs ='';
 				//$scope.countdown();
 
 				//Filter for finding players
@@ -73,20 +68,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 									success(function(data, status){
 										$scope.owners=data;
 									}).then(function(){
-										for(x=0;x<$scope.owners.length;x++){
-											salary=0;
-											fxnOut=$scope.getSalary($scope.owners[x]);
-											salary=fxnOut[0];
-											numPlayer=fxnOut[1];
-											$scope.owners[x].salary=salary;
-											$scope.owners[x].numPlayer=numPlayer;
-											if($scope.owners[x]._id==$scope.ownerId){
-												$scope.salary=salary;
-												$scope.numPlayers=numPlayer;
-												$scope.myOwner=$scope.owners[x];
-												$scope.dispOwner=$scope.owners[x];
-											}
-										}
+										$scope.setMetrics();
 									});
 							}).then(function(){
 								$scope.players = Players.query();
@@ -95,6 +77,28 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 
 
 
+			}
+		};
+
+		$scope.setMetrics=function(){
+			var x,
+				salary= 0,
+				fxnOut,
+				numPlayer;
+
+			for(x=0;x<$scope.owners.length;x++){
+				salary=0;
+				fxnOut=$scope.getSalary($scope.owners[x]);
+				salary=fxnOut[0];
+				numPlayer=fxnOut[1];
+				$scope.owners[x].salary=salary;
+				$scope.owners[x].numPlayer=numPlayer;
+				if($scope.owners[x]._id==$scope.ownerId){
+					$scope.salary=salary;
+					$scope.numPlayers=numPlayer;
+					$scope.myOwner=$scope.owners[x];
+					$scope.dispOwner=$scope.owners[x];
+				}
 			}
 		};
 
@@ -171,8 +175,47 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		};
 
 		$scope.matchBid=function(bid){
-			console.log(bid);
+			$scope.draft(bid.player._id, bid.price, bid._id);
 		};
+
+		$scope.draftRookie=function(rookie, playerId, price, bidId){
+			if(rookie){
+				$scope.draft(playerId, price, bidId);
+			}
+		};
+
+
+		//draft
+		$scope.draft=function(playerId, price, bidId){
+			var input={};
+			input.playerId=playerId;
+			input.ownerId=$scope.myOwner._id;
+			input.price=price;
+			input.bidId=bidId;
+
+			socket.emit('draft', input);
+
+			//console.log(input);
+		};
+
+		socket.on('updatePlayers', function(input){
+			$scope.players=input;
+			$scope.$digest();
+			console.log('update player');
+		});
+
+		socket.on('updateOwners', function(input){
+			$scope.owners=input;
+			$scope.setMetrics();
+			$scope.$digest();
+			console.log('update owner');
+		});
+
+		socket.on('updateBids', function(input){
+			$scope.bids=input;
+			$scope.$digest();
+			console.log('update bids');
+		});
 
 
 		socket.on('updateRfa', function(input){
@@ -193,6 +236,27 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 					$scope.numPlayers=numPlayer;
 					$scope.myOwner=$scope.owners[x];
 				}
+			}
+			$scope.$digest();
+		});
+
+		socket.on('updateGvar', function(input){
+			$scope.gvar=input;
+			if($scope.gvar.rookieDraft){
+				$scope.filters.rookie=true;
+			}
+			else{
+				$scope.filters.rookie='';
+			}
+			$scope.$digest();
+		});
+
+		socket.on('timer', function(input){
+			console.log(input.countdown);
+			$scope.mins = parseInt(input.countdown / 60);
+			$scope.secs = parseInt(input.countdown % 60);
+			if($scope.secs<10){
+				$scope.secs='0' + $scope.secs;
 			}
 			$scope.$digest();
 		});

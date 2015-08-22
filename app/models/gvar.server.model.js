@@ -73,6 +73,10 @@ var GvarSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	rookieDraft:{
+		type: Boolean,
+		default: false
+	},
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'

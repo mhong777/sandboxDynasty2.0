@@ -1,8 +1,8 @@
 'use strict';
 
 // Gvars controller
-angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars', 'Owners',
-	function($scope, $stateParams, $location, Authentication, Gvars, Owners) {
+angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars', 'Owners', 'socket',
+	function($scope, $stateParams, $location, Authentication, Gvars, Owners, socket) {
 		$scope.authentication = Authentication;
 
 		// Create new Gvar
@@ -77,6 +77,12 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			});
 			$scope.owners = Owners.query();
 			$scope.draft;
+			$scope.draftTimer=0;
 		};
+
+		$scope.startTimer=function(){
+			socket.emit('startTimer', $scope.draftTimer);
+		};
+
 	}
 ]);

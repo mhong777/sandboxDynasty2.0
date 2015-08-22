@@ -1,7 +1,9 @@
 <section data-ng-controller="GvarsController" data-ng-init="findOne()">
     <div class="page-header">
         <h1>Edit Gvar</h1>
+        <button class="btn btn-default" type="button" ng-click="remove(gvar)">Delete</button>
     </div>
+
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
@@ -18,6 +20,7 @@
                             matchShow: <input type="checkbox" data-ng-model="gvar.matchShow" id="matchShow" class="form-control" required>
                             timerShow: <input type="checkbox" data-ng-model="gvar.timerShow" id="timerShow" class="form-control" required>
                             draftShow: <input type="checkbox" data-ng-model="gvar.draftShow" id="draftShow" class="form-control" required>
+                            rookieDraft: <input type="checkbox" data-ng-model="gvar.rookieDraft" id="rookieDraft" class="form-control" required>
                         </div>
                         <div class="col-md-2">
                             salaryCap: <input type="number" data-ng-model="gvar.salaryCap" id="salaryCap" class="form-control" placeholder="0" required>
@@ -39,6 +42,11 @@
                             </div>
                         </div>
                         <div class="col-md-3">
+                            <h3>Timer</h3>
+                            <input type="number" data-ng-model="draftTimer" id="draftTimer" class="form-control" placeholder="0" required>
+                            <button class="btn btn-default" type="button" ng-click="startTimer()">Start Timer</button>
+                            <br/>
+
                             <table class="table table-striped table-bordered">
                                 <thead>
                                     <td>Name</td>
@@ -66,4 +74,5 @@
             </fieldset>
         </form>
     </div>
+    {{gvar}}
 </section>

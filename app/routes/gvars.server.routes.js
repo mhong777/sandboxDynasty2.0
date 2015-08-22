@@ -11,9 +11,9 @@ module.exports = function(app) {
 
 	app.route('/gvars/:gvarId')
 		.get(gvars.read)
-		.put(users.requiresLogin, gvars.hasAuthorization, gvars.update)
-		.delete(users.requiresLogin, gvars.hasAuthorization, gvars.delete);
-
-	// Finish by binding the Gvar middleware
+		.put(users.requiresLogin, gvars.update)
+		.delete(users.requiresLogin, gvars.delete);
+	//gvars.hasAuthorization,
+		// Finish by binding the Gvar middleware
 	app.param('gvarId', gvars.gvarByID);
 };
