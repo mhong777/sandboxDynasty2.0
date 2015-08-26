@@ -1,7 +1,8 @@
 <section data-ng-controller="RfaController" data-ng-init="initialize()">
 	<div class="row">
 		<div class="col-md-8">
-			<h3 class="text-center">We are in the XXX portion</h3>
+			<h3 class="text-center">{{gvar.headerMsg}}</h3>
+			<h4 ng-show="gvar.drafterName!=''" class="text-center">{{gvar.drafterName}}'s pick</h4>
 			<div class="timer text-center" ng-show="gvar.timerShow"><span ng-bind="mins"></span><span ng-hide="(mins=='') && (secs=='')">:</span><span ng-bind="secs"></span></div>
 		</div>
 		<div class="col-md-4 minitron">
@@ -11,8 +12,9 @@
 		</div>
 	</div>
 
-	<div>
-		<table class="table table-striped table-bordered" ng-show="gvar.bidShow || gvar.matchShow">
+	<div ng-show="gvar.bidShow || gvar.matchShow">
+		<h4>Bid on Players</h4>
+		<table class="table table-striped table-bordered">
 			<thead>
 			<td>Name</td>
 			<td>Position</td>
@@ -22,7 +24,7 @@
 			<td>Pos Rank</td>
 			<td>Price</td>
 			<td>Current Bidder</td>
-			<td>Original Owner</td>
+			<td ng-show="gvar.rfaDraft">Original Owner</td>
 			<td ng-show="gvar.bidShow">Submit Bid</td>
 			<td ng-show="gvar.matchShow">Match Offer</td>
 			</thead>
@@ -35,16 +37,22 @@
 				<td>{{bid.player.posRank}}</td>
 				<td>${{bid.price}}</td>
 				<td>{{bid.owner.name}}</td>
-				<td>{{bid.origOwner.name}}</td>
+				<td ng-show="gvar.rfaDraft">{{bid.origOwner.name}}</td>
 				<td ng-show="gvar.bidShow">
-					Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}">
+					Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">
 					<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Submit Bid</button>
+					<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
+						<span class="errorMsg">You're roster is full</span>
+					</div>
 					<div ng-show="bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)">
 						<span class="errorMsg">Bid is too high</span>
 					</div>
 				</td>
 				<td ng-show="gvar.matchShow">
 					<button ng-show="(bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id)" class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="(bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Match</button>
+					<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
+						<span class="errorMsg">You're roster is full</span>
+					</div>
 					<div ng-show="((bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id))&&((bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers))">
 						<span class="errorMsg">You can't match this</span>
 					</div>
@@ -57,7 +65,7 @@
 		<tab heading="Rosters">
 			<div class="row">
 				<div class="col-md-4">
-					<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)">
+					<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)" ng-class="{doneDrafting: owner.numPlayer>=gvar.maxPlayers, drafting: owner._id==gvar.drafter, noMoney: (owner.salary>=gvar.salaryCap && owner.numPlayer<gvar.maxPlayers)}">
 						<b>{{owner.name}}</b><br/>
 						${{gvar.salaryCap - owner.salary}} left <br/>
 						{{gvar.maxPlayers - owner.numPlayer}} spots left
@@ -179,14 +187,14 @@
 							<span ng-show="sortType == 'owner.name'" class="fa fa-caret-down"></span>
 						</a>
 					</td>
-					<td ng-show="gvar.nomShow">
+					<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)">
 						Nominate
 					</td>
-					<td ng-show="gvar.draftShow">
+					<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)">
 						Draft
 					</td>
-					<td ng-show="gvar.rookieDraft">
-						Draft
+					<td ng-show="gvar.rookieDraft && (myOwner._id==gvar.drafter)">
+						Draft Rookie
 					</td>
 				</tr>
 				</thead>
@@ -200,9 +208,9 @@
 					<td>{{player.posRank}}</td>
 					<td>{{player.price}}</td>
 					<td>{{player.owner.name}}</td>
-					<td ng-show="gvar.nomShow"><button class="btn btn-default" type="button" ng-click="matchBid(bid)">Nominate</button></td>
-					<td ng-show="gvar.draftShow"><button class="btn btn-default" type="button" ng-click="draft(player._id,0,null)">Draft</button></td>
-					<td ng-show="gvar.rookieDraft && player.rookie"><button class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)">Draft</button></td>
+					<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="nominate(player._id, player.name)">Nominate</button></td>
+					<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draft(player._id,0,null)">Draft</button></td>
+					<td ng-show="gvar.rookieDraft && player.rookie && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)">Draft</button></td>
 				</tr>
 				</tbody>
 			</table>
@@ -210,6 +218,5 @@
 	</tabset>
 
 
-	<!--$scope.draft=function(playerId, price, bidId){-->
 
 </section>

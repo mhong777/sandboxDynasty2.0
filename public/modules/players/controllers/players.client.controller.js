@@ -1,8 +1,8 @@
 'use strict';
 
 // Players controller
-angular.module('players').controller('PlayersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Players', 'Owners', '$http',
-	function($scope, $stateParams, $location, Authentication, Players, Owners, $http) {
+angular.module('players').controller('PlayersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Players', 'Owners', '$http', 'socket',
+	function($scope, $stateParams, $location, Authentication, Players, Owners, $http, socket) {
 		$scope.authentication = Authentication;
 
 		//###ADD IN ALL OF THE TEAMS
@@ -232,6 +232,7 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 
 				// Redirect after save
 				newPlayer.$save(function(response) {
+					socket.emit('updatePlayers');
 					$location.path('players/' + response._id + '/edit');
 				}, function(errorResponse) {
 					$scope.error = errorResponse.data.message;

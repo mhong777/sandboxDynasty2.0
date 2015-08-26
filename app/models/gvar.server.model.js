@@ -26,6 +26,19 @@ var GvarSchema = new Schema({
 	draftOrder:[
 		{type:Schema.ObjectId, ref:'Owner'}
 	],
+	pickOrder:[
+		{type:Schema.ObjectId, ref:'Owner'}
+	],
+	drafter: {
+		type:Schema.ObjectId, ref:'Owner'
+	},
+	drafterName: {
+		type: String,
+		default: ''
+	},
+	upNext: {
+		type:Schema.ObjectId, ref:'Player'
+	},
 	salaryCap:{
 		type:Number,
 		default: 0
@@ -38,7 +51,19 @@ var GvarSchema = new Schema({
 		type:Number,
 		default: 0
 	},
-	timer:{
+	draftPosition:{
+		type:Number,
+		default: 0
+	},
+	bidPosition:{
+		type:Number,
+		default: 0
+	},
+	rfaTimer:{
+		type:Number,
+		default: 0
+	},
+	matchTimer:{
 		type:Number,
 		default: 0
 	},
@@ -46,12 +71,13 @@ var GvarSchema = new Schema({
 		type:Number,
 		default: 0
 	},
-	bidTimer:{
+	nomTimer:{
 		type:Number,
 		default: 0
 	},
-	upNext: {
-		type:Schema.ObjectId, ref:'Player'
+	bidTimer:{
+		type:Number,
+		default: 0
 	},
 	draftTime:{
 		type: Boolean,
@@ -73,9 +99,29 @@ var GvarSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	nomShow:{
+		type: Boolean,
+		default: false
+	},
+	rfaDraft:{
+		type: Boolean,
+		default: false
+	},
 	rookieDraft:{
 		type: Boolean,
 		default: false
+	},
+	auctionDraft:{
+		type: Boolean,
+		default: false
+	},
+	snakeDraft:{
+		type: Boolean,
+		default: false
+	},
+	headerMsg:{
+		type: String,
+		default: ''
 	},
 	user: {
 		type: Schema.ObjectId,

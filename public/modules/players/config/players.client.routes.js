@@ -19,7 +19,7 @@ angular.module('players').config(['$stateProvider',
 		}).
 		state('createPlayer', {
 			url: '/players/create',
-			templateUrl: 'modules/players/views/create-player.client.view.html'
+			templateUrl: 'modules/players/views/add-player.client.view.html'
 		}).
 		state('viewPlayer', {
 			url: '/players/:playerId',

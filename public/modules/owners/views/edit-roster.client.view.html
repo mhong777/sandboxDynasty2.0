@@ -1,4 +1,4 @@
-<section data-ng-controller="EditRosterController" data-ng-init="getOwner()">
+<section data-ng-controller="EditRosterController" data-ng-init="getOwner()" class="botMarg">
 	<!--{{owner.previousRoster}}-->
 	<!--{{user.ownerId}}<br/>-->
 	<!--{{owner._id}}<br/>-->
@@ -22,11 +22,13 @@
 				<h3>Keepers <button type="button" class="btn btn-default" ng-click="open(1)">Help</button><br/></h3>
 				Keeper Salary: ${{salary}}<br/>
 				Keeper Cap Left: ${{gvar.keeperCap-salary}}<br/>
+				Players Keeping: {{owner.keepRoster.length}}<br/>
 			</div>
 			<div class="col-md-6">
 				<h3>Restricted Free Agents <button type="button" class="btn btn-default" ng-click="open(2)">Help</button><br/></h3>
 				RFA Salary: ${{rfaSalary}}<br/>
 				RFA Budget Left: ${{gvar.salaryCap-salary-rfaSalary + owner.extraMoney}}<br/>
+				Players Trying to Keep: {{owner.bidRoster.length}}<br/>
 			</div>
 		</div>
 
@@ -36,7 +38,7 @@
 	<div class="row">
 		<div class="col-md-6">
 			<h3>Currently Keeping</h3>
-			<a data-ng-repeat="player in owner.keepRoster" ng-click="changeKeeper(player,0)" class="list-group-item cursor">
+			<a data-ng-repeat="player in owner.keepRoster" ng-click="changeKeeper(player,0)" class="list-group-item cursor drafting">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
 			</a>
@@ -49,7 +51,7 @@
 		</div>
 		<div class="col-md-6">
 			<h3>Currently Bidding</h3>
-			<a data-ng-repeat="player in owner.bidRoster" ng-click="changeBidee(player,0)" class="list-group-item cursor">
+			<a data-ng-repeat="player in owner.bidRoster" ng-click="changeBidee(player,0)" class="list-group-item cursor drafting">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}}
 			</a>
