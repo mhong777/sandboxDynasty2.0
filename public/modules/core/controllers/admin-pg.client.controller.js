@@ -11,6 +11,9 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		$scope.startRfaMatch=function(){
 			socket.emit('startRfaMatch');
 		};
+		$scope.endRfaMatch=function(){
+			socket.emit('endRfaMatch');
+		};
 		$scope.inbetweenDraft=function(){
 			socket.emit('inbetweenDraft');
 		};
@@ -29,6 +32,40 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		$scope.startSnake=function(){
 			socket.emit('startSnake');
 		};
+		$scope.iterate=function(){
+			socket.emit('iterate');
+		};
+		$scope.executeBid=function(){
+			socket.emit('executeBid');
+		};
+		$scope.timeExample=function(){
+			socket.emit('timeExample');
+		};
+		$scope.resetTime=function(){
+			socket.emit('resetTime');
+		};
+		$scope.stopTime=function(){
+			socket.emit('stopTime');
+		};
+		$scope.pauseTimer=function(){
+			socket.emit('pauseTimer');
+		};
+		$scope.restartTimer=function(){
+			socket.emit('restartTimer');
+		};
+		// Find a list of Owners
+		$scope.findOwners = function() {
+			$scope.owners = Owners.query();
+			//$scope.owners.push(null);
+			$scope.drafter={};
+			$scope.drafter._id=null;
+			$scope.drafter.name='';
+		};
+		$scope.changeDrafter = function(){
+			socket.emit('changeDrafter', $scope.drafter);
+		};
+
+
 
 
 	}

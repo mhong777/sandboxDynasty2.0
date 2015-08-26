@@ -56,6 +56,8 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			$scope.gvars = Gvars.query();
 		};
 
+
+		//ROOKIE DRAFT ORDER
 		$scope.startDraftOrder = function(){
 			var x;
 			x= $scope.gvar.draftOrder;
@@ -68,6 +70,21 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 
 		$scope.changeDraft=function(index,pick){
 			$scope.gvar.draftOrder.splice(index,1,pick._id);
+		};
+
+		//OTHER DRAFT ORDER
+		$scope.startpickOrder = function(){
+			var x;
+			x= $scope.gvar.pickOrder;
+			$scope.pickDraft=x;
+		};
+
+		$scope.addPick = function(){
+			$scope.pickDraft.push(null);
+		};
+
+		$scope.changePick=function(index,pick){
+			$scope.gvar.pickOrder.splice(index,1,pick._id);
 		};
 
 		// Find existing Gvar
