@@ -47,6 +47,8 @@ ApplicationConfiguration.registerModule('core');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('gvars');'use strict';
 // Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('hists');'use strict';
+// Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('owners');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('players');'use strict';
@@ -152,7 +154,8 @@ angular.module('bids').controller('RfaController', [
   'socket',
   'Players',
   '$timeout',
-  function ($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket, Players, $timeout) {
+  'Hists',
+  function ($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket, Players, $timeout, Hists) {
     //INITIALIZE FUNCTION
     // Find a list of Owners
     $scope.getOwners = function () {
@@ -165,6 +168,7 @@ angular.module('bids').controller('RfaController', [
     $scope.initialize = function () {
       if (!Authentication) {
         console.log('need to log in first');
+        $location.path('/');
       } else {
         $scope.salary = 0;
         $scope.numPlayers;
@@ -192,6 +196,14 @@ angular.module('bids').controller('RfaController', [
         $scope.availableString = '';
         $scope.filters.rookie = '';
         $scope.user = Authentication.user;
+        try {
+          $scope.user._id;
+        } catch (e) {
+          $location.path('/');
+        }
+        if ($scope.user._id == null) {
+          $location.path('/');
+        }
         $http.get('/gvars').success(function (data, status) {
           $scope.gvar = data[0];
         }).then(function () {
@@ -208,11 +220,14 @@ angular.module('bids').controller('RfaController', [
             });
           }).then(function () {
             $scope.players = Players.query();
+          }).then(function () {
+            $scope.hists = Hists.query();
           });
         });
       }
     };
     $scope.setMetrics = function () {
+      console.log('setting metrics');
       var x, salary = 0, fxnOut, numPlayer;
       for (x = 0; x < $scope.owners.length; x++) {
         salary = 0;
@@ -228,6 +243,7 @@ angular.module('bids').controller('RfaController', [
           $scope.dispOwner = $scope.owners[x];
         }
       }
+      console.log($scope.gvar.salaryCap - $scope.myOwner.salary);
     };
     $scope.getSalary = function (owner) {
       var x = 0, salary = 0, bid, numPlayer = 0;
@@ -333,6 +349,10 @@ angular.module('bids').controller('RfaController', [
       $scope.bids = input;
       $scope.$digest();  //console.log('update bids');
     });
+    socket.on('updateHistory', function (input) {
+      $scope.hists = input;
+      $scope.$digest();
+    });
     socket.on('updateRfa', function (input) {
       var x, salary, fxnOut, numPlayer;
       //update the bid
@@ -351,12 +371,16 @@ angular.module('bids').controller('RfaController', [
       $scope.$digest();
     });
     socket.on('timer', function (input) {
-      console.log(input.countdown);
+      //console.log(input.countdown);
       $scope.mins = parseInt(input.countdown / 60);
       $scope.secs = parseInt(input.countdown % 60);
       if ($scope.secs < 10) {
         $scope.secs = '0' + $scope.secs;
       }
+      console.log($scope.secs);
+      console.log(typeof $scope.secs);
+      console.log($scope.mins);
+      console.log(typeof $scope.mins);
       $scope.$digest();
     });
     /*******
@@ -778,6 +802,89 @@ angular.module('gvars').factory('Gvars', [
   '$resource',
   function ($resource) {
     return $resource('gvars/:gvarId', { gvarId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';
+//Setting up route
+angular.module('hists').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Hists state routing
+    $stateProvider.state('listHists', {
+      url: '/hists',
+      templateUrl: 'modules/hists/views/list-hists.client.view.html'
+    }).state('createHist', {
+      url: '/hists/create',
+      templateUrl: 'modules/hists/views/create-hist.client.view.html'
+    }).state('viewHist', {
+      url: '/hists/:histId',
+      templateUrl: 'modules/hists/views/view-hist.client.view.html'
+    }).state('editHist', {
+      url: '/hists/:histId/edit',
+      templateUrl: 'modules/hists/views/edit-hist.client.view.html'
+    });
+  }
+]);'use strict';
+// Hists controller
+angular.module('hists').controller('HistsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Hists',
+  function ($scope, $stateParams, $location, Authentication, Hists) {
+    $scope.authentication = Authentication;
+    // Create new Hist
+    $scope.create = function () {
+      // Create new Hist object
+      var hist = new Hists({ name: this.name });
+      // Redirect after save
+      hist.$save(function (response) {
+        $location.path('hists/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Hist
+    $scope.remove = function (hist) {
+      if (hist) {
+        hist.$remove();
+        for (var i in $scope.hists) {
+          if ($scope.hists[i] === hist) {
+            $scope.hists.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.hist.$remove(function () {
+          $location.path('hists');
+        });
+      }
+    };
+    // Update existing Hist
+    $scope.update = function () {
+      var hist = $scope.hist;
+      hist.$update(function () {
+        $location.path('hists/' + hist._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Hists
+    $scope.find = function () {
+      $scope.hists = Hists.query();
+    };
+    // Find existing Hist
+    $scope.findOne = function () {
+      $scope.hist = Hists.get({ histId: $stateParams.histId });
+    };
+  }
+]);'use strict';
+//Hists service used to communicate Hists REST endpoints
+angular.module('hists').factory('Hists', [
+  '$resource',
+  function ($resource) {
+    return $resource('hists/:histId', { histId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]);'use strict';
 // Configuring the Articles module

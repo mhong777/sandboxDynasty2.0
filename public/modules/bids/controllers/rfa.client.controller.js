@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket', 'Players', '$timeout',
-	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket,Players, $timeout ) {
+angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket', 'Players', '$timeout', 'Hists',
+	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket,Players, $timeout, Hists) {
 
 		//INITIALIZE FUNCTION
 		// Find a list of Owners
@@ -21,6 +21,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		$scope.initialize = function(){
 			if(!Authentication){
 				console.log('need to log in first');
+				$location.path('/');
 			}
 			else{
 				$scope.salary=0;
@@ -54,6 +55,14 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				$scope.filters.rookie='';
 
 				$scope.user=Authentication.user;
+				try{
+					$scope.user._id
+				}catch(e){
+					$location.path('/');
+				}
+				if($scope.user._id==null){
+					$location.path('/');
+				}
 
 				$http.get('/gvars').
 					success(function(data, status){
@@ -74,15 +83,15 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 									});
 							}).then(function(){
 								$scope.players = Players.query();
+							}).then(function(){
+								$scope.hists = Hists.query();
 							});
 					});
-
-
-
 			}
 		};
 
 		$scope.setMetrics=function(){
+			console.log('setting metrics');
 			var x,
 				salary= 0,
 				fxnOut,
@@ -102,6 +111,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 					$scope.dispOwner=$scope.owners[x];
 				}
 			}
+			console.log($scope.gvar.salaryCap - $scope.myOwner.salary);
 		};
 
 		$scope.getSalary = function(owner){
@@ -231,6 +241,10 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 			//console.log('update bids');
 		});
 
+		socket.on('updateHistory', function(input){
+			$scope.hists=input;
+			$scope.$digest();
+		});
 
 		socket.on('updateRfa', function(input){
 			var x,salary, fxnOut,numPlayer;
@@ -254,12 +268,16 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		});
 
 		socket.on('timer', function(input){
-			console.log(input.countdown);
+			//console.log(input.countdown);
 			$scope.mins = parseInt(input.countdown / 60);
 			$scope.secs = parseInt(input.countdown % 60);
 			if($scope.secs<10){
 				$scope.secs='0' + $scope.secs;
 			}
+			console.log($scope.secs);
+			console.log(typeof $scope.secs);
+			console.log($scope.mins);
+			console.log(typeof $scope.mins)
 			$scope.$digest();
 		});
 

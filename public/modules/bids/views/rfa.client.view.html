@@ -1,222 +1,237 @@
 <section data-ng-controller="RfaController" data-ng-init="initialize()">
+	<!--{{user}}-->
 	<div class="row">
-		<div class="col-md-8">
-			<h3 class="text-center">{{gvar.headerMsg}}</h3>
-			<h4 ng-show="gvar.drafterName!=''" class="text-center">{{gvar.drafterName}}'s pick</h4>
-			<div class="timer text-center" ng-show="gvar.timerShow"><span ng-bind="mins"></span><span ng-hide="(mins=='') && (secs=='')">:</span><span ng-bind="secs"></span></div>
+		<div class="col-md-2">
+			<h4 class="text-center">Draft History</h4>
+			<span ng-hide="hists.length>0">
+				No one's been drafted yet
+			</span>
+			<a data-ng-repeat="hist in hists" class="list-group-item text-center">
+				{{hist.player}}: ${{hist.price}}<br/>
+				{{hist.owner}}
+			</a>
 		</div>
-		<div class="col-md-4 minitron">
-			<h4>{{myOwner.name}}'s Info:</h4>
-			<h5>Cap Left: ${{gvar.salaryCap-salary+myOwner.extraMoney}}</h5>
-			<h5>Roster Spots Left: {{gvar.maxPlayers - myOwner.numPlayer}}</h5>
-		</div>
-	</div>
-
-	<div ng-show="gvar.bidShow || gvar.matchShow">
-		<h4>Bid on Players</h4>
-		<table class="table table-striped table-bordered">
-			<thead>
-			<td>Name</td>
-			<td>Position</td>
-			<td>Team</td>
-			<td>Bye Week</td>
-			<td>Abs Rank</td>
-			<td>Pos Rank</td>
-			<td>Price</td>
-			<td>Current Bidder</td>
-			<td ng-show="gvar.rfaDraft">Original Owner</td>
-			<td ng-show="gvar.bidShow">Submit Bid</td>
-			<td ng-show="gvar.matchShow">Match Offer</td>
-			</thead>
-			<tr ng-repeat="bid in bids | orderBy:'player.name'">
-				<td>{{bid.player.name}}</td>
-				<td>{{bid.player.position}}</td>
-				<td>{{bid.player.team.name}}</td>
-				<td>{{bid.player.team.byeWeek}}</td>
-				<td>{{bid.player.absRank}}</td>
-				<td>{{bid.player.posRank}}</td>
-				<td>${{bid.price}}</td>
-				<td>{{bid.owner.name}}</td>
-				<td ng-show="gvar.rfaDraft">{{bid.origOwner.name}}</td>
-				<td ng-show="gvar.bidShow">
-					Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">
-					<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Submit Bid</button>
-					<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
-						<span class="errorMsg">You're roster is full</span>
-					</div>
-					<div ng-show="bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)">
-						<span class="errorMsg">Bid is too high</span>
-					</div>
-				</td>
-				<td ng-show="gvar.matchShow">
-					<button ng-show="(bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id)" class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="(bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers)">Match</button>
-					<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
-						<span class="errorMsg">You're roster is full</span>
-					</div>
-					<div ng-show="((bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id))&&((bid.price>(gvar.salaryCap-salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers))">
-						<span class="errorMsg">You can't match this</span>
-					</div>
-				</td>
-			</tr>
-		</table>
-	</div>
-
-	<tabset class="botMarg">
-		<tab heading="Rosters">
+		<div class="col-md-10">
 			<div class="row">
-				<div class="col-md-4">
-					<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)" ng-class="{doneDrafting: owner.numPlayer>=gvar.maxPlayers, drafting: owner._id==gvar.drafter, noMoney: (owner.salary>=gvar.salaryCap && owner.numPlayer<gvar.maxPlayers)}">
-						<b>{{owner.name}}</b><br/>
-						${{gvar.salaryCap - owner.salary}} left <br/>
-						{{gvar.maxPlayers - owner.numPlayer}} spots left
-						<!--<br/>-->
-					</a>
-				</div>
-
 				<div class="col-md-8">
-					<h3>{{dispOwner.name}}'s Roster</h3>
-					<h4>Available Cap: ${{gvar.salaryCap - dispOwner.salary + dispOwner.extraMoney}}</h4>
-					<table class="table table-striped table-bordered">
+					<h3 class="text-center">{{gvar.headerMsg}}</h3>
+					<h4 ng-show="gvar.drafterName!=''" class="text-center">{{gvar.drafterName}}'s pick</h4>
+					<div class="timer text-center" ng-show="gvar.timerShow"><span ng-bind="mins"></span><span ng-hide="(mins=='') && (secs=='')">:</span><span ng-bind="secs"></span></div>
+				</div>
+				<div class="col-md-4 minitron">
+					<h4>{{myOwner.name}}'s Info:</h4>
+					<h5>Cap Left: ${{gvar.salaryCap-salary+myOwner.extraMoney}}</h5>
+					<h5>Roster Spots Left: {{gvar.maxPlayers - myOwner.numPlayer}}</h5>
+				</div>
+			</div>
+
+			<div ng-show="gvar.bidShow || gvar.matchShow">
+				<h4>Bid on Players</h4>
+				<table class="table table-striped table-bordered">
+					<thead>
+					<td>Name</td>
+					<td>Position</td>
+					<td>Team</td>
+					<td>Bye Week</td>
+					<td>Abs Rank</td>
+					<td>Pos Rank</td>
+					<td>Price</td>
+					<td>Current Bidder</td>
+					<td ng-show="gvar.rfaDraft">Original Owner</td>
+					<td ng-show="gvar.bidShow">Submit Bid</td>
+					<td ng-show="gvar.matchShow">Match Offer</td>
+					</thead>
+					<tr ng-repeat="bid in bids | orderBy:'player.name'">
+						<td>{{bid.player.name}}</td>
+						<td>{{bid.player.position}}</td>
+						<td>{{bid.player.team.name}}</td>
+						<td>{{bid.player.team.byeWeek}}</td>
+						<td>{{bid.player.absRank}}</td>
+						<td>{{bid.player.posRank}}</td>
+						<td>${{bid.price}}</td>
+						<td>{{bid.owner.name}}</td>
+						<td ng-show="gvar.rfaDraft">{{bid.origOwner.name}}</td>
+						<td ng-show="gvar.bidShow">
+							Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(myOwner.numPlayer>=gvar.maxPlayers)">
+							<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney">Submit Bid</button>
+							<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
+								<span class="errorMsg">You're roster is full - you're done</span>
+							</div>
+							<div ng-show="bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney) && gvar.salaryCap>myOwner.salary+myOwner.extraMoney">
+								<span class="errorMsg">Bid is too high</span>
+							</div>
+							<div ng-show="gvar.salaryCap<=myOwner.salary+myOwner.extraMoney && myOwner.numPlayer<gvar.maxPlayers">
+								<span class="errorMsg">You've got no money</span>
+							</div>
+						</td>
+						<td ng-show="gvar.matchShow">
+							<button ng-show="(bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id)" class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="myOwner.numPlayer>=gvar.maxPlayers || bid.price>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)">Match</button>
+							<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
+								<span class="errorMsg">You're roster is full</span>
+							</div>
+							<div ng-show="((bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id))&&((bid.price>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || (myOwner.numPlayer>=gvar.maxPlayers))">
+								<span class="errorMsg">You can't match this</span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<tabset class="botMarg">
+				<tab heading="Rosters">
+					<div class="row">
+						<div class="col-md-4">
+							<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)" ng-class="{doneDrafting: owner.numPlayer>=gvar.maxPlayers, drafting: owner._id==gvar.drafter, noMoney: (owner.salary>=gvar.salaryCap && owner.numPlayer<gvar.maxPlayers)}">
+								<b>{{owner.name}}</b><br/>
+								${{gvar.salaryCap - owner.salary}} left <br/>
+								{{gvar.maxPlayers - owner.numPlayer}} spots left
+								<!--<br/>-->
+							</a>
+						</div>
+
+						<div class="col-md-8">
+							<h3>{{dispOwner.name}}'s Roster</h3>
+							<h4>Available Cap: ${{gvar.salaryCap - dispOwner.salary + dispOwner.extraMoney}}</h4>
+							<table class="table table-striped table-bordered">
+								<thead>
+								<td>Name</td>
+								<td>Position</td>
+								<td>Team</td>
+								<td>Bye Week</td>
+								<td>Abs Rank</td>
+								<td>Pos Rank</td>
+								<td>Price</td>
+								<td>Years Owned</td>
+								</thead>
+								<tbody>
+								<tr ng-repeat="player in dispOwner.keepRoster">
+									<td>{{player.name}}</td>
+									<td>{{player.position}}</td>
+									<td>{{player.team.name}}</td>
+									<td>{{player.team.byeWeek}}</td>
+									<td>{{player.absRank}}</td>
+									<td>{{player.posRank}}</td>
+									<td>${{player.price}}</td>
+									<td>{{player.yearsOwned}}</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</tab>
+				<tab heading="Players">
+					<div class="playerFilter">
+						<div class="row">
+							<h3>Filters</h3>
+							<div class="col-md-12">
+								Search Player: <input type="text" placeholder="name" ng-model="searchPlayer">
+							</div>
+						</div><br/>
+
+						<div class="row">
+							<div class="col-md-6">
+								Position:
+								<div class="btn-group" role="group" aria-label="bGroup1">
+									<button type="button" class="btn btn-default" ng-click="filters.position = ''">All</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'QB'">QB</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'RB'">RB</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'WR'">WR</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'TE'">TE</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'K'">K</button>
+									<button type="button" class="btn btn-default" ng-click="filters.position = 'D'">D</button>
+								</div>
+							</div>
+							<div class="col-md-6">
+								Availability:
+								<div class="btn-group" role="group" aria-label="bGroup2">
+									<button type="button" class="btn btn-default" ng-click="changeAvailable(1)">All</button>
+									<button type="button" class="btn btn-default" ng-click="changeAvailable(2)">Available</button>
+									<button type="button" class="btn btn-default" ng-click="changeAvailable(3)">Unavailable</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<table class="table">
 						<thead>
-						<td>Name</td>
-						<td>Position</td>
-						<td>Team</td>
-						<td>Bye Week</td>
-						<td>Abs Rank</td>
-						<td>Pos Rank</td>
-						<td>Price</td>
-						<td>Years Owned</td>
+						<tr>
+							<td>
+								<a href="" ng-click="sortType = 'name'; sortReverse = !sortReverse" target="_self">
+									Name
+									<span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'position'; sortReverse = !sortReverse">
+									Position
+									<span ng-show="sortType == 'position'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'team.name'; sortReverse = !sortReverse">
+									Team
+									<span ng-show="sortType == 'team.name'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'team.byeWeek'; sortReverse = !sortReverse">
+									Bye Week
+									<span ng-show="sortType == 'team.byeWeek'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'absRank'; sortReverse = !sortReverse">
+									Absolute Rank
+									<span ng-show="sortType == 'absRank'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'posRank'; sortReverse = !sortReverse">
+									Position Rank
+									<span ng-show="sortType == 'posRank'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'price'; sortReverse = !sortReverse">
+									Price
+									<span ng-show="sortType == 'price'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td>
+								<a href="" ng-click="sortType = 'owner.name'; sortReverse = !sortReverse">
+									Owner
+									<span ng-show="sortType == 'owner.name'" class="fa fa-caret-down"></span>
+								</a>
+							</td>
+							<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)">
+								Nominate
+							</td>
+							<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)">
+								Draft
+							</td>
+							<td ng-show="gvar.rookieDraft && (myOwner._id==gvar.drafter)">
+								Draft Rookie
+							</td>
+						</tr>
 						</thead>
 						<tbody>
-						<tr ng-repeat="player in dispOwner.keepRoster">
+						<tr ng-repeat="player in players | orderBy:sortType:sortReverse | filter:searchPlayer | filter: listFilter(filters.position, filters.available, filters.rookie)">
 							<td>{{player.name}}</td>
 							<td>{{player.position}}</td>
 							<td>{{player.team.name}}</td>
 							<td>{{player.team.byeWeek}}</td>
 							<td>{{player.absRank}}</td>
 							<td>{{player.posRank}}</td>
-							<td>${{player.price}}</td>
-							<td>{{player.yearsOwned}}</td>
+							<td>{{player.price}}</td>
+							<td>{{player.owner.name}}</td>
+							<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="nominate(player._id, player.name)">Nominate</button></td>
+							<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draft(player._id,0,null)">Draft</button></td>
+							<td ng-show="gvar.rookieDraft && player.rookie && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)">Draft</button></td>
 						</tr>
 						</tbody>
 					</table>
-				</div>
-			</div>
-		</tab>
-		<tab heading="Players">
-			<div class="playerFilter">
-				<div class="row">
-					<h3>Filters</h3>
-					<div class="col-md-12">
-						Search Player: <input type="text" placeholder="name" ng-model="searchPlayer">
-					</div>
-				</div><br/>
-
-				<div class="row">
-					<div class="col-md-6">
-						Position:
-						<div class="btn-group" role="group" aria-label="bGroup1">
-							<button type="button" class="btn btn-default" ng-click="filters.position = ''">All</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'QB'">QB</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'RB'">RB</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'WR'">WR</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'TE'">TE</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'K'">K</button>
-							<button type="button" class="btn btn-default" ng-click="filters.position = 'D'">D</button>
-						</div>
-					</div>
-					<div class="col-md-6">
-						Availability:
-						<div class="btn-group" role="group" aria-label="bGroup2">
-							<button type="button" class="btn btn-default" ng-click="changeAvailable(1)">All</button>
-							<button type="button" class="btn btn-default" ng-click="changeAvailable(2)">Available</button>
-							<button type="button" class="btn btn-default" ng-click="changeAvailable(3)">Unavailable</button>
-						</div>
-					</div>
-				</div>
-
-			</div>
-			<table class="table">
-				<thead>
-				<tr>
-					<td>
-						<a href="" ng-click="sortType = 'name'; sortReverse = !sortReverse" target="_self">
-							Name
-							<span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'position'; sortReverse = !sortReverse">
-							Position
-							<span ng-show="sortType == 'position'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'team.name'; sortReverse = !sortReverse">
-							Team
-							<span ng-show="sortType == 'team.name'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'team.byeWeek'; sortReverse = !sortReverse">
-							Bye Week
-							<span ng-show="sortType == 'team.byeWeek'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'absRank'; sortReverse = !sortReverse">
-							Absolute Rank
-							<span ng-show="sortType == 'absRank'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'posRank'; sortReverse = !sortReverse">
-							Position Rank
-							<span ng-show="sortType == 'posRank'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'price'; sortReverse = !sortReverse">
-							Price
-							<span ng-show="sortType == 'price'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td>
-						<a href="" ng-click="sortType = 'owner.name'; sortReverse = !sortReverse">
-							Owner
-							<span ng-show="sortType == 'owner.name'" class="fa fa-caret-down"></span>
-						</a>
-					</td>
-					<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)">
-						Nominate
-					</td>
-					<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)">
-						Draft
-					</td>
-					<td ng-show="gvar.rookieDraft && (myOwner._id==gvar.drafter)">
-						Draft Rookie
-					</td>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="player in players | orderBy:sortType:sortReverse | filter:searchPlayer | filter: listFilter(filters.position, filters.available, filters.rookie)">
-					<td>{{player.name}}</td>
-					<td>{{player.position}}</td>
-					<td>{{player.team.name}}</td>
-					<td>{{player.team.byeWeek}}</td>
-					<td>{{player.absRank}}</td>
-					<td>{{player.posRank}}</td>
-					<td>{{player.price}}</td>
-					<td>{{player.owner.name}}</td>
-					<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="nominate(player._id, player.name)">Nominate</button></td>
-					<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draft(player._id,0,null)">Draft</button></td>
-					<td ng-show="gvar.rookieDraft && player.rookie && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)">Draft</button></td>
-				</tr>
-				</tbody>
-			</table>
-		</tab>
-	</tabset>
-
-
-
+				</tab>
+			</tabset>
+		</div>
+	</div>
 </section>
