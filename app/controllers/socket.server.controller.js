@@ -5,12 +5,13 @@ var mongoose = require('mongoose'),
     Player = mongoose.model('Player'),
 	User = mongoose.model('User'),
     Bid = mongoose.model('Bid'),
+    Hist = mongoose.model('Hist'),
     Gvar = mongoose.model('Gvar'),
 	_ = require('lodash');
 
 
 
-    var maxPlayers=10,
+    var maxPlayers=22,
         salaryCap=315;
 
     /*****
@@ -30,38 +31,40 @@ var mongoose = require('mongoose'),
             } else {
                 gvar=gvars[0];
                 if(gvar.rfaDraft && !gvar.matchShow){
-                    rfaCountdown = gvar.rfaTimer;
-                    io.emit('timer', { countdown: rfaCountdown });
-                    rfaInterval = setInterval(function() {
-                        if(rfaCountdown===0){
-                            //don't do anything
-                            clearInterval(rfaInterval);
-                            console.log('end');
-                            io.emit('finalMsg', {msg:'worked!'});
-                        }
-                        else{
-                            rfaCountdown--;
-                            console.log(rfaCountdown);
-                            io.emit('timer', { countdown: rfaCountdown });
-                        }
-                    }, 1000);
+                    console.log('nothing');
+                    //rfaCountdown = gvar.rfaTimer;
+                    //io.emit('timer', { countdown: rfaCountdown });
+                    //rfaInterval = setInterval(function() {
+                    //    if(rfaCountdown===0){
+                    //        //don't do anything
+                    //        clearInterval(rfaInterval);
+                    //        console.log('end');
+                    //        io.emit('finalMsg', {msg:'worked!'});
+                    //    }
+                    //    else{
+                    //        rfaCountdown--;
+                    //        console.log(rfaCountdown);
+                    //        io.emit('timer', { countdown: rfaCountdown });
+                    //    }
+                    //}, 1000);
                 }
                 else if(gvar.rfaDraft && gvar.matchShow){
-                    matchCountdown = gvar.matchTimer;
-                    io.emit('timer', { countdown: matchCountdown });
-                    matchInterval = setInterval(function() {
-                        if(matchCountdown===0){
-                            //don't do anything here either
-                            clearInterval(matchInterval);
-                            console.log('end');
-                            io.emit('finalMsg', {msg:'worked!'});
-                        }
-                        else{
-                            matchCountdown--;
-                            console.log(matchCountdown);
-                            io.emit('timer', { countdown: matchCountdown });
-                        }
-                    }, 1000);
+                    console.log('nothing');
+                    //matchCountdown = gvar.matchTimer;
+                    //io.emit('timer', { countdown: matchCountdown });
+                    //matchInterval = setInterval(function() {
+                    //    if(matchCountdown===0){
+                    //        //don't do anything here either
+                    //        clearInterval(matchInterval);
+                    //        console.log('end');
+                    //        io.emit('finalMsg', {msg:'worked!'});
+                    //    }
+                    //    else{
+                    //        matchCountdown--;
+                    //        console.log(matchCountdown);
+                    //        io.emit('timer', { countdown: matchCountdown });
+                    //    }
+                    //}, 1000);
                 }
                 else if(gvar.rookieDraft || gvar.snakeDraft){
                     pickCountdown = gvar.pickTimer;
@@ -73,7 +76,8 @@ var mongoose = require('mongoose'),
                             console.log('rookie wasnt drafted so autodrafting');
 
                             modDraftPlayer(gvar.upNext,0,gvar.drafter);
-                            modDraftOwner(gvar.upNext,gvar.drafter);
+                            //modDraftOwner(gvar.upNext,gvar.drafter);
+                            modHistory(gvar.drafter, 0, gvar.upNext);
                             //if(input.bidId!=null){
                             //    modDraftBid(input.bidId);
                             //}
@@ -136,7 +140,8 @@ var mongoose = require('mongoose'),
                                     console.log('********');
                                     console.log(bid);
                                     modDraftPlayer(bid.player,bid.price,bid.owner);
-                                    modDraftOwner(bid.player,bid.owner);
+                                    //modDraftOwner(bid.player,bid.owner);
+                                    modHistory(bid.owner, bid.price, bid.player);
                                     modDraftBid(bid._id);
                                     iterateDraft();
                                 }
@@ -201,32 +206,53 @@ var mongoose = require('mongoose'),
                     io.emit('updatePlayers', players);
                     console.log('updated player');
                 }
+            }).then(function(){
+                Owner.findById(ownerId).exec(function(err, owner) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        owner.keepRoster.push(playerId);
+                        owner.save();
+                    }
+                }).then(function(){
+                    //emit new bids to update everything
+                    Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            io.emit('updateOwners', owners);
+                            console.log('updated owner');
+                            //console.log(owners);
+                        }
+                    });
+                });
             });
         });
     };
 
     function modDraftOwner(playerId, ownerId){
-        console.log(ownerId);
-        console.log(playerId);
-        Owner.findById(ownerId).exec(function(err, owner) {
-            if (err) {
-                console.log(err);
-            } else {
-                owner.keepRoster.push(playerId);
-                owner.save();
-            }
-        }).then(function(){
-            //emit new bids to update everything
-            Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    io.emit('updateOwners', owners);
-                    console.log('updated owner');
-                    //console.log(owners);
-                }
-            });
-        });
+        console.log('still got one');
+        //console.log(ownerId);
+        //console.log(playerId);
+        //Owner.findById(ownerId).exec(function(err, owner) {
+        //    if (err) {
+        //        console.log(err);
+        //    } else {
+        //        owner.keepRoster.push(playerId);
+        //        owner.save();
+        //    }
+        //}).then(function(){
+        //    //emit new bids to update everything
+        //    Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+        //        if (err) {
+        //            console.log(err);
+        //        } else {
+        //            io.emit('updateOwners', owners);
+        //            console.log('updated owner');
+        //            //console.log(owners);
+        //        }
+        //    });
+        //});
     };
 
     function modDraftBid(bidId){
@@ -248,6 +274,59 @@ var mongoose = require('mongoose'),
             });
         });
     };
+
+    function modHistory(ownerId, price, playerId){
+        console.log('modding history');
+        var sampleUser, input={}, ownerName, playerName;
+        User.find().exec(function(err, users) {
+            if (err) {
+                console.log(err);
+            } else {
+                sampleUser=users[0]._id;
+                //console.log('mod1');
+                //console.log(sampleUser);
+            }
+        }).then(function(){
+            Player.findById(playerId).exec(function(err, player) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    playerName=player.name;
+                    //console.log('mod2');
+                    //console.log(playerName);
+                }
+            }).then(function(){
+                Owner.findById(ownerId).exec(function(err, owner) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        ownerName=owner.name;
+                    }
+                }).then(function(){
+                    input.owner=ownerName;
+                    input.price=price;
+                    input.player=playerName;
+                    input.user=sampleUser;
+                    input.name=playerName + '_' + ownerName;
+                    var hist = new Hist(input);
+                    console.log('mod3');
+                    console.log(hist);
+                    hist.save();
+                }).then(function(){
+                    Hist.find().sort('-created').exec(function(err, allHist) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log('history modded');
+                            //console.log(allHist);
+                            io.emit('updateHistory', allHist);
+                        }
+                    });
+                });
+            });
+        });
+    };
+
 
     function nominate (input){
         var bid=new Bid(input);
@@ -277,16 +356,16 @@ var mongoose = require('mongoose'),
                     io.emit('updateBids', bids);
                     console.log('updated bid');
                 }
+            }).then(function(){
+                allDraftTimer();
             });
-        }).then(function(){
-            allDraftTimer();
         });
     };
 
     function iterateDraft(){
         console.log('iterating draft');
         var gvar, upNext, endAuction=true, x, drafter, allOwners, testOwner, y, tester, startTimer=true, rgvar;
-        Gvar.find().exec(function(err, gvars) {
+        Gvar.find().populate('draftOrder', 'name').exec(function(err, gvars) {
             if (err) {
                 console.log(err);
             } else {
@@ -307,7 +386,8 @@ var mongoose = require('mongoose'),
                             console.log(player);
                         }
                     }).then(function(){
-                        gvar.drafter=gvar.draftOrder[gvar.draftPosition];
+                        gvar.drafter=gvar.draftOrder[gvar.draftPosition]._id;
+                        gvar.drafterName=gvar.draftOrder[gvar.draftPosition].name;
                         gvar.upNext=upNext;
                         gvar.save();
                         io.emit('updateGvar', gvar);
@@ -317,6 +397,7 @@ var mongoose = require('mongoose'),
                 }
                 else{
                     //end it
+                    stopAllDraftTimer();
                     gvar.drafter=null;
                     gvar.upNext=null;
                     gvar.drafterName='';
@@ -326,7 +407,7 @@ var mongoose = require('mongoose'),
                     gvar.save();
                     io.emit('updateGvar', gvar);
 
-                    console.log('end the rooke draft');
+                    console.log('end the rookie draft');
                 }
             }
             else if(gvar.auctionDraft){
@@ -385,6 +466,7 @@ var mongoose = require('mongoose'),
                     }
                     if(endAuction){
                         //end it
+                        stopAllDraftTimer();
                         gvar.drafter=null;
                         gvar.upNext=null;
                         gvar.bidShow=false;
@@ -433,7 +515,7 @@ var mongoose = require('mongoose'),
                         console.log('going through the list');
                         console.log(testOwner.name);
 
-                        if(testOwner.keepRoster.length<maxPlayers){
+                        if((testOwner.keepRoster.length+1)<maxPlayers){
                             Player.find({available: true}).sort('absRank').limit(1).exec(function(err, player) {
                                 if (err) {
                                     console.log(err);
@@ -444,7 +526,7 @@ var mongoose = require('mongoose'),
                             }).then(function(){
                                 gvar.drafterName=testOwner.name;
                                 gvar.drafter=gvar.pickOrder[gvar.draftPosition];
-                                gvar.nomShow=true;
+                                gvar.nomShow=false;
                                 gvar.upNext=upNext;
                                 gvar.save();
                                 io.emit('updateGvar', gvar);
@@ -457,6 +539,7 @@ var mongoose = require('mongoose'),
                     }
                     if(endAuction){
                         //end it
+                        stopAllDraftTimer();
                         gvar.drafter=null;
                         gvar.upNext=null;
                         gvar.bidShow=false;
@@ -651,9 +734,9 @@ var mongoose = require('mongoose'),
                         gvar.save();
                         io.emit('updateGvar', gvar);
                     }
+                }).then(function(){
+                    allDraftTimer();
                 });
-            }).then(function(){
-                allDraftTimer();
             });
         });
         socket.on('startAuctionDraft', function(){
@@ -744,13 +827,79 @@ var mongoose = require('mongoose'),
          * DRAFT STUFF
          **********/
         socket.on('draft', function(input){
-            modDraftPlayer(input.playerId,input.price,input.ownerId);
-            modDraftOwner(input.playerId,input.ownerId);
-            if(input.bidId!=null){
-                modDraftBid(input.bidId);
-            }
-            iterateDraft();
+            var playerId=input.playerId,
+                ownerId=input.ownerId,
+                price=input.price,
+                bidId=input.bidId;
+
+            Gvar.find().exec(function(err, bids) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('stopping time first');
+                    stopAllDraftTimer();
+                }
+            }).then(function(){
+                //&&&&
+                Player.findById(playerId).exec(function(err, player) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        player.price=price;
+                        player.owner=ownerId;
+                        player.available=false;
+                        player.save();
+                    }
+                }).then(function(){
+                    //emit new bids to update everything
+                    Player.find().populate('owner', 'name').exec(function(err, players) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            io.emit('updatePlayers', players);
+                            console.log('updated player');
+                        }
+                    }).then(function(){
+                        Owner.findById(ownerId).exec(function(err, owner) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                owner.keepRoster.push(playerId);
+                                owner.save();
+                            }
+                        }).then(function(){
+                            //emit new bids to update everything
+                            Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    io.emit('updateOwners', owners);
+                                    console.log('updated owner');
+                                    //console.log(owners);
+                                }
+                            }).then(function(){
+                                modHistory(ownerId, price, playerId);
+                                if(bidId!=null){
+                                    modDraftBid(bidId);
+                                }
+                                iterateDraft();
+                            });
+                        });
+                    });
+                });
+            });
         });
+        //.then(function(){
+        //    modDraftPlayer(input.playerId,input.price,input.ownerId);
+        //    //modDraftOwner(input.playerId,input.ownerId);
+        //    modHistory(input.ownerId, input.price, input.playerId);
+        //    if(input.bidId!=null){
+        //        modDraftBid(input.bidId);
+        //    }
+        //}).then(function(){
+        //    iterateDraft();
+        //});
+
 
         socket.on('endRfaMatch', function(){
             var x;
@@ -760,7 +909,8 @@ var mongoose = require('mongoose'),
                 } else {
                     for(x=0;x<bids.length;x++){
                         modDraftPlayer(bids[x].player,bids[x].price,bids[x].owner);
-                        modDraftOwner(bids[x].player,bids[x].owner);
+                        //modDraftOwner(bids[x].player,bids[x].owner);
+                        modHistory(bids[x].owner, bids[x].price, bids[x].player);
                         modDraftBid(bids[x]._id);
                     }
                 }
@@ -772,7 +922,17 @@ var mongoose = require('mongoose'),
             //create a bid
             //send it out
             //start the timer
-            nominate(input);
+            Gvar.find().exec(function(err, bids) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('stopping time first');
+                    stopAllDraftTimer();
+                }
+            }).then(function(){
+                nominate(input);
+            });
+
         });
 
         socket.on('executeBid', function(){
@@ -782,7 +942,8 @@ var mongoose = require('mongoose'),
                 } else {
                     var bid=bids[0];
                     modDraftPlayer(bid.player,bid.price,bid.owner);
-                    modDraftOwner(bid.player,bid.owner);
+                    //modDraftOwner(bid.player,bid.owner);
+                    modHistory(bid.owner, bid.price, bid.player);
                     modDraftBid(bid._id);
                     iterateDraft();
                 }
@@ -820,6 +981,8 @@ var mongoose = require('mongoose'),
                     console.log(err);
                 } else {
                     myOwner=owner;
+                    salary=myOwner.extraMoney;
+                    stopAllDraftTimer();
                 }
             }).then(function(){
                 Bid.find().exec(function(err, bids) {
@@ -827,13 +990,13 @@ var mongoose = require('mongoose'),
                         console.log(err);
                     } else {
                         allBids=bids;
-                        console.log('my Owner\n');
-                        console.log(myOwner);
+                        //console.log('my Owner\n');
+                        //console.log(myOwner);
                     }
                 }).then(function(){
                     //calculate the salary and num players
-                    console.log('all Bids\n');
-                    console.log(allBids);
+                    //console.log('all Bids\n');
+                    //console.log(allBids);
                     for(x=0;x<myOwner.keepRoster.length;x++){
                         //console.log(myOwner.keepRoster[x]);
                         salary+=myOwner.keepRoster[x].price;
@@ -841,18 +1004,28 @@ var mongoose = require('mongoose'),
                     }
                     for(y=0;y<allBids.length;y++){
                         if(allBids[y].owner==ownerId){
+                            console.log(allBids[y].player);
                             if(allBids[y]._id==bidId){
-                                salary+=newPrice;
+                                console.log('upping my own bid');
+                                //salary+=newPrice;
                             }
                             else{
+                                console.log('not my bid');
                                 console.log(allBids[y].price);
                                 salary+=allBids[y].price;
                             }
                             numPlayer++
                         }
                     }
-                    console.log('salary\n');
-                    console.log(salary);
+                    salary+=newPrice;
+                    numPlayer++;
+                    //console.log('salary');
+                    //console.log(salary);
+                    //console.log(typeof salary);
+                    //console.log(typeof salaryCap);
+                    //console.log(salary<=salaryCap);
+                    //
+                    //console.log(numPlayer);
                     if(salary<=salaryCap && numPlayer<=maxPlayers) {
                         Bid.findById(bidId).exec(function(err, bid) {
                             if (err) {
@@ -879,6 +1052,10 @@ var mongoose = require('mongoose'),
                     else{
                         console.log('validation failed')
                     }
+                }).then(function(){
+                    //iterateDraft();
+                    allDraftTimer();
+                    //###ADD IN SOMETHING TO RESET TIMER
                 });
             });
 
