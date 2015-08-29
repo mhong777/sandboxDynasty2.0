@@ -136,15 +136,70 @@ var mongoose = require('mongoose'),
                                     console.log(err);
                                 } else {
                                     bid=bids[0];
-                                    console.log(bids);
-                                    console.log('********');
+                                    //console.log(bids);
+                                    //console.log('********');
                                     console.log(bid);
-                                    modDraftPlayer(bid.player,bid.price,bid.owner);
-                                    //modDraftOwner(bid.player,bid.owner);
-                                    modHistory(bid.owner, bid.price, bid.player);
-                                    modDraftBid(bid._id);
-                                    iterateDraft();
+                                    //modDraftPlayer(bid.player,bid.price,bid.owner);
+                                    ////modDraftOwner(bid.player,bid.owner);
+                                    //modHistory(bid.owner, bid.price, bid.player);
+                                    //modDraftBid(bid._id);
+                                    //iterateDraft();
                                 }
+                            }). then(function(){
+                                //%%%%
+                                var playerId=bid.player,
+                                    price=bid.price,
+                                    ownerId=bid.owner;
+                                //function modDraftPlayer(playerId, price, ownerId){
+                                    Player.findById(playerId).exec(function(err, player) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            player.price=price;
+                                            player.owner=ownerId;
+                                            player.available=false;
+                                            player.save();
+                                        }
+                                    }).then(function(){
+                                        //emit new bids to update everything
+                                        Player.find().populate('owner', 'name').exec(function(err, players) {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                io.emit('updatePlayers', players);
+                                                console.log('updated player');
+                                            }
+                                        }).then(function(){
+                                            Owner.findById(ownerId).exec(function(err, owner) {
+                                                if (err) {
+                                                    console.log(err);
+                                                } else {
+                                                    owner.keepRoster.push(playerId);
+                                                    owner.save();
+                                                }
+                                            }).then(function(){
+                                                //emit new bids to update everything
+                                                Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    } else {
+                                                        io.emit('updateOwners', owners);
+                                                        console.log('updated owner');
+                                                        //console.log(owners);
+                                                    }
+                                                });
+                                            }).then(function(){
+                                                modDraftBid(bid._id);
+                                                iterateDraft();
+                                            });
+                                        });
+                                    });
+
+
+
+
+
+
                             });
                         }
                         else{

@@ -55,7 +55,7 @@
 							Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(myOwner.numPlayer>=gvar.maxPlayers)">
 							<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney">Submit Bid</button>
 							<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
-								<span class="errorMsg">You're roster is full - you're done</span>
+								<span class="errorMsg">Your roster is full - you're done</span>
 							</div>
 							<div ng-show="bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney) && gvar.salaryCap>myOwner.salary+myOwner.extraMoney">
 								<span class="errorMsg">Bid is too high</span>

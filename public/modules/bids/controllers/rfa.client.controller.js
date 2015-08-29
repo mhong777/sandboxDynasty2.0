@@ -274,10 +274,10 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 			if($scope.secs<10){
 				$scope.secs='0' + $scope.secs;
 			}
-			console.log($scope.secs);
-			console.log(typeof $scope.secs);
-			console.log($scope.mins);
-			console.log(typeof $scope.mins)
+			//console.log($scope.secs);
+			//console.log(typeof $scope.secs);
+			//console.log($scope.mins);
+			//console.log(typeof $scope.mins)
 			$scope.$digest();
 		});
 
