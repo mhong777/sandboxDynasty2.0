@@ -64,6 +64,9 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		$scope.changeDrafter = function(){
 			socket.emit('changeDrafter', $scope.drafter);
 		};
+		$scope.endRfa = function(){
+			socket.emit('endRfa');
+		};
 
 
 

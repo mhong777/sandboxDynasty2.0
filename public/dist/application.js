@@ -531,6 +531,9 @@ angular.module('core').controller('AdminPgController', [
     $scope.changeDrafter = function () {
       socket.emit('changeDrafter', $scope.drafter);
     };
+    $scope.endRfa = function () {
+      socket.emit('endRfa');
+    };
   }
 ]);'use strict';
 angular.module('core').controller('HeaderController', [
