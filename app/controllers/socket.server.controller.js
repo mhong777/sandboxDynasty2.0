@@ -186,16 +186,11 @@ var mongoose = require('mongoose'),
                                                 });
                                             }).then(function(){
                                                 modDraftBid(bid._id);
+                                                modHistory(ownerId, price, playerId);
                                                 iterateDraft();
                                             });
                                         });
                                     });
-
-
-
-
-
-
                             });
                         }
                         else{
@@ -629,7 +624,7 @@ var mongoose = require('mongoose'),
                         console.log(testOwner.name);
                         console.log(testOwner.keepRoster.length+1);
 
-                        if((testOwner.keepRoster.length+1)<maxPlayers){
+                        if((testOwner.keepRoster.length)<maxPlayers){
                             Player.find({available: true}).sort('absRank').limit(1).exec(function(err, player) {
                                 if (err) {
                                     console.log(err);
@@ -923,17 +918,18 @@ var mongoose = require('mongoose'),
                         gvar.rfaDraft=false;
                         gvar.auctionDraft=true;
                         gvar.snakeDraft=false;
-                        gvar.draftPosition=0;
+                        gvar.draftPosition=-1;
                         gvar.drafter=gvar.pickOrder[0]._id;
                         gvar.drafterName=gvar.pickOrder[0].name;
                         gvar.upNext=upNext;
                         gvar.headerMsg='Auction Draft';
 
                         gvar.save();
-                        io.emit('updateGvar', gvar);
+                        //io.emit('updateGvar', gvar);
                     }
                 }).then(function(){
-                    allDraftTimer();
+                    iterateDraft();
+                    //allDraftTimer();
                 });
             })
         });
@@ -961,7 +957,7 @@ var mongoose = require('mongoose'),
                         gvar.rfaDraft=false;
                         gvar.auctionDraft=false;
                         gvar.snakeDraft=true;
-                        gvar.draftPosition=0;
+                        gvar.draftPosition=-1;
                         gvar.drafter=gvar.pickOrder[0]._id;
                         gvar.drafterName=gvar.pickOrder[0].name;
                         gvar.upNext=upNext;
@@ -969,10 +965,11 @@ var mongoose = require('mongoose'),
 
 
                         gvar.save();
-                        io.emit('updateGvar', gvar);
+                        //io.emit('updateGvar', gvar);
                     }
                 }).then(function(){
-                    allDraftTimer();
+                    iterateDraft();
+                    //allDraftTimer();
                 });
             });
         });
