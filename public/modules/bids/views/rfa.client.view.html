@@ -104,7 +104,7 @@
 								<td>Years Owned</td>
 								</thead>
 								<tbody>
-								<tr ng-repeat="player in dispOwner.keepRoster">
+								<tr ng-repeat="player in dispOwner.keepRoster | orderBy: '-position'">
 									<td>{{player.name}}</td>
 									<td>{{player.position}}</td>
 									<td>{{player.team.name}}</td>
