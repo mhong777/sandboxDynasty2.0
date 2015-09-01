@@ -300,6 +300,8 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 									success(function(data, status){
 										console.log('changed the new one');
 										console.log(data);
+										$location.path('admin-players');
+										//admin-players
 									});
 							});
 

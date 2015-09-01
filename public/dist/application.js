@@ -1856,6 +1856,7 @@ angular.module('players').controller('PlayersController', [
             $http.put('/ownerChange', ownerReq).success(function (data, status) {
               console.log('changed the new one');
               console.log(data);
+              $location.path('admin-players');  //admin-players
             });
           });
         }
