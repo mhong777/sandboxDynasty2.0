@@ -81,7 +81,7 @@
 				<tab heading="Rosters">
 					<div class="row">
 						<div class="col-md-4">
-							<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)" ng-class="{doneDrafting: owner.numPlayer>=gvar.maxPlayers, drafting: owner._id==gvar.drafter, noMoney: (owner.salary>=gvar.salaryCap && owner.numPlayer<gvar.maxPlayers)}">
+							<a ng-repeat="owner in owners" class="list-group-item" ng-click="viewOwner(owner)" ng-class="{doneDrafting: owner.numPlayer>=gvar.maxPlayers, drafting: owner._id==gvar.drafter, noMoney: (owner.salary>=gvar.salaryCap && owner.numPlayer<gvar.maxPlayers), viewingOwner: dispOwner._id==owner._id}">
 								<b>{{owner.name}}</b><br/>
 								${{gvar.salaryCap - owner.salary}} left <br/>
 								{{gvar.maxPlayers - owner.numPlayer}} spots left
@@ -132,21 +132,21 @@
 							<div class="col-md-6">
 								Position:
 								<div class="btn-group" role="group" aria-label="bGroup1">
-									<button type="button" class="btn btn-default" ng-click="filters.position = ''">All</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'QB'">QB</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'RB'">RB</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'WR'">WR</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'TE'">TE</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'K'">K</button>
-									<button type="button" class="btn btn-default" ng-click="filters.position = 'D'">D</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position==''}" ng-click="filters.position = ''">All</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='QB'}" ng-click="filters.position = 'QB'">QB</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='RB'}" ng-click="filters.position = 'RB'">RB</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='WR'}" ng-click="filters.position = 'WR'">WR</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='TE'}" ng-click="filters.position = 'TE'">TE</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='K'}" ng-click="filters.position = 'K'">K</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.position=='D'}" ng-click="filters.position = 'D'">D</button>
 								</div>
 							</div>
 							<div class="col-md-6">
 								Availability:
 								<div class="btn-group" role="group" aria-label="bGroup2">
-									<button type="button" class="btn btn-default" ng-click="changeAvailable(1)">All</button>
-									<button type="button" class="btn btn-default" ng-click="changeAvailable(2)">Available</button>
-									<button type="button" class="btn btn-default" ng-click="changeAvailable(3)">Unavailable</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.available==''}" ng-click="changeAvailable(1)">All</button>
+									<button type="button" class="btn" ng-class="{drafting: filters.available}" ng-click="changeAvailable(2)">Available</button>
+									<!--<button type="button" class="btn" ng-class="{drafting: filters.available==false}" ng-click="changeAvailable(3)">Unavailable</button>-->
 								</div>
 							</div>
 						</div>

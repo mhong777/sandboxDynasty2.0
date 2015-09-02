@@ -21,7 +21,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		$scope.initialize = function(){
 			if(!Authentication){
 				console.log('need to log in first');
-				$location.path('/');
+				$location.path('/signin');
 			}
 			else{
 				$scope.salary=0;
@@ -50,7 +50,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				$scope.filters={};
 				$scope.filters.position='';
 				$scope.availableString='All Players';
-				$scope.filters.available='';
+				$scope.filters.available=true;
 				$scope.availableString='';
 				$scope.filters.rookie='';
 
@@ -58,10 +58,10 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				try{
 					$scope.user._id
 				}catch(e){
-					$location.path('/');
+					$location.path('/signin');
 				}
 				if($scope.user._id==null){
-					$location.path('/');
+					$location.path('/signin');
 				}
 
 				$http.get('/gvars').

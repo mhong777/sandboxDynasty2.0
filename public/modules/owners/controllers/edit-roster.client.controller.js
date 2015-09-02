@@ -5,7 +5,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		$scope.user = Authentication.user;
 		//$scope.keeperCap=175;
 		//$scope.totalCap=parseInt(300);
-		$scope.changeTime=1;
+		$scope.changeTime=0;
 		$scope.timeCheck=false;
 		$scope.rosterCheck=false;
 
