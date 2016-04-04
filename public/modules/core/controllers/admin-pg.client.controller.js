@@ -6,5 +6,14 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 			socket.emit('dumpPlayers');
 		};
 
+		$scope.ownerId=Authentication.user.ownerId;
+
+		console.log(Authentication);
+
+		$scope.testAsync=function(){
+			console.log($scope.ownerId);
+			socket.emit('testAsync', $scope.ownerId);
+		};
+
 	}
 ]);

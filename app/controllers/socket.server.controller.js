@@ -5,8 +5,26 @@ var mongoose = require('mongoose'),
     Player = mongoose.model('Player'),
 	User = mongoose.model('User'),
     Bid = mongoose.model('Bid'),
-	_ = require('lodash');
-    
+	_ = require('lodash'),
+    async = require("async");
+
+
+    function tfxn1(){
+        return function(callback){
+            console.log('function 1');
+            var something = 'function 2';
+            callback(null, something);
+        }
+    }
+
+    function tfxn2(something, callback){
+        return function(callback){
+            var somethingelse = function(){
+                console.log(something);
+            };
+            callback(err,somethingelse);
+        }
+    }
 
     var maxPlayers=22,
         salaryCap=300;
@@ -18,6 +36,46 @@ var mongoose = require('mongoose'),
             console.log(input);
             io.emit('test back', input);
         });
+
+
+        socket.on('testAsync', function(ownerId){
+           console.log('test async');
+            console.log(ownerId);
+            //async.waterfall([tfxn1, tfxn2],
+            async.waterfall([
+                //get an owner - pass the list of players
+                //lookup all of the players and print something
+                //log something
+
+                function(callback){
+                    console.log('this is function 1');
+                    var testVar1;
+                    Owner.findById(ownerId).populate('keepRoster', 'price').exec(function(err, owner) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            testVar1=owner;
+                        }
+                    })
+
+                    callback(null,testVar1);
+                },
+                function(testVar1, callback){
+                    console.log(testVar1);
+                    var testVar2 = 'a';
+                    callback(null, testVar2);
+                },
+                function(testVar2, callback){
+                    console.log(testVar2);
+                    callback(null, 'finish');
+                }
+
+            ],
+                function(error, success){
+                    console.log(success);
+                });
+        });
+
 
         /**********
          * MOD RFA BID
