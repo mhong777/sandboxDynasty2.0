@@ -5,7 +5,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		$scope.user = Authentication.user;
 		//$scope.keeperCap=175;
 		//$scope.totalCap=parseInt(300);
-		$scope.changeTime=1;
+		$scope.changeTime=0;
 		$scope.timeCheck=false;
 		$scope.rosterCheck=false;
 
@@ -30,9 +30,11 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 							success(function(data, status){
 								$scope.owner=data;
 							}).then(function(){
-								if($scope.user.ownerId!=$scope.owner._id){
+								if($scope.owner.myUser==$scope.user._id){
 									$scope.rosterCheck=true;
 								}
+								console.log($scope.user.ownerId);
+								console.log($scope.owner._id)
 								$scope.setData();
 							});
 					});
@@ -41,7 +43,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 
 		$scope.changeKeeper=function(player,status){
 			//check that the user owns the person first
-			if($scope.user.ownerId==$scope.owner._id && $scope.changeTime==1){
+			if($scope.rosterCheck && $scope.changeTime==1){
 				var req={};
 				req.status=status;
 				req.ownerId=$scope.owner._id;
@@ -83,7 +85,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			//console.log(($scope.rfaSalary+player.price + $scope.salary));
 			//console.log($scope.totalCap + $scope.owner.extraMoney);
 			//check that the user owns the person first
-			if($scope.user.ownerId==$scope.owner._id && $scope.changeTime==1){
+			if($scope.rosterCheck && $scope.changeTime==1){
 				var req={};
 				req.status=status;
 				req.ownerId=$scope.owner._id;
@@ -154,7 +156,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			//$scope.rfaSalary=parseFloat(rfaSalary.toFixed(1));
 
 
-			if($scope.owner._id==$scope.user.ownerId){
+			if($scope.rosterCheck){
 				$scope.errMsg=false;
 			}else{
 				$scope.errMsg=true;

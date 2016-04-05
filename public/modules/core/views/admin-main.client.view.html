@@ -1,45 +1,94 @@
-<section data-ng-controller="AdminPgController">
+<section data-ng-controller="AdminPgController" data-ng-init="findOwners()">
 	<h1>admin page</h1>
 
-	<h3>Initial Functions</h3>
-	<ul>
-		<!--<li><a href="#!/remove-owner">remove owner</a></li>-->
-		<li><a href="#!/assocplayer">associate players</a></li>
-		<li><a href="#!/batch-upload">batch upload</a></li>
-	</ul>
+	<div class="row">
+		<div class="col-md-4">
+			<h3>Initial Functions</h3>
+			<ul>
+				<!--<li><a href="#!/remove-owner">remove owner</a></li>-->
+				<li><a href="#!/assocplayer">associate players</a></li>
+				<li><a href="#!/batch-upload">batch upload</a></li>
+			</ul>
 
-	<h3>Players</h3>
-	<ul>
-		<li><a href="#!/players">list players</a></li>
-		<li><a href="#!/players/create">create a player</a></li>
-		<li><a href="#!/admin-players">admin list players</a></li>
-	</ul>
+			<h3>Players</h3>
+			<ul>
+				<li><a href="#!/players">list players</a></li>
+				<li><a href="#!/players/create">create a player</a></li>
+				<li><a href="#!/admin-players">admin list players</a></li>
+			</ul>
 
-	<h3>Owners</h3>
-	<ul>
-		<li><a href="#!/owners">list owners</a></li>
-		<li><a href="#!/owners/create">create an owner</a></li>
-	</ul>
+			<h3>Owners</h3>
+			<ul>
+				<li><a href="#!/owners">list owners</a></li>
+				<li><a href="#!/owners/create">create an owner</a></li>
+			</ul>
 
-	<h3>RFA</h3>
-	<ul>
-		<li><a href="#!/rfa">RFAs</a></li>
-	</ul>
-	<!--<button ng-click="dumpPlayers()" class="btn btn-default" type="button">Dump Players</button>-->
+			<h3>RFA</h3>
+			<ul>
+				<li><a href="#!/rfa">RFAs</a></li>
+			</ul>
+			<button ng-click="dumpPlayers()" class="btn btn-default" type="button">Dump Players</button>
 
-	<h3>Global Vars</h3>
-	<ul>
-		<li><a href="#!/gvars">list</a></li>
-		<li><a href="#!/gvars/create">create</a></li>
-	</ul>
+			<h3>Global Vars</h3>
+			<ul>
+				<li><a href="#!/gvars">list</a></li>
+				<li><a href="#!/gvars/create">create</a></li>
+			</ul>
 
-	<h3>Other pages</h3>
-	<ul>
-		<li><a href="#!/review-roster">Review roster</a></li>
-	</ul>
+			<h3>Other pages</h3>
+			<ul>
+				<li><a href="#!/review-roster">Review roster</a></li>
+			</ul>
+		</div>
+		<div class="col-md-8">
+			<div class="row">
+				<h3>Draft control panel</h3>
+				<h4>All Draft Functions</h4>
+				<div class="row">
+					<div class="col-md-6">
+						Pause the draft: <button ng-click="pauseTimer()" class="btn btn-default" type="button">Submit</button><br/><br/>
+						Restart the draft: <button ng-click="restartTimer()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					</div>
+					<div class="col-md-6">
+						<table>
+							<tr>
+								<td>Edit Drafter: </td>
+								<td><select ng-model="drafter" ng-options="owner.name for owner in owners track by owner.name"></select></td>
+							</tr>
+						</table>
+						{{drafter}}
+						<button ng-click="changeDrafter()" class="btn btn-default" type="button">Submit</button>
+					</div>
+				</div>
+				<hr/>
+				<div class="col-md-6">
+					<h4>RFA</h4>
+					Start the RFA Draft: <button ng-click="startRfaDraft()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					Start the RFA Match: <button ng-click="startRfaMatch()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					End the RFA Match: <button ng-click="endRfaMatch()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					End the RFA Draft: <button ng-click="endRfa()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					<h4>Rookie Draft</h4>
+					Start the Rookie Draft: <button ng-click="startRookieDraft()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					Iterate Rookie Draft: <button ng-click="iterate()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					End the Rookie Draft: <button ng-click="inbetweenDraft()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					<!--<h4>Timer</h4>-->
+					<!--Timer Example: <button ng-click="timeExample()" class="btn btn-default" type="button">Submit</button><br/><br/>-->
+					<!--Reset Time: <button ng-click="resetTime()" class="btn btn-default" type="button">Submit</button><br/><br/>-->
+					<!--Stop Time: <button ng-click="stopTime()" class="btn btn-default" type="button">Submit</button><br/><br/>-->
+				</div>
+				<div class="col-md-6">
+					<h4>Auction Draft</h4>
+					Start the Auction Draft: <button ng-click="startAuctionDraft()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					Execute Bid: <button ng-click="executeBid()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					Iterate Auction Draft: <button ng-click="iterate()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					End the Auction Draft: <button ng-click="inbetweenDraft()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					<h4>Snake Draft</h4>
+					Start the Snake Draft: <button ng-click="startSnake()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					Iterate Snake Draft: <button ng-click="iterate()" class="btn btn-default" type="button">Submit</button><br/><br/>
+					End the Snake Draft: <button ng-click="iterate()" class="btn btn-default" type="button">Submit</button><br/><br/>
 
-	<h3>Testing</h3>
-	<button class="btn btn-default" type="submit" ng-click="testAsync()">Test Async</button><br/>
-
-
+				</div>
+			</div>
+		</div>
+	</div>
 </section>

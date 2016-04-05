@@ -181,19 +181,19 @@ exports.ownerChange = function(req, res) {
 					for(x=0;x<owner.previousRoster.length;x++){
 						if(owner.previousRoster[x]==playerId){
 							owner.previousRoster.splice(x,1);
-							break;
+							//break;
 						}
 					}
 					for(x=0;x<owner.keepRoster.length;x++){
 						if(owner.keepRoster[x]==playerId){
 							owner.keepRoster.splice(x,1);
-							break;
+							//break;
 						}
 					}
 					for(x=0;x<owner.bidRoster.length;x++){
 						if(owner.bidRoster[x]==playerId){
 							owner.bidRoster.splice(x,1);
-							break;
+							//break;
 						}
 					}
 

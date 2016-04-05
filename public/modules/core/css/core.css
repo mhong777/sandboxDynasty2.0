@@ -32,7 +32,7 @@
 }
 
 .botMarg{
-	margin-bottom: 30px;
+	margin-bottom: 45px;
 }
 
 .timer{
@@ -44,3 +44,24 @@
 	border-color: red;
 	border-width: 6px;
 }
+
+.noMoney{
+	background-color: lightgoldenrodyellow;
+}
+
+.doneDrafting{
+	background-color: indianred;
+}
+
+.drafting{
+	background-color: palegreen;
+}
+
+.viewingOwner{
+	background-color: lightskyblue;
+}
+
+.modalFormat{
+	padding: 5% 15% 5% 15%;
+}
+

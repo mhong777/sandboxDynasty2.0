@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket', 'Players', '$timeout',
-	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket,Players, $timeout ) {
+angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', '$http', 'Bids', 'socket', 'Players', '$timeout', 'Hists',
+	function($scope, $stateParams, $location, Authentication, Owners, $http, Bids, socket,Players, $timeout, Hists) {
 
 		//INITIALIZE FUNCTION
 		// Find a list of Owners
@@ -21,31 +21,26 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		$scope.initialize = function(){
 			if(!Authentication){
 				console.log('need to log in first');
+				$location.path('/signin');
 			}
 			else{
-				var x,
-					salary= 0,
-					fxnOut,
-					numPlayer;
-
 				$scope.salary=0;
 				$scope.numPlayers;
-				$scope.onlyNumbers = /^\d+$/;
 
 				//should be in gvars
-				$scope.salaryCap=300;
-				$scope.maxPlayers=22;
+				//$scope.salaryCap=300;
+				//$scope.maxPlayers=22;
 
 				//for hiding everything
-				$scope.bidShow=true;
-				$scope.matchShow=true;
-				$scope.timerShow=true;
-				$scope.draftShow=true;
+				//$scope.bidShow=true;
+				//$scope.matchShow=true;
+				//$scope.timerShow=true;
+				//$scope.draftShow=true;
 
 				//for counter
-				$scope.counter=100;
-				$scope.mins = parseInt($scope.counter / 60);
-				$scope.secs = parseInt($scope.counter % 60);
+				//$scope.counter=100;
+				$scope.mins ='';
+				$scope.secs ='';
 				//$scope.countdown();
 
 				//Filter for finding players
@@ -55,39 +50,68 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				$scope.filters={};
 				$scope.filters.position='';
 				$scope.availableString='All Players';
-				$scope.filters.available='';
+				$scope.filters.available=true;
 				$scope.availableString='';
 				$scope.filters.rookie='';
 
-				$scope.ownerId=Authentication.user.ownerId;
+				$scope.user=Authentication.user;
+				try{
+					$scope.user._id
+				}catch(e){
+					$location.path('/signin');
+				}
+				if($scope.user._id==null){
+					$location.path('/signin');
+				}
 
-				$http.get('/bids').
+				$http.get('/gvars').
 					success(function(data, status){
-						$scope.bids=data;
+						$scope.gvar=data[0];
 					}).then(function(){
-						$http.get('/ownersAndPlayers').
+						if($scope.gvar.rookieDraft){
+							$scope.filters.rookie=true;
+						}
+						$http.get('/bids').
 							success(function(data, status){
-								$scope.owners=data;
+								$scope.bids=data;
 							}).then(function(){
-								for(x=0;x<$scope.owners.length;x++){
-									salary=0;
-									fxnOut=$scope.getSalary($scope.owners[x]);
-									salary=fxnOut[0];
-									numPlayer=fxnOut[1];
-									$scope.owners[x].salary=salary;
-									$scope.owners[x].numPlayer=numPlayer;
-									if($scope.owners[x]._id==$scope.ownerId){
-										$scope.salary=salary;
-										$scope.numPlayers=numPlayer;
-										$scope.myOwner=$scope.owners[x];
-										$scope.dispOwner=$scope.owners[x];
-									}
-								}
+								$http.get('/ownersAndPlayers').
+									success(function(data, status){
+										$scope.owners=data;
+									}).then(function(){
+										$scope.setMetrics();
+									});
+							}).then(function(){
+								$scope.players = Players.query();
+							}).then(function(){
+								$scope.hists = Hists.query();
 							});
-					}).then(function(){
-						$scope.players = Players.query();
 					});
 			}
+		};
+
+		$scope.setMetrics=function(){
+			console.log('setting metrics');
+			var x,
+				salary= 0,
+				fxnOut,
+				numPlayer;
+
+			for(x=0;x<$scope.owners.length;x++){
+				salary=0;
+				fxnOut=$scope.getSalary($scope.owners[x]);
+				salary=fxnOut[0];
+				numPlayer=fxnOut[1];
+				$scope.owners[x].salary=salary;
+				$scope.owners[x].numPlayer=numPlayer;
+				if($scope.owners[x].myUser==$scope.user._id){
+					$scope.salary=salary;
+					$scope.numPlayers=numPlayer;
+					$scope.myOwner=$scope.owners[x];
+					$scope.dispOwner=$scope.owners[x];
+				}
+			}
+			console.log($scope.gvar.salaryCap - $scope.myOwner.salary);
 		};
 
 		$scope.getSalary = function(owner){
@@ -99,11 +123,13 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				salary+=owner.keepRoster[x].price;
 				numPlayer++
 			}
-			for(x=0;x<$scope.bids.length;x++){
-				bid=$scope.bids[x];
-				if(bid.owner._id==owner._id){
-					salary+=bid.price;
-					numPlayer++
+			if($scope.gvar.rfaDraft){
+				for(x=0;x<$scope.bids.length;x++){
+					bid=$scope.bids[x];
+					if(bid.owner._id==owner._id){
+						salary+=bid.price;
+						numPlayer++
+					}
 				}
 			}
 			return [Math.ceil(salary),numPlayer];
@@ -146,11 +172,11 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 
 				salary=salary + bid.myBid;
 				numPlayers++
-				if(salary<=($scope.salaryCap + $scope.myOwner.extraMoney) && numPlayers<=$scope.maxPlayers){
+				if(salary<=($scope.gvar.salaryCap + $scope.myOwner.extraMoney) && numPlayers<=$scope.gvar.maxPlayers){
 					//send to socket - then update
 					var input={};
 					input.bid=bid;
-					input.owner=$scope.ownerId;
+					input.owner=$scope.myOwner._id;
 					socket.emit('modRfaBid', input);
 				}
 				else{
@@ -163,29 +189,95 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		};
 
 		$scope.matchBid=function(bid){
-			console.log(bid);
+			$scope.draft(bid.player._id, bid.price, bid._id);
 		};
 
+		$scope.draftRookie=function(rookie, playerId, price, bidId){
+			if(rookie){
+				$scope.draft(playerId, price, bidId);
+			}
+		};
+
+
+		//draft
+		$scope.draft=function(playerId, price, bidId){
+			var input={};
+			input.playerId=playerId;
+			input.ownerId=$scope.myOwner._id;
+			input.price=price;
+			input.bidId=bidId;
+			socket.emit('draft', input);
+		};
+
+		$scope.nominate=function(playerId, playerName){
+			var input={};
+			input.price=1;
+			input.player=playerId;
+			input.owner=$scope.myOwner._id;
+			input.user=$scope.user._id;
+			input.origOwner=null;
+			input.name='bid for ' + playerName;
+			socket.emit('nominate', input);
+			//console.log(input);
+		};
+
+		//other
+		socket.on('updatePlayers', function(input){
+			$scope.players=input;
+			$scope.$digest();
+			//console.log('update player');
+		});
+
+		socket.on('updateOwners', function(input){
+			$scope.owners=input;
+			$scope.setMetrics();
+			$scope.$digest();
+			//console.log('update owner');
+		});
+
+		socket.on('updateBids', function(input){
+			$scope.bids=input;
+			$scope.$digest();
+			//console.log('update bids');
+		});
+
+		socket.on('updateHistory', function(input){
+			$scope.hists=input;
+			$scope.$digest();
+		});
 
 		socket.on('updateRfa', function(input){
 			var x,salary, fxnOut,numPlayer;
 
 			//update the bid
 			$scope.bids=input;
+			$scope.setMetrics();
 	        //console.log(input);
-			for(x=0;x<$scope.owners.length;x++){
-				salary=0;
-				fxnOut=$scope.getSalary($scope.owners[x]);
-				salary=fxnOut[0];
-				numPlayer=fxnOut[1];
-				$scope.owners[x].salary=salary;
-				$scope.owners[x].numPlayer=numPlayer;
-				if($scope.owners[x]._id==$scope.ownerId){
-					$scope.salary=salary;
-					$scope.numPlayers=numPlayer;
-					$scope.myOwner=$scope.owners[x];
-				}
+			$scope.$digest();
+		});
+
+		socket.on('updateGvar', function(input){
+			$scope.gvar=input;
+			if($scope.gvar.rookieDraft){
+				$scope.filters.rookie=true;
 			}
+			else{
+				$scope.filters.rookie='';
+			}
+			$scope.$digest();
+		});
+
+		socket.on('timer', function(input){
+			//console.log(input.countdown);
+			$scope.mins = parseInt(input.countdown / 60);
+			$scope.secs = parseInt(input.countdown % 60);
+			if($scope.secs<10){
+				$scope.secs='0' + $scope.secs;
+			}
+			//console.log($scope.secs);
+			//console.log(typeof $scope.secs);
+			//console.log($scope.mins);
+			//console.log(typeof $scope.mins)
 			$scope.$digest();
 		});
 

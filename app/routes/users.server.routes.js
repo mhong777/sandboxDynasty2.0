@@ -13,6 +13,9 @@ module.exports = function(app) {
 	app.route('/users/password').post(users.changePassword);
 	app.route('/users/accounts').delete(users.removeOAuthProvider);
 
+	app.route('/users/ownerUpdate')
+		.put(users.updateUserOwner);
+
 	app.route('/allUsers')
 		.get(users.allUsers);
 

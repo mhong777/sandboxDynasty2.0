@@ -1,8 +1,8 @@
 'use strict';
 
 // Gvars controller
-angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars', 'Owners',
-	function($scope, $stateParams, $location, Authentication, Gvars, Owners) {
+angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Gvars', 'Owners', 'socket',
+	function($scope, $stateParams, $location, Authentication, Gvars, Owners, socket) {
 		$scope.authentication = Authentication;
 
 		// Create new Gvar
@@ -56,6 +56,8 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			$scope.gvars = Gvars.query();
 		};
 
+
+		//ROOKIE DRAFT ORDER
 		$scope.startDraftOrder = function(){
 			var x;
 			x= $scope.gvar.draftOrder;
@@ -70,6 +72,21 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			$scope.gvar.draftOrder.splice(index,1,pick._id);
 		};
 
+		//OTHER DRAFT ORDER
+		$scope.startpickOrder = function(){
+			var x;
+			x= $scope.gvar.pickOrder;
+			$scope.pickDraft=x;
+		};
+
+		$scope.addPick = function(){
+			$scope.pickDraft.push(null);
+		};
+
+		$scope.changePick=function(index,pick){
+			$scope.gvar.pickOrder.splice(index,1,pick._id);
+		};
+
 		// Find existing Gvar
 		$scope.findOne = function() {
 			$scope.gvar = Gvars.get({
@@ -77,6 +94,12 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			});
 			$scope.owners = Owners.query();
 			$scope.draft;
+			$scope.draftTimer=0;
 		};
+
+		$scope.startTimer=function(){
+			socket.emit('startTimer', $scope.draftTimer);
+		};
+
 	}
 ]);

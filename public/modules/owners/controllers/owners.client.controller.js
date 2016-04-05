@@ -44,44 +44,43 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 
 		// Update existing Owner
 		$scope.update = function() {
-			if($scope.oldUser!=$scope.owner.myUser){
-				//de-associate the old user
-				$scope.deassociateUser;
-				var user;
-				for(var x=0;x<$scope.allUsers.length;x++){
-					if($scope.allUsers[x]._id==$scope.oldUser){
-						$scope.deassociateUser=$scope.allUsers[x];
-						$scope.deassociateUser.ownerId=null;
-						break;
-					}
-				}
+			//if($scope.oldUser!=$scope.owner.myUser){
+			//	//de-associate the old user
+			//	$scope.deassociateUser;
+			//	var user;
+			//	for(var x=0;x<$scope.allUsers.length;x++){
+			//		if($scope.allUsers[x]._id==$scope.oldUser){
+			//			$scope.deassociateUser=$scope.allUsers[x];
+			//			$scope.deassociateUser.ownerId=null;
+			//			$http.put('/users',$scope.deassociateUser).
+			//				success(function(data, status){
+			//					console.log('deassociated user');
+			//					console.log(data);
+			//				});
+			//			break;
+			//		}
+			//	}
+			//}
+			var owner = $scope.owner, req={};
 
-				console.log($scope.deassociateUser);
-				console.log($scope.associateUser);
-
-				$http.put('/users',$scope.deassociateUser).
-					success(function(data, status){
-						console.log('updated one user');
-						console.log(data);
-					}).then(function(){
-						//associate new user
-						$http.put('/users',$scope.associateUser).
-							success(function(data, status){
-								console.log('updated second user');
-								console.log(data);
-							});
-					});
-
-			}
-
-
-			var owner = $scope.owner ;
+			//req.user=$scope.associateUser;
+			//$http.put('/users/ownerUpdate',req).
+			//	success(function(data, status){
+			//		console.log('associate user');
+			//		console.log(data);
+			//	}). then(function(){
+            //
+			//	});
 
 			$http.put('/owners/'+owner._id,owner).
 				success(function(data, status){
 					console.log('owner data');
 					console.log(data);
+				}).then(function(){
+					$location.path('owners');
 				});
+
+
 
 
 		};

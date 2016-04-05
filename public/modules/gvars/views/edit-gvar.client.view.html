@@ -1,7 +1,9 @@
 <section data-ng-controller="GvarsController" data-ng-init="findOne()">
     <div class="page-header">
         <h1>Edit Gvar</h1>
+        <button class="btn btn-default" type="button" ng-click="remove(gvar)">Delete</button>
     </div>
+
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
@@ -18,24 +20,34 @@
                             matchShow: <input type="checkbox" data-ng-model="gvar.matchShow" id="matchShow" class="form-control" required>
                             timerShow: <input type="checkbox" data-ng-model="gvar.timerShow" id="timerShow" class="form-control" required>
                             draftShow: <input type="checkbox" data-ng-model="gvar.draftShow" id="draftShow" class="form-control" required>
+                            nomShow: <input type="checkbox" data-ng-model="gvar.nomShow" id="nomShow" class="form-control" required>
+                            rookieDraft: <input type="checkbox" data-ng-model="gvar.rookieDraft" id="rookieDraft" class="form-control" required>
                         </div>
                         <div class="col-md-2">
                             salaryCap: <input type="number" data-ng-model="gvar.salaryCap" id="salaryCap" class="form-control" placeholder="0" required>
                             keeperCap: <input type="number" data-ng-model="gvar.keeperCap" id="keeperCap" class="form-control" placeholder="0" required>
                             maxPlayers: <input type="number" data-ng-model="gvar.maxPlayers" id="maxPlayers" class="form-control" placeholder="0" required>
-                            timer: <input type="number" data-ng-model="gvar.timer" id="timer" class="form-control" placeholder="0" required>
+                            <h4>Timers</h4>
+                            rfaTimer: <input type="number" data-ng-model="gvar.rfaTimer" id="rfaTimer" class="form-control" placeholder="0" required>
+                            matchTimer: <input type="number" data-ng-model="gvar.matchTimer" id="matchTimer" class="form-control" placeholder="0" required>
                             pickTimer: <input type="number" data-ng-model="gvar.pickTimer" id="pickTimer" class="form-control" placeholder="0" required>
+                            nomTimer: <input type="number" data-ng-model="gvar.nomTimer" id="nomTimer" class="form-control" placeholder="0" required>
                             bidTimer: <input type="number" data-ng-model="gvar.bidTimer" id="bidTimer" class="form-control" placeholder="0" required>
                         </div>
                         <div class="col-md-4">
-                            <b>upNext: </b> {{gvar.upNext}}
-                            <!--<select ng-model="gvar.upNext" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft($index,pick)"></select>-->
-                            <br/>
-                            <h4>draftOrder:</h4>
+                            <b>upNext: </b> {{gvar.upNext}}<br/>
+                            headerMsg: <input type="text" data-ng-model="gvar.headerMsg" id="headerMsg" class="form-control" placeholder="" required><br/>
+                            <h4>rookie draftOrder:</h4>
                             <button class="btn btn-default" type="button" ng-click="startDraftOrder()">Start</button>
                             <button class="btn btn-default" type="button" ng-click="addDraft()">Add New</button><br/><br/>
                             <div ng-repeat="pick in draft track by $index">
                                 {{$index+1}}: <select ng-model="pick" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft($index,pick)"></select>: {{pick}}
+                            </div>
+                            <h4>other pickOrder</h4>
+                            <button class="btn btn-default" type="button" ng-click="startpickOrder()">Start</button>
+                            <button class="btn btn-default" type="button" ng-click="addPick()">Add New</button><br/><br/>
+                            <div ng-repeat="picker in pickDraft track by $index">
+                                {{$index+1}}: <select ng-model="picker" ng-options="owner.name for owner in owners track by owner._id" ng-change="changePick($index,picker)"></select>: {{picker}}
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -66,4 +78,5 @@
             </fieldset>
         </form>
     </div>
+    {{gvar}}
 </section>
