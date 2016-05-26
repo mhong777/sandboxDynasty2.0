@@ -18,24 +18,6 @@ angular.module('owners').controller('assocPlayerController', ['$scope', '$stateP
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
         /***
         ***INITIALIZATION

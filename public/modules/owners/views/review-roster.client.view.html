@@ -30,7 +30,8 @@
 				</thead>
 				<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
 					<td>{{owner.name}}</td>
-					<td>${{gvar.salaryCap - owner.salary + owner.extraMoney}}</td>
+					<td>
+						${{(gvar.salaryCap*10 - owner.salary*10 + owner.extraMoney*10)/10}}</td>
 					<td>{{owner.keepRoster.length}}</td>
 					<td>{{owner.bidRoster.length}}</td>
 				</tr>

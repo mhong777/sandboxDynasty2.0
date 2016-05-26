@@ -7,13 +7,16 @@ var mongoose = require('mongoose'),
     Bid = mongoose.model('Bid'),
     Hist = mongoose.model('Hist'),
     Gvar = mongoose.model('Gvar'),
+    async = require('async'),
 	_ = require('lodash');
+
+
     function tfxn1(){
         return function(callback){
             console.log('function 1');
             var something = 'function 2';
             callback(null, something);
-        }
+        };
     }
 
     function tfxn2(something, callback){
@@ -22,7 +25,18 @@ var mongoose = require('mongoose'),
                 console.log(something);
             };
             callback(err,somethingelse);
-        }
+        };
+    }
+
+    function seriesFxn(playerId, callback){
+        Player.findById(playerId).exec(function(err, player) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(player);
+                callback();
+            }
+        });
     }
 
     var maxPlayers=22,
@@ -216,7 +230,7 @@ var mongoose = require('mongoose'),
                 }
             }
         });
-    };
+    }
 
     function resetAllDraftTimer(){
         console.log('reset');
@@ -232,7 +246,7 @@ var mongoose = require('mongoose'),
 
             }
         });
-    };
+    }
 
     function stopAllDraftTimer(){
         clearInterval(rfaInterval);
@@ -240,7 +254,7 @@ var mongoose = require('mongoose'),
         clearInterval(pickInterval);
         clearInterval(nomInterval);
         clearInterval(bidInterval);
-    };
+    }
 
     /**********
      * DRAFT FUNCTIONS
@@ -297,7 +311,7 @@ var mongoose = require('mongoose'),
                 });
             });
         });
-    };
+    }
 
     //.then(function(){
     //    modHistory(ownerId, price, playerId);
@@ -349,7 +363,7 @@ var mongoose = require('mongoose'),
                 });
             });
         });
-    };
+    }
 
     function modDraftOwner(playerId, ownerId){
         console.log('still got one');
@@ -374,7 +388,7 @@ var mongoose = require('mongoose'),
         //        }
         //    });
         //});
-    };
+    }
 
     function modDraftBid(bidId){
         Bid.findById(bidId).exec(function(err, bid) {
@@ -395,7 +409,7 @@ var mongoose = require('mongoose'),
                 }
             });
         });
-    };
+    }
 
     function modHistory(ownerId, price, playerId){
         console.log('modding history');
@@ -447,7 +461,7 @@ var mongoose = require('mongoose'),
                 });
             });
         });
-    };
+    }
 
 
     function nominate (input){
@@ -482,7 +496,7 @@ var mongoose = require('mongoose'),
                 allDraftTimer();
             });
         });
-    };
+    }
 
     function iterateDraft(){
         console.log('iterating draft');
@@ -541,7 +555,7 @@ var mongoose = require('mongoose'),
                     console.log(gvar.pickOrder);
                     console.log(allOwners);
                     for (x=0;x<gvar.pickOrder.length;x++){
-                        gvar.draftPosition++
+                        gvar.draftPosition++;
                         if(gvar.draftPosition>=gvar.pickOrder.length){
                             gvar.draftPosition=0;
                         }
@@ -615,7 +629,7 @@ var mongoose = require('mongoose'),
                     console.log(gvar.pickOrder);
                     console.log(allOwners);
                     for (x=0;x<gvar.pickOrder.length+1;x++){
-                        gvar.draftPosition++
+                        gvar.draftPosition++;
                         if(gvar.draftPosition>=gvar.pickOrder.length){
                             gvar.draftPosition=0;
                         }
@@ -681,14 +695,14 @@ var mongoose = require('mongoose'),
                 });
             }
         });
-    };
+    }
 
     function checkAuctionOwner(testOwner){
         var x, salary= 0, numPlayer=0;
         for(x=0;x<testOwner.keepRoster.length;x++){
             //console.log(myOwner.keepRoster[x]);
             salary+=testOwner.keepRoster[x].price;
-            numPlayer++
+            numPlayer++;
         }
         salary=Math.ceil(salary);
         console.log(testOwner.name);
@@ -702,7 +716,7 @@ var mongoose = require('mongoose'),
             console.log('found false');
             return false;
         }
-    };
+    }
 
 
     /************
@@ -731,13 +745,139 @@ var mongoose = require('mongoose'),
                 io.emit('updateGvar', gvar);
             }
         });
-    };
+    }
 
+    function movePlayers(owner, callback){
+        var x=0;
+        for(x=0;x<owner.keepRoster.length;x++){
+            owner.previousRoster.push(owner.keepRoster[x]);
+        }
 
+        for(x=0;x<owner.bidRoster.length;x++){
+            owner.previousRoster.push(owner.bidRoster[x]);
+        }
+
+        //console.log(owner);
+        owner.keepRoster.splice(0,owner.keepRoster.length);
+        owner.bidRoster.splice(0,owner.bidRoster.length);
+        owner.save();
+        callback();
+    }
+
+    function changePrices(){
+        Player.find().exec(function(err, players){
+            if(err){
+                console.log(err);
+            } else{
+                //console.log(players);
+                async.eachSeries(players,newPlayerPrices, function(){
+                    console.log('finished');
+                })
+            }
+        });
+    }
+
+    function newPlayerPrices(player, callback){
+        //console.log(player.price);
+        player.price=Math.round(player.price*1.1*10)/10;
+        player.yearsOwned=player.yearsOwned+1;
+        player.rookie=false;
+        //console.log(player.price);
+        player.save();
+        callback();
+    }
+
+    /*^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^*/
 
 
     io.on('connection', function(socket){
         socket.broadcast.emit('user connected');
+
+        socket.on('startNewSeason',function(){
+            async.waterfall([
+                    function(callback){
+                        changePrices();
+                        var testVar1='finish1';
+                        callback(null,testVar1);
+                    },
+                    function(testVar1, callback){
+                        console.log(testVar1);
+                        Owner.find().exec(function(err, owners){
+                            if(err){
+                                console.log(err);
+                            } else{
+                                //console.log(players);
+                                async.eachSeries(owners,movePlayers, function(){
+                                    console.log('finished');
+                                })
+                            }
+                        });
+                        callback(null, 'finish');
+                    }
+                ],
+                function(error, success){
+                    console.log(success);
+                });
+        });
+
+        socket.on('roundPrices', function(){
+           Player.find().exec(function(err, players){
+              if(err){
+                  console.log(err);
+              } else{
+                //console.log(players);
+                  async.eachSeries(players,roundPlayerPrices, function(){
+                      console.log('finished');
+                  })
+              }
+           });
+        });
+
+
+
+        /****
+         * ASYNC
+         ****/
+        socket.on('testAsync', function(ownerId){
+            console.log('test async');
+            console.log(ownerId);
+            var testVar1;
+
+            async.waterfall([
+                function(callback){
+                    console.log('this is function 1');
+                    Owner.find({'myUser':ownerId}).exec(function(err, owners) {
+                            if (err) {
+                                    console.log(err);
+                            } else {
+                                console.log(owners);
+                                testVar1=owners;
+                                callback(null,testVar1);
+                            }
+                        });
+                    },
+                function(testVar1, callback){
+                    console.log(testVar1[0].previousRoster);
+
+                    async.eachSeries(testVar1[0].previousRoster, seriesFxn, function(){
+                        var testVar2 = 'a';
+                        console.log('finish with all of the players')
+                        callback(null, testVar2);
+                    });
+
+                },
+                function(testVar2, callback){
+                        console.log(testVar2);
+                        callback(null, 'finish');
+                    }
+
+            ],
+            function(error, success){
+                    console.log(success);
+            });
+        });
+
         
         socket.on('test msg', function(input){
             console.log(input);
@@ -1284,7 +1424,7 @@ var mongoose = require('mongoose'),
                     for(x=0;x<myOwner.keepRoster.length;x++){
                         //console.log(myOwner.keepRoster[x]);
                         salary+=myOwner.keepRoster[x].price;
-                        numPlayer++
+                        numPlayer++;
                     }
                     for(y=0;y<allBids.length;y++){
                         if(allBids[y].owner==ownerId){
@@ -1298,7 +1438,7 @@ var mongoose = require('mongoose'),
                                 console.log(allBids[y].price);
                                 salary+=allBids[y].price;
                             }
-                            numPlayer++
+                            numPlayer++;
                         }
                     }
                     salary+=newPrice;
@@ -1395,7 +1535,7 @@ var mongoose = require('mongoose'),
                             owner.save();
 
                             for(z=0;z<owner.bidRoster.length;z++){
-                                counter++
+                                counter++;
                                 bidPlayer=owner.bidRoster[z];
                                 //initialize bids
                                 var bidInput={};

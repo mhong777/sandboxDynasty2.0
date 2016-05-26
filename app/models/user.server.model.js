@@ -49,10 +49,10 @@ var UserSchema = new Schema({
 	//	validate: [validateLocalStrategyProperty, 'Please fill in your email'],
 	//	match: [/.+\@.+\..+/, 'Please fill a valid email address']
 	//},
-	ownerId:{
-		type:Schema.ObjectId,
-		ref:'Owner'
-	},
+	//ownerId:{
+	//	type:Schema.ObjectId,
+	//	ref:'Owner'
+	//},
 
 	username: {
 		type: String,

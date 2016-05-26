@@ -50,5 +50,18 @@ angular.module('owners').controller('MyplayersController', ['$scope', '$statePar
             socket.emit('unchoosePlayer', input);
         };
 
-	}
+
+        //filter by position
+        $scope.addFilter=function(position){
+            $scope.filters.position.push(position);
+        };
+
+        $scope.listFilter = function (position) {
+            return function (list) {
+                return list.position.match(position);
+            };
+        };
+
+
+    }
 ]);

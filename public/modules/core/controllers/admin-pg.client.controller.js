@@ -2,6 +2,22 @@
 
 angular.module('core').controller('AdminPgController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', 'Players', 'socket', '$http',
 	function($scope, $stateParams, $location, Authentication, Owners, Players, socket, $http ) {
+		$scope.testAsync=function(){
+			//alert('hi');
+			console.log(Authentication.user._id);
+
+			//socket.emit('roundPrices');
+
+			socket.emit('startNewSeason');
+
+			//socket.emit('testAsync', Authentication.user._id);
+			//socket.emit('test msg', $scope.ownerId);
+		};
+
+		//console.log($scope.ownerId);
+		//socket.emit('testAsync', $scope.ownerId);
+
+
 		$scope.dumpPlayers=function(){
 			socket.emit('dumpPlayers');
 		};
@@ -48,6 +64,7 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 			socket.emit('stopTime');
 		};
 		$scope.pauseTimer=function(){
+			console.log('blah');
 			socket.emit('pauseTimer');
 		};
 		$scope.restartTimer=function(){
@@ -67,18 +84,5 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		$scope.endRfa = function(){
 			socket.emit('endRfa');
 		};
-
-
-
-
-		$scope.ownerId=Authentication.user.ownerId;
-
-		console.log(Authentication);
-
-		$scope.testAsync=function(){
-			console.log($scope.ownerId);
-			socket.emit('testAsync', $scope.ownerId);
-		};
-
 	}
 ]);

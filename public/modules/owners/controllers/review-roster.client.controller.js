@@ -44,16 +44,18 @@ angular.module('owners').controller('ReviewRosterController', ['$scope', '$state
 		};
 
 
-
 		$scope.getSalary = function(owner){
-			var x= 0,
-				salary=0;
 
+			var salary= 0,
+				x;
 			for(x=0;x<owner.keepRoster.length;x++){
-				salary+=owner.keepRoster[x].price;
+				//console.log(salary);
+				//console.log(typeof owner.keepRoster[x].price);
+				salary= ((salary*10) + (owner.keepRoster[x].price*10))/10;
+				console.log(owner.keepRoster[x].price + ' ' + salary);
 			}
-
-			return salary.toFixed(2);
+			return salary;
+			//return salary.toFixed(2);
 		};
 
 
