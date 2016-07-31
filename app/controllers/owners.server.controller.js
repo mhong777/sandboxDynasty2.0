@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	Owner = mongoose.model('Owner'),
 	Player = mongoose.model('Player'),
+	async = require('async'),
 	_ = require('lodash');
 
 /**
@@ -86,9 +87,16 @@ exports.batchAddPlayer = function(req, res) {
 			console.log(err);
 		} else {
 			owner.previousRoster.push(stuff.playerId);
-			owner.save();
-			console.log('player added\n' + owner);
-			res.jsonp(owner);
+			owner.save(function(err) {
+				if (err) {
+					return res.send(400, {
+						message: getErrorMessage(err)
+					});
+				} else {
+					console.log('player added\n' + owner);
+					res.jsonp(owner);
+				}
+			});
 		}
 	});
 
@@ -196,16 +204,29 @@ exports.ownerChange = function(req, res) {
 							//break;
 						}
 					}
-
-					owner.save();
-					console.log('old owner changed');
-					res.jsonp(owner);
+					owner.save(function(err) {
+						if (err) {
+							return res.send(400, {
+								message: getErrorMessage(err)
+							});
+						} else {
+							console.log('old owner changed');
+							res.jsonp(owner);
+						}
+					});
 				}else{
 					//just add the owner
 					owner.previousRoster.push(playerId);
-					owner.save();
-					console.log('new owner changed');
-					res.jsonp(owner);
+					owner.save(function(err) {
+						if (err) {
+							return res.send(400, {
+								message: getErrorMessage(err)
+							});
+						} else {
+							console.log('new owner changed');
+							res.jsonp(owner);
+						}
+					});
 				}
 			}
 		});
@@ -222,46 +243,69 @@ exports.changeKeeper = function(req, res) {
 		playerId=req.body.playerId,
 		x;
 
-	Owner.findById(ownerId).exec(function(err, owner) {
-		if (err) {
-			console.log(err);
-		} else {
-			if(status==1){
-				console.log('add');
-				//add a player to keepRoster
-				owner.keepRoster.push(playerId);
-				//remove a player from previousRoster
-				for(x=0;x<owner.previousRoster.length;x++){
-					if(owner.previousRoster[x]==playerId){
-						owner.previousRoster.splice(x,1);
-						break;
+	//waterfall
+	//1 - move the player
+	//2 - find updated and send back
+
+	async.waterfall([
+			function(callback){
+				Owner.findById(ownerId).exec(function(err, owner) {
+					if (err) {
+						console.log(err);
+					} else {
+						if(status==1){
+							console.log('add');
+							//add a player to keepRoster
+							owner.keepRoster.push(playerId);
+							//remove a player from previousRoster
+							for(x=0;x<owner.previousRoster.length;x++){
+								if(owner.previousRoster[x]==playerId){
+									owner.previousRoster.splice(x,1);
+									break;
+								}
+							}
+						}else{
+							console.log('remove');
+							//add a player to keepRoster
+							owner.previousRoster.push(playerId);
+							//remove a player from previousRoster
+							for(x=0;x<owner.keepRoster.length;x++){
+								if(owner.keepRoster[x]==playerId){
+									owner.keepRoster.splice(x,1);
+									break;
+								}
+							}
+						}
+						owner.save(function(err) {
+							if (err) {
+								return res.send(400, {
+									message: getErrorMessage(err)
+								});
+							} else {
+								//console.log(owner.previousRoster.length + ' - ' + owner.keepRoster.length);
+								var testVar1 = 'changed the roster';
+								callback(null,testVar1);
+							}
+						});
 					}
-				}
-			}else{
-				console.log('remove');
-				//add a player to keepRoster
-				owner.previousRoster.push(playerId);
-				//remove a player from previousRoster
-				for(x=0;x<owner.keepRoster.length;x++){
-					if(owner.keepRoster[x]==playerId){
-						owner.keepRoster.splice(x,1);
-						break;
+				});
+			},
+			function(testVar1, callback){
+				//change the player
+				Owner.findById(ownerId).populate('previousRoster').populate('bidRoster').populate('keepRoster').exec(function(err, owner) {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(owner.previousRoster.length + ' - ' + owner.keepRoster.length);
+						res.jsonp(owner);
+						callback(null, 'sending back data');
 					}
-				}
+				});
 			}
-			owner.save();
-			console.log('after\n' + owner);
-		}
-	}).then(function(){
-		//change the player
-		Owner.findById(ownerId).populate('previousRoster').populate('bidRoster').populate('keepRoster').exec(function(err, owner) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.jsonp(owner);
-			}
+		],
+		function(error, success){
+			console.log('moved player');
 		});
-	});
 };
 
 /**
@@ -273,53 +317,76 @@ exports.changeBidee = function(req, res) {
 		playerId=req.body.playerId,
 		x;
 
-	Owner.findById(ownerId).exec(function(err, owner) {
-		if (err) {
-			console.log(err);
-		} else {
-			if(status==1){
-				console.log('add');
-				//add a player to keepRoster
-				owner.bidRoster.push(playerId);
-				//remove a player from previousRoster
-				for(x=0;x<owner.previousRoster.length;x++){
-					if(owner.previousRoster[x]==playerId){
-						owner.previousRoster.splice(x,1);
-						break;
+	//waterfall
+	//1 - move the player
+	//2 - find updated and send back
+
+	async.waterfall([
+			function(callback){
+				Owner.findById(ownerId).exec(function(err, owner) {
+					if (err) {
+						console.log(err);
+					} else {
+						if(status==1){
+							console.log('add');
+							//add a player to keepRoster
+							owner.bidRoster.push(playerId);
+							//remove a player from previousRoster
+							for(x=0;x<owner.previousRoster.length;x++){
+								if(owner.previousRoster[x]==playerId){
+									owner.previousRoster.splice(x,1);
+									break;
+								}
+							}
+						}else{
+							console.log('remove');
+							//add a player to keepRoster
+							owner.previousRoster.push(playerId);
+							//remove a player from previousRoster
+							for(x=0;x<owner.bidRoster.length;x++){
+								if(owner.bidRoster[x]==playerId){
+									owner.bidRoster.splice(x,1);
+									break;
+								}
+							}
+						}
+						owner.save(function(err) {
+							if (err) {
+								return res.send(400, {
+									message: getErrorMessage(err)
+								});
+							} else {
+								console.log(owner.previousRoster.length + ' - ' + owner.bidRoster.length);
+								var testVar1 = 'changed the roster';
+								callback(null,testVar1);
+							}
+						});
 					}
-				}
-			}else{
-				console.log('remove');
-				//add a player to keepRoster
-				owner.previousRoster.push(playerId);
-				//remove a player from previousRoster
-				for(x=0;x<owner.bidRoster.length;x++){
-					if(owner.bidRoster[x]==playerId){
-						owner.bidRoster.splice(x,1);
-						break;
+				});
+			},
+			function(testVar1, callback){
+				//change the player
+				Owner.findById(ownerId).populate('previousRoster').populate('bidRoster').populate('keepRoster').exec(function(err, owner) {
+					if (err) {
+						console.log(err);
+					} else {
+						res.jsonp(owner);
 					}
-				}
+				});
+
+				callback(null, 'sending back data');
 			}
-			owner.save();
-			console.log('after\n' + owner);
-		}
-	}).then(function(){
-		//change the player
-		Owner.findById(ownerId).populate('previousRoster').populate('bidRoster').populate('keepRoster').exec(function(err, owner) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.jsonp(owner);
-			}
+		],
+		function(error, success){
+			console.log('moved player');
 		});
-	});
 };
 
 /**
  * Owner middleware
  */
 exports.ownerByID = function(req, res, next, id) {
-	Owner.findById(id).populate('previousRoster', 'name').exec(function(err, owner) {
+	Owner.findById(id).populate('previousRoster').exec(function(err, owner) {
 		if (err) return next(err);
 		if (! owner) return next(new Error('Failed to load Owner ' + id));
 		req.owner = owner ;

@@ -6,7 +6,7 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 		$scope.authentication = Authentication;
 
 		//###ADD IN ALL OF THE TEAMS
-		$scope.teams=[{name:'ARI', byeWeek:9}, {name:'ATL', byeWeek:10}, {name:'BAL', byeWeek:9}, {name:'BUF', byeWeek:8}, {name:'CAR', byeWeek:5}, {name:'CHI', byeWeek:7}, {name:'CIN', byeWeek:7}, {name:'CLE', byeWeek:11}, {name:'DAL', byeWeek:6}, {name:'DEN', byeWeek:7}, {name:'DET', byeWeek:9}, {name:'GB', byeWeek:7}, {name:'HOU', byeWeek:9}, {name:'IND', byeWeek:10}, {name:'JAC', byeWeek:8}, {name:'KC', byeWeek:9}, {name:'MIA', byeWeek:5}, {name:'MIN', byeWeek:5}, {name:'NE', byeWeek:4}, {name:'NO', byeWeek:11}, {name:'NYG', byeWeek:11}, {name:'NYJ', byeWeek:5}, {name:'OAK', byeWeek:6}, {name:'PHI', byeWeek:8}, {name:'PIT', byeWeek:11}, {name:'SD', byeWeek:10}, {name:'SEA', byeWeek:9}, {name:'SF', byeWeek:10}, {name:'STL', byeWeek:6}, {name:'TB', byeWeek:6}, {name:'TEN', byeWeek:4}, {name:'WAS', byeWeek:8}, {name:'FA', byeWeek:0}];
+		$scope.teams=[{name:'ARI', byeWeek:9}, {name:'ATL', byeWeek:11}, {name:'BAL', byeWeek:8}, {name:'BUF', byeWeek:10}, {name:'CAR', byeWeek:7}, {name:'CHI', byeWeek:9}, {name:'CIN', byeWeek:9}, {name:'CLE', byeWeek:13}, {name:'DAL', byeWeek:7}, {name:'DEN', byeWeek:11}, {name:'DET', byeWeek:10}, {name:'GB', byeWeek:4}, {name:'HOU', byeWeek:9}, {name:'IND', byeWeek:10}, {name:'JAC', byeWeek:5}, {name:'KC', byeWeek:5}, {name:'MIA', byeWeek:8}, {name:'MIN', byeWeek:6}, {name:'NE', byeWeek:9}, {name:'NO', byeWeek:5}, {name:'NYG', byeWeek:8}, {name:'NYJ', byeWeek:11}, {name:'OAK', byeWeek:10}, {name:'PHI', byeWeek:4}, {name:'PIT', byeWeek:8}, {name:'SD', byeWeek:11}, {name:'SEA', byeWeek:5}, {name:'SF', byeWeek:8}, {name:'LA', byeWeek:8}, {name:'TB', byeWeek:6}, {name:'TEN', byeWeek:13}, {name:'WAS', byeWeek:9}, {name:'FA', byeWeek:0}];
 		$scope.contractYears=[0,1,2,3];
 		$scope.playerPositions=['QB','RB','WR','TE','K','D'];
 
@@ -79,12 +79,37 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 			console.log($scope.content);
 		};
 
-		$scope.parseCSV=function(){
+		$scope.parseCSV=function(upload){
 			if($scope.content==''){
 				console.log('input something first');
 			}
 			else{
 				$scope.CSVToArray($scope.content);
+			}
+		};
+
+		$scope.CSVToUpdate=function(strData){
+			var rows=strData.split('\n'),
+				player={},
+				cols, i, j,
+				oName,
+				teamIn;
+
+			//skip the first row because it has headers
+			for(i=1;i<rows.length;i++){
+				oName='';
+				cols=rows[i].split(',');
+				//console.log(rows[i]);
+
+				player={};
+				player.name=cols[0];
+				player.position=cols[1];
+				player.absRank=Number(cols[2]);
+				player.posRank=Number(cols[3]);
+				player.uploaded=false;
+				player.toUpload=true;
+
+				$scope.playerArray.push(player);
 			}
 		};
 
@@ -146,6 +171,35 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 
 				$scope.playerArray.push(player);
 			}
+		};
+
+		$scope.updateRanks=function(){
+			var i;
+			for(i=0;i<$scope.playerArray.length;i++){
+				$scope.playerArray[i].user=$scope.authentication.user._id;
+			}
+			socket.emit('updateRanks', $scope.playerArray);
+		};
+
+		$scope.markOldPlayers=function(){
+			socket.emit('markOldPlayers', $scope.playerArray);
+		};
+
+		$scope.oldPlayers=function(){
+			socket.emit('oldPlayers');
+		};
+
+		$scope.startNewYear=function(){
+			socket.emit('startNewSeason');
+		};
+
+
+		$scope.teamQuality=function(){
+			socket.emit('teamQuality');
+		};
+
+		$scope.currentlyRostered=function(){
+			socket.emit('currentlyRostered');
 		};
 
 		//upload player array

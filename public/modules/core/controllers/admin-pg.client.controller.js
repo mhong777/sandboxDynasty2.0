@@ -2,21 +2,12 @@
 
 angular.module('core').controller('AdminPgController', ['$scope', '$stateParams', '$location', 'Authentication', 'Owners', 'Players', 'socket', '$http',
 	function($scope, $stateParams, $location, Authentication, Owners, Players, socket, $http ) {
-		$scope.testAsync=function(){
-			//alert('hi');
-			console.log(Authentication.user._id);
-
-			//socket.emit('roundPrices');
-
-			socket.emit('startNewSeason');
-
-			//socket.emit('testAsync', Authentication.user._id);
-			//socket.emit('test msg', $scope.ownerId);
-		};
 
 		//console.log($scope.ownerId);
 		//socket.emit('testAsync', $scope.ownerId);
-
+		$scope.resetGvars=function(){
+			socket.emit('resetGvars');
+		};
 
 		$scope.dumpPlayers=function(){
 			socket.emit('dumpPlayers');

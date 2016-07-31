@@ -79,6 +79,10 @@ var GvarSchema = new Schema({
 		type:Number,
 		default: 0
 	},
+	editTime:{
+		type: Boolean,
+		default: false
+	},
 	draftTime:{
 		type: Boolean,
 		default: false

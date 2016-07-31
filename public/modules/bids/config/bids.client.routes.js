@@ -10,7 +10,7 @@ angular.module('bids').config(['$stateProvider',
 			templateUrl: 'modules/bids/views/rfa-match.client.view.html'
 		}).
 		state('rfa', {
-			url: '/rfa',
+			url: '/draft',
 			templateUrl: 'modules/bids/views/rfa.client.view.html'
 		}).
 		state('listBids', {

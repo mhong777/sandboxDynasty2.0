@@ -5,7 +5,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		$scope.user = Authentication.user;
 		//$scope.keeperCap=175;
 		//$scope.totalCap=parseInt(300);
-		$scope.changeTime=0;
+		//$scope.changeTime=1;
 		$scope.timeCheck=false;
 		$scope.rosterCheck=false;
 
@@ -24,7 +24,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				$http.get('/gvars').
 					success(function(data, status){
 						$scope.gvar=data[0];
-						console.log($scope.gvar);
+						$scope.changeTime=$scope.gvar.editTime;
 					}).then(function(){
 						$http.get('/editRoster/' + ownerId).
 							success(function(data, status){
@@ -33,17 +33,17 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 								if($scope.owner.myUser==$scope.user._id){
 									$scope.rosterCheck=true;
 								}
-								console.log($scope.user.ownerId);
-								console.log($scope.owner._id)
 								$scope.setData();
 							});
 					});
 			}
 		};
 
+		//make these server functions - not client functions
+
 		$scope.changeKeeper=function(player,status){
 			//check that the user owns the person first
-			if($scope.rosterCheck && $scope.changeTime==1){
+			if($scope.rosterCheck && $scope.changeTime){
 				var req={};
 				req.status=status;
 				req.ownerId=$scope.owner._id;
@@ -57,10 +57,10 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 						//console.log(req);
 						$http.put('/changeKeeper',req).
 							success(function(data, status){
-								console.log('player added');
-								console.log(data);
+								console.log('added ' + player.name);
 								$scope.owner=data;
 							}).then(function(){
+								console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length);
 								$scope.setData();
 							});
 					}else{
@@ -68,12 +68,11 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 					}
 				}else{
 					//just send
-					console.log(req);
 					$http.put('/changeKeeper',req).
 						success(function(data, status){
-							console.log('player removed');
-							console.log(data);
+							console.log('removed ' + player.name);
 							$scope.owner=data;
+						console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length);
 						}).then(function(){
 							$scope.setData();
 						});
@@ -85,7 +84,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			//console.log(($scope.rfaSalary+player.price + $scope.salary));
 			//console.log($scope.totalCap + $scope.owner.extraMoney);
 			//check that the user owns the person first
-			if($scope.rosterCheck && $scope.changeTime==1){
+			if($scope.rosterCheck && $scope.changeTime){
 				var req={};
 				req.status=status;
 				req.ownerId=$scope.owner._id;
@@ -124,6 +123,7 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 		};
 
 		$scope.setData=function(){
+			console.log('setting data');
 			var x,
 				salary= 0,
 				rfaSalary=0;
@@ -138,22 +138,14 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 				}
 			}
 			for(x=0;x<$scope.owner.keepRoster.length;x++){
-				//console.log($scope.owner.keepRoster[x].price);
 				salary+=$scope.owner.keepRoster[x].price;
 			}
 
-			for(x=0;x<$scope.owner.bidRoster.length;x++){
-				rfaSalary+=$scope.owner.bidRoster[x].price;
-			}
-			//$scope.salary=Math.round(salary*100)/100;
-			//$scope.rfaSalary=Math.round(rfaSalary*100)/100;
+			rfaSalary+=$scope.owner.bidRoster.length;
 
-			//$scope.salary=parseFloat(salary.toFixed(1));
 			$scope.salary=Math.ceil(salary);
 			//parseFloat(Math.round(salary*100)/100);
 			$scope.rfaSalary=Math.ceil(rfaSalary);
-				//parseFloat(Math.round(rfaSalary*100)/100);
-			//$scope.rfaSalary=parseFloat(rfaSalary.toFixed(1));
 
 
 			if($scope.rosterCheck){
@@ -161,6 +153,8 @@ angular.module('owners').controller('EditRosterController', ['$scope', '$statePa
 			}else{
 				$scope.errMsg=true;
 			}
+
+			$scope.$digest;
 		};
 
 		//MODAL

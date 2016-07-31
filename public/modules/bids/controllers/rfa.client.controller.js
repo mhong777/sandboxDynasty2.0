@@ -171,7 +171,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				}
 
 				salary=salary + bid.myBid;
-				numPlayers++
+				numPlayers++;
 				if(salary<=($scope.gvar.salaryCap + $scope.myOwner.extraMoney) && numPlayers<=$scope.gvar.maxPlayers){
 					//send to socket - then update
 					var input={};

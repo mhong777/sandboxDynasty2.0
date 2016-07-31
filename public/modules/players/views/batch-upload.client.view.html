@@ -1,10 +1,47 @@
 <section data-ng-controller="PlayersController" data-ng-init="initializeBatchUpload()">
-
+	{{authentication.user._id}}
 	<!--{{owners}}<br/>-->
-	<br/>
-	<input type="file" read-file="showContent($fileContent)" />
-	<button class="btn btn-default" type="submit" ng-click="parseCSV()">Parse</button><br/>
-	<button class="btn btn-default" type="submit" ng-click="batchAdd()">Upload to DB</button>
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Start a new year</h3>
+			<button ng-click="startNewYear()" class="btn btn-default" type="button">Start a New Year</button><br/><br/>
+
+
+			<h3>Get file</h3>
+			<input type="file" read-file="showContent($fileContent)" />
+			<button class="btn btn-default" type="submit" ng-click="parseCSV()">Parse for Upload</button><br/>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<h3>Batch Upload</h3>
+			<button class="btn btn-default" type="submit" ng-click="batchAdd()">Upload to DB</button>
+
+		</div>
+		<div class="col-md-4">
+			<h3>Mark Old Players</h3>
+			<div>
+				<button class="btn btn-default" type="submit" ng-click="markOldPlayers()">Mark Old Players</button><br/>
+				Input a csv of new players for the year and hit submit. This function will compare all players against the new list and mark old players with a ranking of 999
+			</div>
+			<div>
+				<button class="btn btn-default" type="submit" ng-click="oldPlayers()">Old Players</button><br/>
+				Find players with no owners and zero out their price and years played
+			</div>
+			<div>
+				<button class="btn btn-default" type="submit" ng-click="teamQuality()">Team Quality</button><br/>
+				Go back and make sure that all of the players are associated with their owners
+			</div>
+			<div>
+				<button class="btn btn-default" type="submit" ng-click="currentlyRostered()">Currently Rostered</button><br/>
+				Find players with an owner but a price of 0 (waiver pickup), and change years owned to 1 and price to 1.1
+			</div>
+		</div>
+		<div class="col-md-4">
+			<h3>Update Ranks</h3>
+			<button class="btn btn-default" type="submit" ng-click="updateRanks()">Update Ranks</button>
+		</div>
+	</div>
 	<div>
 		<h2>File content is:</h2>
 		<pre>{{ content }}</pre>

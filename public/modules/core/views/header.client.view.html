@@ -1,4 +1,4 @@
-<div class="container" data-ng-controller="HeaderController">
+<div class="container" data-ng-controller="HeaderController" data-ng-init="getGvar()">
 	<div class="navbar-header">
 		<button class="navbar-toggle" type="button" data-ng-click="toggleCollapsibleMenu()">
 			<span class="sr-only">Toggle navigation</span>
@@ -25,8 +25,8 @@
 			<!--</li>-->
 		<!--</ul>-->
 		<ul class="nav navbar-nav" data-ng-show="authentication.user">
-			<li>
-				<a href="/#!/rfa">
+			<li ng-show="!changeTime">
+				<a href="/#!/draft">
 					<span>Draft</span>
 				</a>
 			</li>

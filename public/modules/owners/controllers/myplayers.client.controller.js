@@ -4,6 +4,7 @@ angular.module('owners').controller('MyplayersController', ['$scope', '$statePar
     function($scope, $stateParams, $location, Authentication, Owners, Players, socket ) {
 
         // Find existing Owner
+        //need to change this to get everything - need player
         $scope.initialze= function() {
             $scope.owner = Owners.get({
                 ownerId: $stateParams.ownerId

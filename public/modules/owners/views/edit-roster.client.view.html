@@ -6,59 +6,92 @@
 	<div class="jumbotron text-center">
 		<div class="row">
 			<h2>{{owner.name}}'s Roster</h2>
+
+			Keeper Salary + initial bids: ${{salary}}<br/>
+			Cap Left: ${{gvar.keeperCap-salary}}<br/>
+			Players Keeping: {{owner.keepRoster.length}}<br/>
+			Players Trying to Keep: {{owner.bidRoster.length}}<br/>
+
+
+
 			<!--<p ng-show="rosterCheck">-->
 				<!--You have until TBD time to edit your roster-->
 			<!--</p>-->
 			<!--<p ng-hide="rosterCheck" >-->
 				<!--<span class="errorMsg">This isn't your roster so you can't alter it</span>-->
 			<!--</p>-->
-			<p>
+			<p ng-show="!changeTime">
 				<span class="errorMsg">No more editing<br/>It's time to draft!</span>
 			</p>
 		</div>
 
 		<div class="row">
 			<div class="col-md-6">
-				<h3>Keepers <button type="button" class="btn btn-default" ng-click="open(1)">Help</button><br/></h3>
-				Keeper Salary: ${{salary}}<br/>
-				Keeper Cap Left: ${{gvar.keeperCap-salary}}<br/>
-				Players Keeping: {{owner.keepRoster.length}}<br/>
+
 			</div>
 			<div class="col-md-6">
-				<h3>Restricted Free Agents <button type="button" class="btn btn-default" ng-click="open(2)">Help</button><br/></h3>
-				RFA Salary: ${{rfaSalary}}<br/>
-				RFA Budget Left: ${{gvar.salaryCap-salary-rfaSalary + owner.extraMoney}}<br/>
-				Players Trying to Keep: {{owner.bidRoster.length}}<br/>
+
 			</div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-6">
-			<h3>Currently Keeping</h3>
+			<center><h3>Keepers <button type="button" class="btn btn-default" ng-click="open(1)">Help</button><br/></h3></center>
+
+			<h4>Currently Keeping</h4>
+			<p ng-show="!owner.keepRoster.length">
+				<span class="errorMsg">You aren't keeping anyone right now</span>
+			</p>
+
 			<a data-ng-repeat="player in owner.keepRoster | orderBy: '-position'" ng-click="changeKeeper(player,0)" class="list-group-item cursor drafting">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
 			</a>
+
 			<hr/>
-			<h3>Eligible to Keep</h3>
+
+			<h4>Eligible to Keep</h4>
+			<p ng-show="!owner.keepEligable.length">
+				<span class="errorMsg">You're keeping everyone!</span>
+			</p>
+
 			<a data-ng-repeat="player in owner.keepEligable | orderBy: '-position'" ng-click="changeKeeper(player,1)" class="list-group-item cursor">
 				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
 			</a>
 		</div>
 		<div class="col-md-6">
-			<h3>Currently Bidding</h3>
-			<a data-ng-repeat="player in owner.bidRoster | orderBy: '-position'" ng-click="changeBidee(player,0)" class="list-group-item cursor drafting">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}}
-			</a>
-			<hr/>
-			<h3>Eligible to Bid</h3>
-			<a data-ng-repeat="player in owner.bidEligable | orderBy: '-position'" ng-click="changeBidee(player,1)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}}
-			</a>
+			<center><h3>Restricted Free Agents <button type="button" class="btn btn-default" ng-click="open(2)">Help</button><br/></h3></center>
+			<p ng-show="!(owner.bidRoster.length + owner.bidEligable.length)">
+				<span class="errorMsg">You don't have any RFAs</span>
+			</p>
+
+			<div ng-show="(owner.bidRoster.length + owner.bidEligable.length)">
+				<h4>Currently Bidding</h4>
+				<p ng-show="!owner.bidRoster.length">
+					<span class="errorMsg">You're not trying to keep any RFAs</span>
+				</p>
+
+				<a data-ng-repeat="player in owner.bidRoster | orderBy: '-position'" ng-click="changeBidee(player,0)" class="list-group-item cursor drafting">
+					<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
+					Team: {{player.team.name}}
+				</a>
+
+				<hr/>
+
+				<h4>Eligible to Bid</h4>
+				<p ng-show="!owner.bidEligable.length">
+					<span class="errorMsg">You're going to try and keep all of your RFAs</span>
+				</p>
+
+
+				<a data-ng-repeat="player in owner.bidEligable | orderBy: '-position'" ng-click="changeBidee(player,1)" class="list-group-item cursor">
+					<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
+					Team: {{player.team.name}}
+				</a>
+
+			</div>
 		</div>
 	</div>
 </section>
