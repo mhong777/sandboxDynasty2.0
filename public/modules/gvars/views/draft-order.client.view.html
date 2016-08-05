@@ -1,0 +1,21 @@
+<section data-ng-controller="GvarsController" data-ng-init="getGvar()">
+	<button ng-click="updateDraft()" class="btn btn-default" type="button">Update Draft</button>
+	<div class="row">
+		<div class="col-md-6">
+			<h4>rookie draftOrder:</h4>
+			<button class="btn btn-default" type="button" ng-click="addDraft('rookie')">Add New</button><br/><br/>
+			<div ng-repeat="pick in gvar.draftOrder track by $index">
+				{{$index+1}}: <select ng-model="pick" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft('rookie',$index,pick)"></select> <button ng-click="removePick('rookie', $index)" class="btn btn-default" type="button">Remove</button>
+			</div>
+			<!--{{gvar.draftOrder}}-->
+		</div>
+		<div class="col-md-6">
+			<h4>draft order</h4>
+			<button class="btn btn-default" type="button" ng-click="addDraft('other')">Add New</button><br/><br/>
+			<div ng-repeat="picker in gvar.pickOrder track by $index">
+				{{$index+1}}: <select ng-model="picker" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft('other',$index,picker)"></select> <button ng-click="removePick('other', $index)" class="btn btn-default" type="button">Remove</button>
+			</div>
+			<!--{{gvar.pickOrder}}-->
+		</div>
+	</div>
+</section>

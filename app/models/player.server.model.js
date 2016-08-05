@@ -34,7 +34,11 @@ var PlayerSchema = new Schema({
     },
     available:{
         type: Boolean,
-        default:true        
+        default:true
+    },
+    retired:{
+        type: Boolean,
+        default:false
     },
     yearsOwned:{
         type: Number,

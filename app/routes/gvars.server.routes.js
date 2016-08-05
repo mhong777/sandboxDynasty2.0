@@ -16,4 +16,8 @@ module.exports = function(app) {
 	//gvars.hasAuthorization,
 		// Finish by binding the Gvar middleware
 	app.param('gvarId', gvars.gvarByID);
+
+	app.route('/onlyGvar')
+		.get(gvars.onlyGvar);
+
 };

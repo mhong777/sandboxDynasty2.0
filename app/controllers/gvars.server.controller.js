@@ -83,6 +83,28 @@ exports.list = function(req, res) {
 	});
 };
 
+
+
+/**
+ * List onlyGvar
+ */
+exports.onlyGvar = function(req, res) {
+	Gvar.find().populate('draftOrder', 'name').populate('pickOrder' ,'name').exec(function(err, gvars) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			if(gvars){
+				res.jsonp(gvars[0]);
+			}
+			else{
+				res.jsonp(null);
+			}
+		}
+	});
+};
+
 /**
  * Gvar middleware
  */

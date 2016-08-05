@@ -177,7 +177,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 					var input={};
 					input.bid=bid;
 					input.owner=$scope.myOwner._id;
-					socket.emit('modRfaBid', input);
+					socket.emit('increaseBid', input);
 				}
 				else{
 					console.log('cant do that bcz you are either over salary cap or max players');

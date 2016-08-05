@@ -5,6 +5,10 @@ angular.module('gvars').config(['$stateProvider',
 	function($stateProvider) {
 		// Gvars state routing
 		$stateProvider.
+		state('draft-order', {
+			url: '/draft-order',
+			templateUrl: 'modules/gvars/views/draft-order.client.view.html'
+		}).
 		state('listGvars', {
 			url: '/gvars',
 			templateUrl: 'modules/gvars/views/list-gvars.client.view.html'

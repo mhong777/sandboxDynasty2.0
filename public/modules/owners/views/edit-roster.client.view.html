@@ -45,8 +45,10 @@
 			</p>
 
 			<a data-ng-repeat="player in owner.keepRoster | orderBy: '-position'" ng-click="changeKeeper(player,0)" class="list-group-item cursor drafting">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
-				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
+				<!--<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>-->
+				<h4>{{player.name}} ({{player.position}}{{player.posRank}}): ${{player.price}}</h4>
+				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}<br/>
+				<!--Absolute Rank: {{player.absRank}} - Position Rank: {{player.posRank}}-->
 			</a>
 
 			<hr/>
@@ -57,7 +59,7 @@
 			</p>
 
 			<a data-ng-repeat="player in owner.keepEligable | orderBy: '-position'" ng-click="changeKeeper(player,1)" class="list-group-item cursor">
-				<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
+				<h4>{{player.name}} ({{player.position}}{{player.posRank}}): ${{player.price}}</h4>
 				Team: {{player.team.name}} - Years Owned: {{player.yearsOwned}}
 			</a>
 		</div>
@@ -74,7 +76,7 @@
 				</p>
 
 				<a data-ng-repeat="player in owner.bidRoster | orderBy: '-position'" ng-click="changeBidee(player,0)" class="list-group-item cursor drafting">
-					<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
+					<h4>{{player.name}} ({{player.position}}{{player.posRank}}): ${{player.price}}</h4>
 					Team: {{player.team.name}}
 				</a>
 
@@ -87,7 +89,7 @@
 
 
 				<a data-ng-repeat="player in owner.bidEligable | orderBy: '-position'" ng-click="changeBidee(player,1)" class="list-group-item cursor">
-					<h4>{{player.name}} ({{player.position}}): ${{player.price}}</h4>
+					<h4>{{player.name}} ({{player.position}}{{player.posRank}}): ${{player.price}}</h4>
 					Team: {{player.team.name}}
 				</a>
 
