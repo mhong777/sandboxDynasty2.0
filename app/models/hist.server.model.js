@@ -32,6 +32,14 @@ var HistSchema = new Schema({
 		type: String,
 		default: ''
 	},
+	ownerdat:{
+		type: Schema.ObjectId,
+		ref: 'Owner'
+	},
+	playerdat:{
+		type: Schema.ObjectId,
+		ref: 'Player'
+	},
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'

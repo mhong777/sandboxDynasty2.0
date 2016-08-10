@@ -1,0 +1,133 @@
+<section data-ng-controller="BidlogsController" data-ng-init="initialize()">
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Analytic View</h3>
+			Bid Threshold: <input type="number" ng-model="bidThreshold" />
+		</div>
+	</div>
+	<div class="row">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+			<td>Toggle</td>
+			<td>Owner Name</td>
+			<td>Total</td>
+			<td colspan="4">QB</td>
+			<td colspan="4">RB</td>
+			<td colspan="4">WR</td>
+			<td colspan="4">TE</td>
+			</thead>
+			<thead>
+			<td colspan="3"></td>
+			<td>Top 10</td>
+			<td>Top 20</td>
+			<td>Top 30</td>
+			<td>30+</td>
+			<td>Top 10</td>
+			<td>Top 20</td>
+			<td>Top 30</td>
+			<td>30+</td>
+			<td>Top 10</td>
+			<td>Top 20</td>
+			<td>Top 30</td>
+			<td>30+</td>
+			<td>Top 10</td>
+			<td>Top 20</td>
+			<td>Top 30</td>
+			<td>30+</td>
+			</thead>
+			<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
+				<td><button ng-click="owner.show = !owner.show" class="btn btn-default" type="button">toggle</button></td>
+				<td>{{owner.name}}</td>
+				<td ng-show="owner.show">{{owner.numPlayers}} players<br/>
+					${{owner.salary}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][0]>bidThreshold}">{{owner.positions[0][0]}}<br/>
+					${{owner.cost[0][0]}}<hr/>
+					bid:{{owner.bids[0][0]}}<br/>
+					won:{{owner.won[0][0]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][1]>bidThreshold}">{{owner.positions[0][1]}}<br/>
+					${{owner.cost[0][1]}}<hr/>
+					bid:{{owner.bids[0][1]}}<br/>
+					won:{{owner.won[0][1]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][2]>bidThreshold}">{{owner.positions[0][2]}}<br/>
+					${{owner.cost[0][2]}}<hr/>
+					bid:{{owner.bids[0][2]}}<br/>
+					won:{{owner.won[0][2]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][3]>bidThreshold}">{{owner.positions[0][3]}}<br/>
+					${{owner.cost[0][3]}}<hr/>
+					bid:{{owner.bids[0][3]}}<br/>
+					won:{{owner.won[0][3]}}
+				</td>
+
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][0]>bidThreshold}">{{owner.positions[1][0]}}<br/>
+					${{owner.cost[1][0]}}<hr/>
+					bid:{{owner.bids[1][0]}}<br/>
+					won:{{owner.won[1][0]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][1]>bidThreshold}">{{owner.positions[1][1]}}<br/>
+					${{owner.cost[1][1]}}<hr/>
+					bid:{{owner.bids[1][1]}}<br/>
+					won:{{owner.won[1][1]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][2]>bidThreshold}">{{owner.positions[1][2]}}<br/>
+					${{owner.cost[1][2]}}<hr/>
+					bid:{{owner.bids[1][2]}}<br/>
+					won:{{owner.won[1][2]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][3]>bidThreshold}">{{owner.positions[1][3]}}<br/>
+					${{owner.cost[1][3]}}<hr/>
+					bid:{{owner.bids[1][3]}}<br/>
+					won:{{owner.won[1][3]}}
+				</td>
+
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][0]>bidThreshold}">{{owner.positions[2][0]}}<br/>
+					${{owner.cost[2][0]}}<hr/>
+					bid:{{owner.bids[2][0]}}<br/>
+					won:{{owner.won[2][0]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][1]>bidThreshold}">{{owner.positions[2][1]}}<br/>
+					${{owner.cost[2][1]}}<hr/>
+					bid:{{owner.bids[2][1]}}<br/>
+					won:{{owner.won[2][1]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][2]>bidThreshold}">{{owner.positions[2][2]}}<br/>
+					${{owner.cost[2][2]}}<hr/>
+					bid:{{owner.bids[2][2]}}<br/>
+					won:{{owner.won[2][2]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][3]>bidThreshold}">{{owner.positions[2][3]}}<br/>
+					${{owner.cost[2][3]}}<hr/>
+					bid:{{owner.bids[2][3]}}<br/>
+					won:{{owner.won[2][3]}}
+				</td>
+
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][0]>bidThreshold}">{{owner.positions[3][0]}}<br/>
+					${{owner.cost[3][0]}}<hr/>
+					bid:{{owner.bids[3][0]}}<br/>
+					won:{{owner.won[3][0]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][1]>bidThreshold}">{{owner.positions[3][1]}}<br/>
+					${{owner.cost[3][1]}}<hr/>
+					bid:{{owner.bids[3][1]}}<br/>
+					won:{{owner.won[3][1]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][2]>bidThreshold}">{{owner.positions[3][2]}}<br/>
+					${{owner.cost[3][2]}}<hr/>
+					bid:{{owner.bids[3][2]}}<br/>
+					won:{{owner.won[3][2]}}
+				</td>
+				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][3]>bidThreshold}">{{owner.positions[3][3]}}<br/>
+					${{owner.cost[3][3]}}<hr/>
+					bid:{{owner.bids[3][3]}}<br/>
+					won:{{owner.won[3][3]}}
+				</td>
+
+				<!--${{(gvar.salaryCap*10 - owner.salary*10 + owner.extraMoney*10)/10}}</td>-->
+			</tr>
+		</table>
+	</div>
+</section>

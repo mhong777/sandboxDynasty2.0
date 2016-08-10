@@ -53,7 +53,7 @@
 						<td ng-show="gvar.rfaDraft">{{bid.origOwner.name}}</td>
 						<td ng-show="gvar.bidShow">
 							Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(myOwner.numPlayer>=gvar.maxPlayers)">
-							<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney">Submit Bid</button>
+							<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney || time==0">Submit Bid</button>
 							<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
 								<span class="errorMsg">Your roster is full - you're done</span>
 							</div>
@@ -65,7 +65,7 @@
 							</div>
 						</td>
 						<td ng-show="gvar.matchShow">
-							<button ng-show="(bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id)" class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="myOwner.numPlayer>=gvar.maxPlayers || bid.price>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)">Match</button>
+							<button ng-show="(bid.origOwner._id==myOwner._id) && (bid.owner._id!=myOwner._id)" class="btn btn-default" type="button" ng-click="matchBid(bid)" ng-disabled="myOwner.numPlayer>=gvar.maxPlayers || bid.price>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney || time==0)">Match</button>
 							<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
 								<span class="errorMsg">You're roster is full</span>
 							</div>
@@ -224,9 +224,9 @@
 							<td>{{player.posRank}}</td>
 							<td>{{player.price}}</td>
 							<td>{{player.owner.name}}</td>
-							<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="nominate(player._id, player.name)">Nominate</button></td>
-							<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draft(player._id,0,null)">Draft</button></td>
-							<td ng-show="gvar.rookieDraft && player.rookie && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)">Draft</button></td>
+							<td ng-show="gvar.nomShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="nominate(player._id, player.name)" ng-disabled="time==0">Nominate</button></td>
+							<td ng-show="gvar.draftShow && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draft(player._id,0,null)" ng-disabled="time==0">Draft</button></td>
+							<td ng-show="gvar.rookieDraft && player.rookie && (myOwner._id==gvar.drafter)"><button ng-show="player.available" class="btn btn-default" type="button" ng-click="draftRookie(player.rookie,player._id,0,null)" ng-disabled="time==0">Draft</button></td>
 						</tr>
 						</tbody>
 					</table>

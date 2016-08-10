@@ -1,21 +1,7 @@
 <section data-ng-controller="ReviewRosterController" data-ng-init="initialize()">
 	<br/>
 	<div class="row">
-		<div class="col-md-2">
-			<h3>Draft Picks</h3>
-			<table class="table table-striped table-bordered">
-				<thead>
-					<td>Pick</td>
-					<td>Owner</td>
-				</thead>
-				<tr ng-repeat="pick in gvar.draftOrder">
-					<td>{{$index+1}}</td>
-					<td>{{pick.name}}</td>
-				</tr>
-			</table>
-		</div>
-
-		<div class="col-md-10">
+		<div class="col-md-8">
 			<div class="minitron text-center">
 				<h3>Rosters</h3>
 				<span>Select a roster to view it</span>
@@ -37,6 +23,33 @@
 				</tr>
 			</table>
 		</div>
+		<div class="col-md-2">
+			<h3>Rookie Draft Order</h3>
+			<table class="table table-striped table-bordered">
+				<thead>
+				<td>Pick</td>
+				<td>Owner</td>
+				</thead>
+				<tr ng-repeat="pick in gvar.draftOrder">
+					<td>{{$index+1}}</td>
+					<td>{{pick.name}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-2">
+			<h3>Auction Draft Order</h3>
+			<table class="table table-striped table-bordered">
+				<thead>
+				<td>Pick</td>
+				<td>Owner</td>
+				</thead>
+				<tr ng-repeat="pick in gvar.pickOrder">
+					<td>{{$index+1}}</td>
+					<td>{{pick.name}}</td>
+				</tr>
+			</table>
+		</div>
+
 	</div>
 
 </section>

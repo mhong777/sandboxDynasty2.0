@@ -40,6 +40,8 @@
 			<h3>Other pages</h3>
 			<ul>
 				<li><a href="#!/review-roster">Review roster</a></li>
+				<li><a href="#!/draft-order">Draft Order</a></li>
+				<li><a href="#!/analytic-view">Admin Draft</a></li>
 			</ul>
 		</div>
 		<div class="col-md-8">
@@ -50,16 +52,18 @@
 					<div class="col-md-6">
 						Pause the draft: <button ng-click="pauseTimer()" class="btn btn-default" type="button">Submit</button><br/><br/>
 						Restart the draft: <button ng-click="restartTimer()" class="btn btn-default" type="button">Submit</button><br/><br/>
+
+						<!--bid,pick,nom-->
+						Nominate Timer: <input type="number" ng-model="nomTimer" /><button ng-click="updateTimer('nom')" class="btn btn-default" type="button">Submit</button><br/>
+						Snake/Rookie Timer:  <input type="number" ng-model="pickTimer" /><button ng-click="updateTimer('pick')" class="btn btn-default" type="button">Submit</button><br/>
+						Bidding Timer:  <input type="number" ng-model="bidTimer" /><button ng-click="updateTimer('bid')" class="btn btn-default" type="button">Submit</button><br/>
+
+
 					</div>
 					<div class="col-md-6">
-						<table>
-							<tr>
-								<td>Edit Drafter: </td>
-								<td><select ng-model="drafter" ng-options="owner.name for owner in owners track by owner.name"></select></td>
-							</tr>
-						</table>
-						{{drafter}}
-						<button ng-click="changeDrafter()" class="btn btn-default" type="button">Submit</button>
+						Edit Drafter:<select ng-model="drafter" ng-options="owner.name for owner in owners track by owner.name"></select><button ng-click="changeDrafter()" class="btn btn-default" type="button">Submit</button>
+						Update Draft Vars: <button ng-click="updateVars()" class="btn btn-default" type="button">Submit</button>
+						<!--{{drafter}}-->
 					</div>
 				</div>
 				<hr/>

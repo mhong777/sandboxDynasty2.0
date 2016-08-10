@@ -63,11 +63,20 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		};
 		// Find a list of Owners
 		$scope.findOwners = function() {
-			$scope.owners = Owners.query();
-			//$scope.owners.push(null);
-			$scope.drafter={};
-			$scope.drafter._id=null;
-			$scope.drafter.name='';
+			$http.get('/gvars').
+			success(function(data, status){
+				$scope.gvar=data[0];
+
+				$scope.bidTimer=$scope.gvar.bidTimer;
+				$scope.nomTimer=$scope.gvar.nomTimer;
+				$scope.pickTimer=$scope.gvar.pickTimer;
+			}).then(function(){
+				$scope.owners = Owners.query();
+				//$scope.owners.push(null);
+				$scope.drafter={};
+				$scope.drafter._id=null;
+				$scope.drafter.name='';
+			});
 		};
 		$scope.changeDrafter = function(){
 			socket.emit('changeDrafter', $scope.drafter);
@@ -75,5 +84,20 @@ angular.module('core').controller('AdminPgController', ['$scope', '$stateParams'
 		$scope.endRfa = function(){
 			socket.emit('endRfa');
 		};
+
+		$scope.updateTimer=function(timerType){
+			var input={};
+			input.bidTimer=$scope.bidTimer;
+			input.pickTimer=$scope.pickTimer;
+			input.nomTimer=$scope.nomTimer;
+			input.type=timerType;
+			socket.emit('updateTimer', input);
+		};
+
+		$scope.updateVars=function(){
+			socket.emit('updateDraftVars');
+		};
+
+
 	}
 ]);

@@ -272,7 +272,7 @@ var mongoose = require('mongoose'),
                 player.available=true;
                 player.owner=null;
                 player.yearsOwned=0;
-                player.price=1;
+                player.price=0;
 
                 console.log(player.name);
 
@@ -322,14 +322,38 @@ var mongoose = require('mongoose'),
                     });
                 },
                 function(testVar2, callback){
+                    Owner.findById(ownerId).exec(function(err, owner) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+
+                            var x;
+                            for(x=0;x<owner.bidRoster.length;x++){
+                                //console.log(owner.bidRoster[x] + ' - ' + playerId);
+                                if(String(owner.bidRoster[x])==String(playerId)){
+                                    //console.log('found');
+                                    owner.bidRoster.splice(x,1);
+                                    break;
+                                }
+                            }
+                            owner.save(function(err) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    var testVar3 = 'change the owner';
+                                    callback(null,testVar3);
+                                }
+                            });
+                        }
+                    });
+                },
+                function(testVar3, callback){
                     //change the player
                     Player.findById(playerId).exec(function(err, biddingPlayer) {
                         if (err) {
                             console.log(err);
                         } else {
                             biddingPlayer.yearsOwned=0;
-                            biddingPlayer.save();
-
                             biddingPlayer.save(function(err) {
                                 if (err) {
                                     console.log(err);
@@ -580,6 +604,8 @@ var mongoose = require('mongoose'),
                                     input.owner=ownerName;
                                     input.price=price;
                                     input.player=playerName;
+                                    input.playerdat=playerId;
+                                    input.ownerdat=ownerId;
                                     input.user=sampleUser;
                                     input.name=playerName + '_' + ownerName;
                                     var hist = new Hist(input);
@@ -590,6 +616,7 @@ var mongoose = require('mongoose'),
                                             console.log(err);
                                         } else {
                                             var testVar2='send out the payers';
+                                            io.emit('updateAdmin');
                                             callback(null,testVar2);
                                         }
                                     });
@@ -1283,6 +1310,7 @@ var mongoose = require('mongoose'),
                 if (err) {
                     console.log(err);
                 } else {
+                    stopAllDraftTimer();
                     var gvar=gvars[0];
                     gvar.drafter=drafter._id;
                     gvar.drafterName=drafter.name;
@@ -1309,6 +1337,63 @@ var mongoose = require('mongoose'),
                     console.log('updated player');
                 }
             });
+        });
+
+        socket.on('updateDraftVars', function(){
+            async.waterfall([
+                    function(callback){
+                        sendOutBids();
+                        var testVar1='bids';
+                        callback(null,testVar1);
+                    },
+                    function(testVar1, callback){
+                        //emit new bids to update everything
+                        Player.find().populate('owner', 'name').exec(function(err, players) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                io.emit('updatePlayers', players);
+                                callback(null,players);
+                            }
+                        });
+                    },
+                    function(players, callback){
+                        //emit new bids to update everything
+                        Owner.find().populate('keepRoster').populate('previousRoster').populate('bidRoster').exec(function(err, owners) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                io.emit('updateOwners', owners);
+                                callback(null,owners);
+                            }
+                        });
+                    },
+                    function(owners, callback){
+                        //send back all of the executed bids
+                        Hist.find().sort('-created').exec(function(err, allHist) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                io.emit('updateHistory', allHist);
+                                var testVar3='add the player to the roster';
+                                callback(null, 'finish');
+                            }
+                        });
+                    }
+                ],
+                function(error, success){
+                    console.log('sent out updated vars');
+                });
+
+
+
+
+
+
+
+
+
+
         });
 
         socket.on('startRfaDraft', function(){
@@ -1645,6 +1730,26 @@ var mongoose = require('mongoose'),
             stopTime();
         });
 
+        socket.on('updateTimer', function(data){
+            Gvar.find().exec(function(err, gvars) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var gvar=gvars[0];
+                    if(data.type=='nom'){
+                        gvar.nomTimer=data.nomTimer;
+                    }
+                    else if(data.type=='pick'){
+                        gvar.pickTimer=data.pickTimer;
+                    }
+                    else if(data.type=='bid'){
+                        gvar.bidTimer=data.bidTimer;
+                    }
+                    gvar.save();
+                }
+            });
+        });
+
 
         /**********
          * DRAFT STUFF
@@ -1654,7 +1759,7 @@ var mongoose = require('mongoose'),
             //create a bid
             //send it out
             //start the timer
-            Gvar.find().exec(function(err, bids) {
+            Gvar.find().exec(function(err, gvars) {
                 if (err) {
                     console.log(err);
                 } else {

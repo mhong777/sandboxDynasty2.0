@@ -5,6 +5,10 @@ angular.module('bidlogs').config(['$stateProvider',
 	function($stateProvider) {
 		// Bidlogs state routing
 		$stateProvider.
+		state('analytic-view', {
+			url: '/analytic-view',
+			templateUrl: 'modules/bidlogs/views/analytic-view.client.view.html'
+		}).
 		state('listBidlogs', {
 			url: '/bidlogs',
 			templateUrl: 'modules/bidlogs/views/list-bidlogs.client.view.html'

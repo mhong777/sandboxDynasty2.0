@@ -73,7 +73,7 @@ exports.delete = function(req, res) {
  * List of Bidlogs
  */
 exports.list = function(req, res) { 
-	Bidlog.find().sort('-created').populate('user', 'displayName').exec(function(err, bidlogs) {
+	Bidlog.find().sort('-created').populate('owner', 'name').populate('player').populate('origOwner', 'name').exec(function(err, bidlogs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

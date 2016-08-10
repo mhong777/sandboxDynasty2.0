@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
  * List of Hists
  */
 exports.list = function(req, res) { 
-	Hist.find().sort('-created').populate('user', 'displayName').exec(function(err, hists) {
+	Hist.find().sort('-created').populate('user', 'displayName').populate('playerdat').populate('ownerdat').exec(function(err, hists) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

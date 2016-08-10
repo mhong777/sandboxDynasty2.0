@@ -269,6 +269,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 
 		socket.on('timer', function(input){
 			//console.log(input.countdown);
+			$scope.time=input.countdown;
 			$scope.mins = parseInt(input.countdown / 60);
 			$scope.secs = parseInt(input.countdown % 60);
 			if($scope.secs<10){

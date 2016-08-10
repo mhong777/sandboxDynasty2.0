@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
  * List of Gvars
  */
 exports.list = function(req, res) { 
-	Gvar.find().populate('draftOrder', 'name').exec(function(err, gvars) {
+	Gvar.find().populate('draftOrder', 'name').populate('pickOrder', 'name').exec(function(err, gvars) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
