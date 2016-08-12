@@ -41,6 +41,7 @@
 				<td>Team</td>
 				<td>Abs Rank</td>
 				<td>Position Rank</td>
+				<td>Years Owned</td>
 				<td>Salary</td>
 				</thead>
 				<tr data-ng-repeat="player in owner.keepRoster | orderBy: '-position'" ng-click="changeKeeper(player,0)" class="cursor">
@@ -49,6 +50,7 @@
 					<td>{{player.team.name}}</td>
 					<td>{{player.absRank}}</td>
 					<td>{{player.posRank}}</td>
+					<td>{{player.yearsOwned}}</td>
 					<td>${{player.price}}</td>
 				</tr>
 			</table>
@@ -67,6 +69,7 @@
 				<td>Team</td>
 				<td>Abs Rank</td>
 				<td>Position Rank</td>
+				<td>Years Owned</td>
 				<td>Salary</td>
 				</thead>
 				<tr data-ng-repeat="player in owner.keepEligable | orderBy: '-position'" ng-click="changeKeeper(player,1)" class="cursor">
@@ -75,6 +78,7 @@
 					<td>{{player.team.name}}</td>
 					<td>{{player.absRank}}</td>
 					<td>{{player.posRank}}</td>
+					<td>{{player.yearsOwned}}</td>
 					<td>${{player.price}}</td>
 				</tr>
 			</table>
@@ -99,6 +103,7 @@
 					<td>Team</td>
 					<td>Abs Rank</td>
 					<td>Position Rank</td>
+					<td>Years Owned</td>
 					<td>Salary</td>
 					</thead>
 					<tr data-ng-repeat="player in owner.bidRoster | orderBy: '-position'" ng-click="changeBidee(player,0)" class="cursor">
@@ -107,6 +112,7 @@
 						<td>{{player.team.name}}</td>
 						<td>{{player.absRank}}</td>
 						<td>{{player.posRank}}</td>
+						<td>{{player.yearsOwned}}</td>
 						<td>${{player.price}}</td>
 					</tr>
 				</table>
@@ -125,6 +131,7 @@
 					<td>Team</td>
 					<td>Abs Rank</td>
 					<td>Position Rank</td>
+					<td>Years Owned</td>
 					<td>Salary</td>
 					</thead>
 					<tr data-ng-repeat="player in owner.bidEligable | orderBy: '-position'" ng-click="changeBidee(player,1)" class="cursor">
@@ -133,6 +140,7 @@
 						<td>{{player.team.name}}</td>
 						<td>{{player.absRank}}</td>
 						<td>{{player.posRank}}</td>
+						<td>{{player.yearsOwned}}</td>
 						<td>${{player.price}}</td>
 					</tr>
 				</table>
