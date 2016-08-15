@@ -308,7 +308,7 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 					console.log(data);
 				}).then(function(){
 					$scope.dPlayer.$remove();
-					$location.path('players');
+					$location.path('admin-players');
 				});
 		};
 
