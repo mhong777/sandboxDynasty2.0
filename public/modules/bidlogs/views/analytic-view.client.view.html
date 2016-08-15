@@ -1,132 +1,205 @@
 <section data-ng-controller="BidlogsController" data-ng-init="initialize()">
 
 	<div class="row">
-		<div class="col-md-12">
-			<h3>Analytic View</h3>
-			Bid Threshold: <input type="number" ng-model="bidThreshold" />
+		<div class="col-md-6">
+			<h3>Needs</h3>
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+				<td>Owner Name</td>
+				<td>Spots Left</td>
+				<td>Money Left</td>
+				<td>QB</td>
+				<td>RB</td>
+				<td>WR</td>
+				<td>TE</td>
+				</thead>
+				<tr ng-repeat="owner in owners">
+					<!--ng-click="goToRoster(owner._id)" class="cursor"-->
+					<td>{{owner.name}}</td>
+					<td>{{22 - owner.numPlayers}}</td>
+					<td>${{315-owner.salary}}</td>
+					<td ng-class="{'doneDrafting': owner.positions[0][0] + owner.positions[0][1] + owner.positions[0][2] + owner.positions[0][3]<thresholds[0][3], 'noMoney': owner.positions[0][0] + owner.positions[0][1] + owner.positions[0][2] + owner.positions[0][3]==thresholds[0][3], 'drafting': owner.positions[0][0] + owner.positions[0][1] + owner.positions[0][2] + owner.positions[0][3]>thresholds[0][3]}">
+						{{owner.positions[0][0] + owner.positions[0][1] + owner.positions[0][2] + owner.positions[0][3]}}
+					</td>
+					<td ng-class="{'doneDrafting': owner.positions[1][0] + owner.positions[1][1] + owner.positions[1][2]<thresholds[1][3], 'noMoney': owner.positions[1][0] + owner.positions[1][1] + owner.positions[1][2]==thresholds[1][3], 'drafting': owner.positions[1][0] + owner.positions[1][1] + owner.positions[1][2]>thresholds[1][3]}">
+						{{owner.positions[1][0] + owner.positions[1][1] + owner.positions[1][2]}}
+					</td>
+					<td ng-class="{'doneDrafting': owner.positions[2][0] + owner.positions[2][1] + owner.positions[2][2]<thresholds[2][3], 'noMoney': owner.positions[2][0] + owner.positions[2][1] + owner.positions[2][2]==thresholds[2][3], 'drafting': owner.positions[2][0] + owner.positions[2][1] + owner.positions[2][2]>thresholds[2][3]}">
+						{{owner.positions[2][0] + owner.positions[2][1] + owner.positions[2][2]}}
+					</td>
+					<td ng-class="{'doneDrafting': owner.positions[3][0] + owner.positions[3][1]<thresholds[3][3], 'noMoney': owner.positions[3][0] + owner.positions[3][1]==thresholds[3][3], 'drafting': owner.positions[3][0] + owner.positions[3][1]>thresholds[3][3]}">
+						{{owner.positions[3][0] + owner.positions[3][1]}}
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<h3>Thresholds</h3>
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+				<td>Position</td>
+				<td>Tier 1 Cutoff</td>
+				<td>Tier 2 Cutoff</td>
+				<td>Tier 3 Cutoff</td>
+				<td>Need</td>
+				</thead>
+				<tr>
+					<td>QB</td>
+					<td><input type="number" ng-model="thresholds[0][0]" class="smallInput"/></td>
+					<td><input type="number" ng-model="thresholds[0][1]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[0][2]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[0][3]" class="smallInput" /></td>
+				</tr>
+				<tr>
+					<td>RB</td>
+					<td><input type="number" ng-model="thresholds[1][0]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[1][1]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[1][2]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[1][3]" class="smallInput" /></td>
+				</tr>
+				<tr>
+					<td>WR</td>
+					<td><input type="number" ng-model="thresholds[2][0]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[2][1]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[2][2]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[2][3]" class="smallInput" /></td>
+				</tr>
+				<tr>
+					<td>TE</td>
+					<td><input type="number" ng-model="thresholds[3][0]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[3][1]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[3][2]" class="smallInput" /></td>
+					<td><input type="number" ng-model="thresholds[3][3]" class="smallInput" /></td>
+				</tr>
+			</table>
+			<button ng-click="initialize()" class="btn btn-default" type="button">Update</button>
 		</div>
 	</div>
+
 	<div class="row">
+		<h3>Bidding Habits</h3>
+		Bid Number Threshold: <input type="number" ng-model="bidThreshold" />
+		Bid Amount Threshold: <input type="number" ng-model="bidAmountThreshold" />
 		<table class="table table-striped table-bordered table-hover">
 			<thead>
-			<td>Toggle</td>
-			<td>Owner Name</td>
-			<td>Total</td>
-			<td colspan="4">QB</td>
+			<td></td>
+			<td colspan="3">QB</td>
 			<td colspan="4">RB</td>
 			<td colspan="4">WR</td>
-			<td colspan="4">TE</td>
+			<td colspan="2">TE</td>
 			</thead>
 			<thead>
-			<td colspan="3"></td>
-			<td>Top 10</td>
-			<td>Top 20</td>
-			<td>Top 30</td>
-			<td>30+</td>
-			<td>Top 10</td>
-			<td>Top 20</td>
-			<td>Top 30</td>
-			<td>30+</td>
-			<td>Top 10</td>
-			<td>Top 20</td>
-			<td>Top 30</td>
-			<td>30+</td>
-			<td>Top 10</td>
-			<td>Top 20</td>
-			<td>Top 30</td>
-			<td>30+</td>
+			<td>Onwer Name</td>
+			<td>
+				Tier 1<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 2<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 3/4<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 1<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 2<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 3<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 4<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 1<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 2<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 3<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 4<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 1<br/>
+				Avg: $
+			</td>
+			<td>
+				Tier 2<br/>
+				Avg: $
+			</td>
 			</thead>
-			<tr ng-repeat="owner in owners" ng-click="goToRoster(owner._id)" class="cursor">
-				<td><button ng-click="owner.show = !owner.show" class="btn btn-default" type="button">toggle</button></td>
+			<tr ng-repeat="owner in owners">
 				<td>{{owner.name}}</td>
-				<td ng-show="owner.show">{{owner.numPlayers}} players<br/>
-					${{owner.salary}}
-				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][0]>bidThreshold}">{{owner.positions[0][0]}}<br/>
-					${{owner.cost[0][0]}}<hr/>
-					bid:{{owner.bids[0][0]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[0][0]>bidThreshold}">
+					bid:{{owner.bids[0][0]}} /
 					won:{{owner.won[0][0]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][1]>bidThreshold}">{{owner.positions[0][1]}}<br/>
-					${{owner.cost[0][1]}}<hr/>
-					bid:{{owner.bids[0][1]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[0][1]>bidThreshold}">
+					bid:{{owner.bids[0][1]}} /
 					won:{{owner.won[0][1]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][2]>bidThreshold}">{{owner.positions[0][2]}}<br/>
-					${{owner.cost[0][2]}}<hr/>
-					bid:{{owner.bids[0][2]}}<br/>
-					won:{{owner.won[0][2]}}
-				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[0][3]>bidThreshold}">{{owner.positions[0][3]}}<br/>
-					${{owner.cost[0][3]}}<hr/>
-					bid:{{owner.bids[0][3]}}<br/>
-					won:{{owner.won[0][3]}}
+				<td ng-class="{'activelyBidding': owner.bids[0][2]>bidThreshold}">
+					bid:{{owner.bids[0][2] + owner.bids[0][3]}} /
+					won:{{owner.won[0][2] + owner.won[0][3]}}
 				</td>
 
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][0]>bidThreshold}">{{owner.positions[1][0]}}<br/>
-					${{owner.cost[1][0]}}<hr/>
-					bid:{{owner.bids[1][0]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[1][0]>bidThreshold}">
+					bid:{{owner.bids[1][0]}} /
 					won:{{owner.won[1][0]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][1]>bidThreshold}">{{owner.positions[1][1]}}<br/>
-					${{owner.cost[1][1]}}<hr/>
-					bid:{{owner.bids[1][1]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[1][1]>bidThreshold}">
+					bid:{{owner.bids[1][1]}} /
 					won:{{owner.won[1][1]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][2]>bidThreshold}">{{owner.positions[1][2]}}<br/>
-					${{owner.cost[1][2]}}<hr/>
-					bid:{{owner.bids[1][2]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[1][2]>bidThreshold}">
+					bid:{{owner.bids[1][2]}} /
 					won:{{owner.won[1][2]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[1][3]>bidThreshold}">{{owner.positions[1][3]}}<br/>
-					${{owner.cost[1][3]}}<hr/>
-					bid:{{owner.bids[1][3]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[1][3]>bidThreshold}">
+					bid:{{owner.bids[1][3]}} /
 					won:{{owner.won[1][3]}}
 				</td>
 
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][0]>bidThreshold}">{{owner.positions[2][0]}}<br/>
-					${{owner.cost[2][0]}}<hr/>
-					bid:{{owner.bids[2][0]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[2][0]>bidThreshold}">
+					bid:{{owner.bids[2][0]}} /
 					won:{{owner.won[2][0]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][1]>bidThreshold}">{{owner.positions[2][1]}}<br/>
-					${{owner.cost[2][1]}}<hr/>
-					bid:{{owner.bids[2][1]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[2][1]>bidThreshold}">
+					bid:{{owner.bids[2][1]}} /
 					won:{{owner.won[2][1]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][2]>bidThreshold}">{{owner.positions[2][2]}}<br/>
-					${{owner.cost[2][2]}}<hr/>
-					bid:{{owner.bids[2][2]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[2][2]>bidThreshold}">
+					bid:{{owner.bids[2][2]}} /
 					won:{{owner.won[2][2]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[2][3]>bidThreshold}">{{owner.positions[2][3]}}<br/>
-					${{owner.cost[2][3]}}<hr/>
-					bid:{{owner.bids[2][3]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[2][3]>bidThreshold}">
+					bid:{{owner.bids[2][3]}} /
 					won:{{owner.won[2][3]}}
 				</td>
 
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][0]>bidThreshold}">{{owner.positions[3][0]}}<br/>
-					${{owner.cost[3][0]}}<hr/>
-					bid:{{owner.bids[3][0]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[3][0]>bidThreshold}">
+					bid:{{owner.bids[3][0]}} /
 					won:{{owner.won[3][0]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][1]>bidThreshold}">{{owner.positions[3][1]}}<br/>
-					${{owner.cost[3][1]}}<hr/>
-					bid:{{owner.bids[3][1]}}<br/>
+				<td ng-class="{'activelyBidding': owner.bids[3][1]>bidThreshold}">
+					bid:{{owner.bids[3][1]}} /
 					won:{{owner.won[3][1]}}
 				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][2]>bidThreshold}">{{owner.positions[3][2]}}<br/>
-					${{owner.cost[3][2]}}<hr/>
-					bid:{{owner.bids[3][2]}}<br/>
-					won:{{owner.won[3][2]}}
-				</td>
-				<td ng-show="owner.show" ng-class="{'activelyBidding': owner.bids[3][3]>bidThreshold}">{{owner.positions[3][3]}}<br/>
-					${{owner.cost[3][3]}}<hr/>
-					bid:{{owner.bids[3][3]}}<br/>
-					won:{{owner.won[3][3]}}
-				</td>
-
-				<!--${{(gvar.salaryCap*10 - owner.salary*10 + owner.extraMoney*10)/10}}</td>-->
 			</tr>
 		</table>
 	</div>

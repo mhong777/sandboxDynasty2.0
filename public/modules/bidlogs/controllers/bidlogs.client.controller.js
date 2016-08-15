@@ -5,8 +5,16 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 	function($scope, $stateParams, $location, Authentication, Bidlogs, Players, Hists, $http, socket) {
 		$scope.authentication = Authentication;
 
+		//QB, RB, WR, TE
+		$scope.thresholds=[[5,10,20,2],[5,10,20,2],[5,10,20,3],[5,10,20,1]];
+		$scope.bidAmountThreshold=1;
+		$scope.bidThreshold=1;
+		$scope.amounts=[[[],[],[],[]],[[],[],[],[]],[[],[],[],[]],[[],[],[],[]]];
+		$scope.avgs=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+
+
 		// Create new Bidlog
-		$scope.create = function() {
+		$scope.create = function(){
 			// Create new Bidlog object
 			var bidlog = new Bidlogs ({
 				name: this.name
@@ -94,15 +102,15 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 			});
 		};
 
-		$scope.bidThreshold=1;
-
 		//table
 		$scope.fillData=function(){
 			var x,
 				y,
 				pos,
 				i,
-				rnk;
+				rnk,
+				zArray=[0,0,0,0],
+				sum;
 			for(x=0;x<$scope.owners.length;x++){
 				//qb, rb, wr, te
 				//initialize the arrays
@@ -115,15 +123,13 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 				$scope.owners[x].numPlayers=$scope.owners[x].keepRoster.length;
 				$scope.owners[x].show=true;
 				for(i=0;i<4;i++){
-					$scope.owners[x].positions[i]=[0,0,0,0];
-					$scope.owners[x].bids[i]=[0,0,0,0];
-					$scope.owners[x].cost[i]=[0,0,0,0];
-					$scope.owners[x].won[i]=[0,0,0,0];
-					$scope.owners[x].spent[i]=[0,0,0,0];
+					$scope.owners[x].positions[i]=zArray.slice(0);
+					$scope.owners[x].bids[i]=zArray.slice(0);
+					$scope.owners[x].cost[i]=zArray.slice(0);
+					$scope.owners[x].won[i]=zArray.slice(0);
+					$scope.owners[x].spent[i]=zArray.slice(0);
 				}
-				//console.log($scope.owners[x].keepRoster.length);
 				for(y=0;y<$scope.owners[x].keepRoster.length;y++){
-					//console.log($scope.owners[x].keepRoster[y].position + ' ' + $scope.owners[x].keepRoster[y].posRank);
 					if($scope.owners[x].keepRoster[y].position=='QB'){
 						pos=0;
 					}
@@ -137,28 +143,27 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 						pos=3;
 					}
 
-					if($scope.owners[x].keepRoster[y].posRank<=10){
+					if($scope.owners[x].keepRoster[y].posRank<=$scope.thresholds[pos][0]){
 						rnk=0;
 					}
-					else if($scope.owners[x].keepRoster[y].posRank<=20){
+					else if($scope.owners[x].keepRoster[y].posRank<=$scope.thresholds[pos][1]){
 						rnk=1;
 					}
-					else if($scope.owners[x].keepRoster[y].posRank<=30){
+					else if($scope.owners[x].keepRoster[y].posRank<=$scope.thresholds[pos][2]){
 						rnk=2;
 					}
 					else{
 						rnk=3;
 					}
-					//console.log(pos + ' - ' +rnk);
 					$scope.owners[x].positions[pos][rnk]++;
-					$scope.owners[x].cost[pos][rnk]+=$scope.owners[x].keepRoster[y].price;
-					$scope.owners[x].salary+=$scope.owners[x].keepRoster[y].price;
+					$scope.owners[x].cost[pos][rnk]=($scope.owners[x].keepRoster[y].price*10 + $scope.owners[x].cost[pos][rnk]*10)/10;
+					$scope.owners[x].salary=($scope.owners[x].salary*10 + $scope.owners[x].keepRoster[y].price*10)/10;
 				}
 			}
 
 			for(x=0;x<$scope.bidlogs.length;x++){
 				for(y=0;y<$scope.owners.length;y++){
-					if($scope.owners[y]._id==$scope.bidlogs[x].owner._id){
+					if($scope.owners[y]._id==$scope.bidlogs[x].owner._id && $scope.bidlogs[x].price>=$scope.bidAmountThreshold){
 						if($scope.bidlogs[x].player.position=='QB'){
 							pos=0;
 						}
@@ -172,13 +177,13 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 							pos=3;
 						}
 
-						if($scope.bidlogs[x].player.posRank<=10){
+						if($scope.bidlogs[x].player.posRank<=$scope.thresholds[pos][0]){
 							rnk=0;
 						}
-						else if($scope.bidlogs[x].player.posRank<=20){
+						else if($scope.bidlogs[x].player.posRank<=$scope.thresholds[pos][1]){
 							rnk=1;
 						}
-						else if($scope.bidlogs[x].player.posRank<=30){
+						else if($scope.bidlogs[x].player.posRank<=$scope.thresholds[pos][2]){
 							rnk=2;
 						}
 						else{
@@ -191,39 +196,55 @@ angular.module('bidlogs').controller('BidlogsController', ['$scope', '$statePara
 				}
 			}
 
-			//console.log($scope.hists);
 			for(x=0;x<$scope.hists.length;x++){
-				//console.log($scope.hists[x]);
-				for(y=0;y<$scope.owners.length;y++){
-					if($scope.owners[y].name==$scope.hists[x].owner){
-						if($scope.hists[x].playerdat.position=='QB'){
-							pos=0;
-						}
-						else if($scope.hists[x].playerdat.position=='RB'){
-							pos=1;
-						}
-						else if($scope.hists[x].playerdat.position=='WR'){
-							pos=2;
-						}
-						else if($scope.hists[x].playerdat.position=='TE'){
-							pos=3;
-						}
+				if($scope.hists[x].price>0){
+					if($scope.hists[x].playerdat.position=='QB'){
+						pos=0;
+					}
+					else if($scope.hists[x].playerdat.position=='RB'){
+						pos=1;
+					}
+					else if($scope.hists[x].playerdat.position=='WR'){
+						pos=2;
+					}
+					else if($scope.hists[x].playerdat.position=='TE'){
+						pos=3;
+					}
 
-						if($scope.hists[x].playerdat.posRank<=10){
-							rnk=0;
-						}
-						else if($scope.hists[x].playerdat.posRank<=20){
-							rnk=1;
-						}
-						else if($scope.hists[x].playerdat.posRank<=30){
-							rnk=2;
-						}
-						else{
-							rnk=3;
-						}
+					if($scope.hists[x].playerdat.posRank<=$scope.thresholds[pos][0]){
+						rnk=0;
+					}
+					else if($scope.hists[x].playerdat.posRank<=$scope.thresholds[pos][1]){
+						rnk=1;
+					}
+					else if($scope.hists[x].playerdat.posRank<=$scope.thresholds[pos][2]){
+						rnk=2;
+					}
+					else{
+						rnk=3;
+					}
 
-						$scope.owners[y].won[pos][rnk]++;
-						break;
+					//for avgs
+					$scope.amounts[pos][rnk].push($scope.hists[x].price);
+
+					//associate owner
+					for(y=0;y<$scope.owners.length;y++){
+						if($scope.owners[y].name==$scope.hists[x].owner){
+							$scope.owners[y].won[pos][rnk]++;
+							break;
+						}
+					}
+				}
+			}
+
+			for(x=0;x<4;x++){
+				for(y=0;y<4;y++){
+					sum=0;
+					for(i=0;i<$scope.amounts[x][y].length;i++){
+						sum=($scope.amounts[x][y][i]*10 + sum*10)/10;
+					}
+					if($scope.amounts[x][y].length>0){
+						$scope.avgs[x][y]=Math.round(sum/$scope.amounts[x][y].length*10)/10;
 					}
 				}
 			}

@@ -68,3 +68,7 @@
 .activelyBidding{
 	background: #ccffcc;
 }
+
+.smallInput{
+	width:50%;
+}
