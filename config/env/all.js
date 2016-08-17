@@ -7,8 +7,8 @@ module.exports = {
 		keywords: 'MongoDB, Express, AngularJS, Node.js'
 	},
 	//comment this in and out for production
-	port: process.env.PORT || 3000,
-	//port: process.env.PORT || 80,
+	//port: process.env.PORT || 3000,
+	port: process.env.PORT || 80,
 	templateEngine: 'swig',
 	sessionSecret: 'MEAN',
 	sessionCollection: 'sessions',
