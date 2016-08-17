@@ -11,6 +11,15 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 			//ownersAndPlayers
 
 		};
+		$scope.onlyNumbers = function(bidAmt){
+			if(bidAmt % 1 == 0 && bidAmt>0){
+				return false;
+			}
+			else{
+				return true;
+			}
+
+		};
 
 		//need a function to get all of the bids too
 		//available salary = totalCap - (keeperSalary + outstandingBids)
@@ -85,6 +94,9 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 								$scope.players = Players.query();
 							}).then(function(){
 								$scope.hists = Hists.query();
+								//$scope.numHists=$scope.hists.get('length');
+								//console.log($scope.hists);
+								//console.log($scope.hists.$promise);
 							});
 					});
 			}
@@ -120,7 +132,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				bid,
 				numPlayer=0;
 			for(x=0;x<owner.keepRoster.length;x++){
-				salary+=owner.keepRoster[x].price;
+				salary=(salary*10 + owner.keepRoster[x].price*10)/10;
 				numPlayer++
 			}
 			if($scope.gvar.rfaDraft){
@@ -133,6 +145,7 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 				}
 			}
 			return [Math.ceil(salary),numPlayer];
+			//return [salary,numPlayer];
 		};
 
 		/****

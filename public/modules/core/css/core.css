@@ -57,6 +57,10 @@
 	background-color: palegreen;
 }
 
+.notInteresting{
+	background-color: lightslategray;
+}
+
 .viewingOwner{
 	background-color: lightskyblue;
 }
@@ -72,3 +76,59 @@
 .smallInput{
 	width:50%;
 }
+
+.droster{
+	font-size: .85em;
+}
+
+.dplayers{
+	height:85vh;
+	overflow: scroll;
+	margin-bottom: 10vh;
+}
+
+.dhistory{
+	font-size: .8em;
+	display:block;
+	width:100%;
+	overflow-x:scroll;
+
+
+}
+
+.list-line{
+	white-space:nowrap;
+	margin-bottom: 2vh;
+}
+
+.dhitem{
+	width:10%;
+	/*float:left;*/
+	display: inline-block;
+	text-align: center;
+	/*border-left: solid black 1px;*/
+	border-right: solid black 1px;
+}
+
+/*format scroll bars individually */
+
+.dhistory::-webkit-scrollbar {
+	-webkit-appearance: none;
+	height: 2px;
+}
+.dhistory::-webkit-scrollbar-thumb:horizontal {
+	border-radius: 2px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 .5px rgba(255,255,255,.5);
+}
+
+.dplayers::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 8px;
+}
+.dplayers::-webkit-scrollbar-thumb {
+	border-radius: 4px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+

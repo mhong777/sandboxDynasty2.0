@@ -323,14 +323,14 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 					updateOwner=true;
 				}
 			}
-			console.log('request');
-			console.log($scope.player);
+			//console.log('request');
+			//console.log($scope.player);
 			req.player=$scope.player;
 			//update the owner
 			$http.put('/players/' + $scope.player._id,req).
 				success(function(data, status){
-					console.log('changed');
-					console.log(data);
+					//console.log('changed');
+					//console.log(data);
 				}).then(function(){
 					//update the owners - old one first, then new one - check if it is null
 					if(updateOwner){
@@ -338,28 +338,29 @@ angular.module('players').controller('PlayersController', ['$scope', '$statePara
 						ownerReq.ownerId=$scope.oldOwner;
 						ownerReq.playerId=$scope.player._id;
 						ownerReq.oldMarker=true;
-						console.log('old change');
-						console.log(ownerReq);
+						//console.log('old change');
+						//console.log(ownerReq);
 						$http.put('/ownerChange',ownerReq).
 							success(function(data, status){
 								console.log('changed the old one');
-								console.log(data);
+								//console.log(data);
 							}).then(function(){
 								//do the new one
 								ownerReq.ownerId=$scope.player.owner;
 								ownerReq.oldMarker=false;
 								console.log('new change');
-								console.log(ownerReq);
+								//console.log(ownerReq);
 								$http.put('/ownerChange',ownerReq).
 									success(function(data, status){
 										console.log('changed the new one');
-										console.log(data);
+										//console.log(data);
 										$location.path('admin-players');
 										//admin-players
 									});
 							});
-
-
+					}
+					else{
+						$location.path('admin-players');
 					}
 				});
 		};
