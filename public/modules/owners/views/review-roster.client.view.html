@@ -1,5 +1,6 @@
 <section data-ng-controller="ReviewRosterController" data-ng-init="initialize()">
 	<br/>
+
 	<div class="row">
 		<div class="col-md-8">
 			<div class="minitron text-center">
@@ -18,7 +19,7 @@
 					<td>{{owner.name}}</td>
 					<td>
 						${{(gvar.salaryCap*10 - owner.salary*10 + owner.extraMoney*10)/10}}</td>
-					<td>{{owner.keepRoster.length}}</td>
+					<td>{{owner.keepRoster.length}} - {{owner.previousRoster.length}}</td>
 					<td>{{owner.bidRoster.length}}</td>
 				</tr>
 			</table>
