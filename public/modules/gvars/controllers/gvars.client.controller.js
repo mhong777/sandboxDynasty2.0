@@ -124,16 +124,18 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 		$scope.changeDraft=function(listType, index,pick){
 			if(listType=='rookie'){
 				$scope.gvar.draftOrder.splice(index,1,pick);
+				console.log('changed rookie');
 			}
 			else{
 				$scope.gvar.pickOrder.splice(index,1,pick);
 			}
 		};
 
+		/*
         $scope.changePick=function(index,pick){
             $scope.gvar.pickOrder.splice(index,1,pick._id);
         };
-
+		*/
 
         $scope.updateDraft=function(){
 			var input={},
