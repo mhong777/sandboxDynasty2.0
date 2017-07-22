@@ -163,6 +163,14 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 		 *MAIN FUNCTIONS
 		 ****/
 		//made function to check the bid - can be used for both rfa and auction
+		$scope.oneUp=function(bid,price){
+            var input={};
+            input.bid=angular.copy(bid);
+            input.bid.myBid=price;
+            input.owner=$scope.myOwner._id;
+            socket.emit('increaseBid', input);
+		};
+
 		$scope.submitBid=function(bid){
 			var bidTest= 0,
 				x,

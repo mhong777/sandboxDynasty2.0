@@ -77,7 +77,7 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 					console.log('owner data');
 					console.log(data);
 				}).then(function(){
-					$location.path('owners');
+					$location.path('/roster');
 				});
 
 

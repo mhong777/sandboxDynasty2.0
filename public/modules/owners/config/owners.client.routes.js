@@ -41,6 +41,10 @@ angular.module('owners').config(['$stateProvider',
 			url: '/owners/:ownerId/edit',
 			templateUrl: 'modules/owners/views/edit-owner.client.view.html'
 		}).
+        state('editOwnerName', {
+            url: '/owners/:ownerId/edit-name',
+            templateUrl: 'modules/owners/views/edit-owner-name.client.view.html'
+        }).
 		state('assocPlayers', {
 			url: '/assocPlayers',
 			templateUrl: 'modules/owners/views/admin-player-owner.html'

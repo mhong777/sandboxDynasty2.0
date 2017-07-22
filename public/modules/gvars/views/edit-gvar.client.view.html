@@ -42,13 +42,13 @@
                             <button class="btn btn-default" type="button" ng-click="startDraftOrder()">Start</button>
                             <button class="btn btn-default" type="button" ng-click="addDraft()">Add New</button><br/><br/>
                             <div ng-repeat="pick in draft track by $index">
-                                {{$index+1}}: <select ng-model="pick" ng-options="owner.name for owner in owners track by owner._id" ng-change="changeDraft($index,pick)"></select>: {{pick}}
+                                {{$index+1}}: <select ng-model="pick" ng-options="owner._id as owner.name for owner in owners" ng-change="changeDraft('rookie',$index,pick)">{{owner.name}}</select>
                             </div>
                             <h4>other pickOrder</h4>
                             <button class="btn btn-default" type="button" ng-click="startpickOrder()">Start</button>
                             <button class="btn btn-default" type="button" ng-click="addPick()">Add New</button><br/><br/>
                             <div ng-repeat="picker in pickDraft track by $index">
-                                {{$index+1}}: <select ng-model="picker" ng-options="owner.name for owner in owners track by owner._id" ng-change="changePick($index,picker)"></select>: {{picker}}
+                                {{$index+1}}: <select ng-model="picker" ng-options="owner._id as owner.name for owner in owners" ng-change="changeDraft('',$index,picker)"></select>
                             </div>
                         </div>
                         <div class="col-md-3">

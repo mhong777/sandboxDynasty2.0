@@ -75,10 +75,6 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			$scope.pickDraft.push(null);
 		};
 
-		$scope.changePick=function(index,pick){
-			$scope.gvar.pickOrder.splice(index,1,pick._id);
-		};
-
 		// Find existing Gvar
 		$scope.findOne = function() {
 			$scope.gvar = Gvars.get({
@@ -134,8 +130,12 @@ angular.module('gvars').controller('GvarsController', ['$scope', '$stateParams',
 			}
 		};
 
+        $scope.changePick=function(index,pick){
+            $scope.gvar.pickOrder.splice(index,1,pick._id);
+        };
 
-		$scope.updateDraft=function(){
+
+        $scope.updateDraft=function(){
 			var input={},
 				draftOrder=[],
 				pickOrder=[],

@@ -55,7 +55,8 @@
 					<td ng-show="gvar.rfaDraft">{{bid.origOwner.name}}</td>
 					<td ng-show="gvar.bidShow">
 						Enter Bid: <input type="number" data-ng-model="bid.myBid" id="abs" ng-class="{tooExpensive: bid.myBid>(gvar.salaryCap-salary+myOwner.extraMoney)}" ng-disabled="(myOwner.numPlayer>=gvar.maxPlayers)">
-						<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney || time==0 || onlyNumbers(bid.myBid)">Submit Bid</button>
+						<button class="btn btn-default" type="button" ng-click="submitBid(bid)" ng-disabled="(bid.myBid>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney || time==0 || onlyNumbers(bid.myBid)">Submit Bid</button><br/><br/>
+						<button class="full-width btn btn-default" type="button" ng-click="oneUp(bid,bid.price+1)" ng-disabled="(bid.price+1>(gvar.salaryCap-myOwner.salary+myOwner.extraMoney)) || myOwner.numPlayer>=gvar.maxPlayers || gvar.salaryCap<=myOwner.salary+myOwner.extraMoney || time==0">Increase by $1<br/>(${{bid.price+1}})</button>
 						<div ng-show="myOwner.numPlayer>=gvar.maxPlayers">
 							<span class="errorMsg">Your roster is full - you're done</span>
 						</div>

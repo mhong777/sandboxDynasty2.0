@@ -6,13 +6,17 @@
 	<div class="jumbotron text-center">
 		<div class="row">
 			<h2>{{owner.name}}'s Roster</h2>
-
 			Keeper Salary: ${{salary}} / Keeper Cap Left: (${{gvar.keeperCap-salary}})<br/>
 			Players Keeping: {{owner.keepRoster.length}} / RFA Rights: {{owner.bidRoster.length}}<br/>
 
 			<p ng-show="!changeTime">
 				<span class="errorMsg">No more editing<br/>It's time to draft!</span>
 			</p>
+
+			<div class="pull-right" ng-if="rosterCheck">
+				<a ng-href="#!/owners/{{owner._id}}/edit-name"><button class="btn btn-default">Change roster name</button></a>
+			</div>
+
 		</div>
 
 		<div class="row">
