@@ -120,7 +120,9 @@ angular.module('bids').controller('RfaController', ['$scope', '$stateParams', '$
 					$scope.salary=salary;
 					$scope.numPlayers=numPlayer;
 					$scope.myOwner=$scope.owners[x];
-					$scope.dispOwner=$scope.owners[x];
+					if(!$scope.dispOwner){
+                        $scope.dispOwner=$scope.owners[x];
+					}
 				}
 			}
 			console.log($scope.gvar.salaryCap - $scope.myOwner.salary);

@@ -329,7 +329,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
       console.log('setting metrics');
       var x, fxnOut, numPlayer, salary = 0;
       for (x = 0; x < $scope.owners.length; x++)
-        salary = 0, fxnOut = $scope.getSalary($scope.owners[x]), salary = fxnOut[0], numPlayer = fxnOut[1], $scope.owners[x].salary = salary, $scope.owners[x].numPlayer = numPlayer, $scope.owners[x].myUser == $scope.user._id && ($scope.salary = salary, $scope.numPlayers = numPlayer, $scope.myOwner = $scope.owners[x], $scope.dispOwner = $scope.owners[x]);
+        salary = 0, fxnOut = $scope.getSalary($scope.owners[x]), salary = fxnOut[0], numPlayer = fxnOut[1], $scope.owners[x].salary = salary, $scope.owners[x].numPlayer = numPlayer, $scope.owners[x].myUser == $scope.user._id && ($scope.salary = salary, $scope.numPlayers = numPlayer, $scope.myOwner = $scope.owners[x], $scope.dispOwner || ($scope.dispOwner = $scope.owners[x]));
       console.log($scope.gvar.salaryCap - $scope.myOwner.salary);
     }, $scope.getSalary = function (owner) {
       var bid, x = 0, salary = 0, numPlayer = 0;
@@ -860,21 +860,17 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         salary += $scope.owner.keepRoster[x].price;
       rfaSalary += $scope.owner.bidRoster.length, $scope.salary = Math.ceil(salary), $scope.rfaSalary = Math.ceil(rfaSalary), $scope.rosterCheck ? $scope.errMsg = !1 : $scope.errMsg = !0, $scope.$digest;
     }, $scope.open = function (myMode) {
-      if (1 == myMode) {
-        $modal.open({
-          animation: !0,
-          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-          controller: 'ModalController',
-          size: 'lg'
-        });
-      } else {
-        $modal.open({
-          animation: !0,
-          templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
-          controller: 'ModalController',
-          size: 'lg'
-        });
-      }
+      1 == myMode ? $modal.open({
+        animation: !0,
+        templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+        controller: 'ModalController',
+        size: 'lg'
+      }) : $modal.open({
+        animation: !0,
+        templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
+        controller: 'ModalController',
+        size: 'lg'
+      });
     };
   }
 ]), angular.module('owners').controller('ModalController', [

@@ -46,18 +46,20 @@ var mongoose = require('mongoose'),
                             console.log(err);
                         } else {
                             var gvar = gvars[0];
+                            stopAllDraftTimer()
                             callback(null,gvar);
                         }
                     });
                 },
                 function(gvar, callback){
-                    if(gvar.rfaDraft && !gvar.matchShow){
+                    //during rfa draft
+                    if(gvar.rfaDraft){
                         console.log('nothing');
                     }
-                    else if(gvar.rfaDraft && gvar.matchShow){
-                        console.log('nothing');
-                    }
+                    //rookie and snake are same
                     else if(gvar.rookieDraft || gvar.snakeDraft){
+                        console.log('starting timer for a snake draft');
+                        console.log(pickCountdown);
                         pickCountdown = gvar.pickTimer;
                         io.emit('timer', { countdown: pickCountdown });
                         pickInterval = setInterval(function() {
