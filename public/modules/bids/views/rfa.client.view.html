@@ -92,7 +92,7 @@
 							<td><b>Spots</b></td>
 							</thead>
 							<tbody>
-							<tr ng-repeat="owner in owners" ng-click="viewOwner(owner)" ng-class="{viewingOwner: dispOwner._id==owner._id}"  class="cursor">
+							<tr ng-repeat="owner in owners | orderBy:'order'" ng-click="viewOwner(owner)" ng-class="{viewingOwner: dispOwner._id==owner._id}"  class="cursor">
 								<td>
 									<span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="color:green" ng-show="owner._id==gvar.drafter"></span>
 									<span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red" ng-show="owner.numPlayer>=gvar.maxPlayers"></span>

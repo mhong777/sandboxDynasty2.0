@@ -4,6 +4,7 @@
 angular.module('players').controller('PlayersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Players', 'Owners', '$http', 'socket',
 	function($scope, $stateParams, $location, Authentication, Players, Owners, $http, socket) {
 		$scope.authentication = Authentication;
+		console.log($scope.authentication);
 
 		//###ADD IN ALL OF THE TEAMS
 		$scope.teams=[{name:'ARI', byeWeek:9}, {name:'ATL', byeWeek:11}, {name:'BAL', byeWeek:8}, {name:'BUF', byeWeek:10}, {name:'CAR', byeWeek:7}, {name:'CHI', byeWeek:9}, {name:'CIN', byeWeek:9}, {name:'CLE', byeWeek:13}, {name:'DAL', byeWeek:7}, {name:'DEN', byeWeek:11}, {name:'DET', byeWeek:10}, {name:'GB', byeWeek:4}, {name:'HOU', byeWeek:9}, {name:'IND', byeWeek:10}, {name:'JAC', byeWeek:5}, {name:'KC', byeWeek:5}, {name:'MIA', byeWeek:8}, {name:'MIN', byeWeek:6}, {name:'NE', byeWeek:9}, {name:'NO', byeWeek:5}, {name:'NYG', byeWeek:8}, {name:'NYJ', byeWeek:11}, {name:'OAK', byeWeek:10}, {name:'PHI', byeWeek:4}, {name:'PIT', byeWeek:8}, {name:'SD', byeWeek:11}, {name:'SEA', byeWeek:5}, {name:'SF', byeWeek:8}, {name:'LA', byeWeek:8}, {name:'TB', byeWeek:6}, {name:'TEN', byeWeek:13}, {name:'WAS', byeWeek:9}, {name:'FA', byeWeek:0}];

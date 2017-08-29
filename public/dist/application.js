@@ -860,17 +860,21 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         salary += $scope.owner.keepRoster[x].price;
       rfaSalary += $scope.owner.bidRoster.length, $scope.salary = Math.ceil(salary), $scope.rfaSalary = Math.ceil(rfaSalary), $scope.rosterCheck ? $scope.errMsg = !1 : $scope.errMsg = !0, $scope.$digest;
     }, $scope.open = function (myMode) {
-      1 == myMode ? $modal.open({
-        animation: !0,
-        templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-        controller: 'ModalController',
-        size: 'lg'
-      }) : $modal.open({
-        animation: !0,
-        templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
-        controller: 'ModalController',
-        size: 'lg'
-      });
+      if (1 == myMode) {
+        $modal.open({
+          animation: !0,
+          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+      } else {
+        $modal.open({
+          animation: !0,
+          templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+      }
     };
   }
 ]), angular.module('owners').controller('ModalController', [
@@ -1142,7 +1146,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
   '$http',
   'socket',
   function ($scope, $stateParams, $location, Authentication, Players, Owners, $http, socket) {
-    $scope.authentication = Authentication, $scope.teams = [
+    $scope.authentication = Authentication, console.log($scope.authentication), $scope.teams = [
       {
         name: 'ARI',
         byeWeek: 9

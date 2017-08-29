@@ -21,6 +21,9 @@
                     <h4>Extra Money</h4>
                     <input type="number" data-ng-model="owner.extraMoney" id="extraMoney" class="form-control" required>
 
+                    <h4>Order</h4>
+                    <input type="number" data-ng-model="owner.order" id="order" class="form-control" required>
+
                     <h4>Associated User</h4>
                     <select ng-model="associateUser" ng-options="user.username for user in allUsers track by user._id" ng-change="changeOwnerUser()"></select>
 

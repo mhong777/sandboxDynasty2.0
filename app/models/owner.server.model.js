@@ -43,6 +43,9 @@ var OwnerSchema = new Schema({
     myUser:{
         type: Schema.ObjectId,
         ref: 'User'
+    },
+    order:{
+	    type:Number
     }
     
     
