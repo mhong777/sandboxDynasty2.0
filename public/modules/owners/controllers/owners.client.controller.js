@@ -116,6 +116,38 @@ angular.module('owners').controller('OwnersController', ['$scope', '$stateParams
 				});
 		};
 
+
+        $scope.changeKeeper=function(player,status){
+            //check that the user owns the person first
+
+			var req={};
+			req.status=status;
+			req.ownerId=$scope.owner._id;
+			req.playerId=player._id;
+			//check which action you need to do 1=keep -1=un-keep
+			if(status==1){
+				//keep
+				//check salary - if the salary is over - give them an alert
+				$http.put('/changeKeeper',req).
+				success(function(data, status){
+					$scope.owner=data;
+				}).then(function(){
+					console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length);
+                    $scope.$digest();
+				});
+			}else{
+				//just send
+				$http.put('/changeKeeper',req).
+				success(function(data, status){
+					console.log('removed ' + player.name);
+					$scope.owner=data;
+					console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length);
+					$scope.$digest();
+				});
+			}
+
+        };
+
 		$scope.changeOwnerUser=function(){
 			$scope.owner.myUser=$scope.associateUser._id;
 			$scope.associateUser.ownerId=$scope.owner._id;

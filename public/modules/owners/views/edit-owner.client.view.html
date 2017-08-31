@@ -13,6 +13,10 @@
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-default">
+                </div>
+
+                <div class="form-group">
                     <h4>Name</h4>
                     <div class="controls">
                         <input type="text" data-ng-model="owner.name" id="name" class="form-control" placeholder="Name" required>
@@ -28,9 +32,6 @@
                     <select ng-model="associateUser" ng-options="user.username for user in allUsers track by user._id" ng-change="changeOwnerUser()"></select>
 
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
-                </div>
 				<div data-ng-show="error" class="text-danger">
 					<strong data-ng-bind="error"></strong>
 				</div>
@@ -39,4 +40,47 @@
             </fieldset>
         </form>
     </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Currently Keeping</h4>
+            <p ng-show="!owner.keepRoster.length">
+                <span class="errorMsg">You aren't keeping anyone right now</span>
+            </p>
+
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <td>Position</td>
+                <td>Name</td>
+                <td>years Owned</td>
+                </thead>
+                <tr data-ng-repeat="player in owner.keepRoster | orderBy: '-position'" ng-click="changeKeeper(player,0)" class="cursor">
+                    <td>{{player.position}}</td>
+                    <td>{{player.name}}</td>
+                    <td>{{player.yearsOwned}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h4>Eligible to Keep</h4>
+            <p ng-show="!owner.keepEligable.length">
+                <span class="errorMsg">You're keeping everyone!</span>
+            </p>
+
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <td>Position</td>
+                <td>Name</td>
+                <td>years Owned</td>
+                </thead>
+                <tr data-ng-repeat="player in owner.previousRoster | orderBy: '-position'" ng-click="changeKeeper(player,1)" class="cursor">
+                    <td>{{player.position}}</td>
+                    <td>{{player.name}}</td>
+                    <td>{{player.yearsOwned}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
 </section>

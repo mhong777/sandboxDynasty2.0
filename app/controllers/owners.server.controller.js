@@ -386,7 +386,7 @@ exports.changeBidee = function(req, res) {
  * Owner middleware
  */
 exports.ownerByID = function(req, res, next, id) {
-	Owner.findById(id).populate('previousRoster').exec(function(err, owner) {
+	Owner.findById(id).populate('previousRoster').populate('keepRoster').exec(function(err, owner) {
 		if (err) return next(err);
 		if (! owner) return next(new Error('Failed to load Owner ' + id));
 		req.owner = owner ;

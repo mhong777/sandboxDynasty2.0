@@ -861,17 +861,21 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         salary += $scope.owner.keepRoster[x].price;
       rfaSalary += $scope.owner.bidRoster.length, $scope.salary = Math.ceil(salary), $scope.rfaSalary = Math.ceil(rfaSalary), $scope.rosterCheck ? $scope.errMsg = !1 : $scope.errMsg = !0, $scope.$digest;
     }, $scope.open = function (myMode) {
-      1 == myMode ? $modal.open({
-        animation: !0,
-        templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
-        controller: 'ModalController',
-        size: 'lg'
-      }) : $modal.open({
-        animation: !0,
-        templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
-        controller: 'ModalController',
-        size: 'lg'
-      });
+      if (1 == myMode) {
+        $modal.open({
+          animation: !0,
+          templateUrl: 'modules/owners/views/keeper-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+      } else {
+        $modal.open({
+          animation: !0,
+          templateUrl: 'modules/owners/views/rfa-modal.client.view.html',
+          controller: 'ModalController',
+          size: 'lg'
+        });
+      }
     };
   }
 ]), angular.module('owners').controller('ModalController', [
@@ -963,6 +967,15 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         $scope.owner = data;
       }).then(function () {
         $scope.associateUser = {}, $scope.associateUser._id = $scope.owner.myUser, $scope.oldUser = $scope.owner.myUser;
+      });
+    }, $scope.changeKeeper = function (player, status) {
+      var req = {};
+      req.status = status, req.ownerId = $scope.owner._id, req.playerId = player._id, 1 == status ? $http.put('/changeKeeper', req).success(function (data, status) {
+        $scope.owner = data;
+      }).then(function () {
+        console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length), $scope.$digest();
+      }) : $http.put('/changeKeeper', req).success(function (data, status) {
+        console.log('removed ' + player.name), $scope.owner = data, console.log($scope.owner.previousRoster.length + ' - ' + $scope.owner.keepRoster.length), $scope.$digest();
       });
     }, $scope.changeOwnerUser = function () {
       $scope.owner.myUser = $scope.associateUser._id, $scope.associateUser.ownerId = $scope.owner._id;
