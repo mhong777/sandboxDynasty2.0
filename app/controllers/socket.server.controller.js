@@ -26,6 +26,7 @@ var mongoose = require('mongoose'),
 
 
     function allDraftTimer(){
+        console.log('starting timer');
         //this is the function that sets all the timers and sets what happens when
         //the counters go to 0
         //waterfall
@@ -41,12 +42,15 @@ var mongoose = require('mongoose'),
 
         async.waterfall([
                 function(callback){
+                    stopAllDraftTimer();
+                    callback(null);
+                },
+                function(callback){
                     Gvar.find().exec(function(err, gvars) {
                         if (err) {
                             console.log(err);
                         } else {
                             var gvar = gvars[0];
-                            stopAllDraftTimer()
                             callback(null,gvar);
                         }
                     });
@@ -179,6 +183,7 @@ var mongoose = require('mongoose'),
     }
 
     function stopAllDraftTimer(){
+        console.log('stop timer');
         clearInterval(rfaInterval);
         clearInterval(matchInterval);
         clearInterval(pickInterval);
