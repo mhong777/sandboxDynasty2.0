@@ -1810,7 +1810,7 @@ var mongoose = require('mongoose'),
                 newPrice=input.bid.myBid,
                 ownerId=input.owner,
                 ownerTest;
-
+            console.log('starting increase bid');
             async.waterfall([
                 function(callback){
                     //create a new bidLog
@@ -1822,6 +1822,8 @@ var mongoose = require('mongoose'),
                         logbid.owner = ownerId;
                         logbid.player = oldBid.player;
                         logbid.origOwner = oldBid.origOwner;
+                        console.log('old bid',oldBid);
+                        console.log('new price', newPrice);
                         logbid.save(function(err) {
                             if (err) {
                                 console.log(err);
@@ -1894,6 +1896,7 @@ var mongoose = require('mongoose'),
                         if (err) {
                             console.log(err);
                         } else {
+                            console.log('highest old bid', highBid[0]);
                             callback(null, highBid[0], ownerTest, oldPrice);
                         }
                     });

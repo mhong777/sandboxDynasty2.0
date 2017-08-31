@@ -347,8 +347,9 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
     }, $scope.checkAmount = function (price) {
       console.log(price + ' - ' + $scope.salary);
     }, $scope.oneUp = function (bid, price) {
+      console.log('show bid going out', bid, price);
       var input = {};
-      input.bid = angular.copy(bid), input.bid.myBid = price, input.owner = $scope.myOwner._id, socket.emit('increaseBid', input);
+      input.bid = angular.copy(bid), input.bid.myBid = price, input.owner = $scope.myOwner._id, console.log('bid output', input), socket.emit('increaseBid', input);
     }, $scope.submitBid = function (bid) {
       var x, salary = $scope.myOwner.salary, numPlayers = $scope.myOwner.numPlayer;
       if (bid.myBid > bid.price) {
